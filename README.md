@@ -18,6 +18,15 @@ Application web cartographique pour la découverte et la valorisation du patrimo
 
 -**[IA/CHATBOT]**: À déterminer
 
+## CONTEXTE
+
+```
+La France dispose d’un patrimoine culturel d’une richesse exceptionnelle, comptant des milliers de musées, galeries d'art et monuments historiques répartis 
+sur l'ensemble du territoire. Le gouvernement met à disposition des bases de données ouvertes exhaustives (data.gouv.fr, base Muséofile), ces données restent brutes 
+et peu accessibles au grand public. Les outils existants se réduisent à des répertoires textuels ou à des cartographies marchandes (Google Maps, Apple Plan ...), favorisant la 
+visibilité des pôles touristiques majeurs au détriment du patrimoine de proximité.
+```
+
 ## PARTICIPANTS
 
 - KARLOV Youri
