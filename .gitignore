@@ -1,0 +1,73 @@
+# ==========================
+# Système d'exploitation (macOS & Windows)
+# ==========================
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+Desktop.ini
+
+# ==========================
+# IDEs & Éditeurs (IntelliJ, VS Code, Fleet)
+# ==========================
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.vscode/
+.fleet/
+*.sublime-project
+*.sublime-workspace
+
+# ==========================
+# Java (Maven & Gradle)
+# ==========================
+*.class
+target/
+build/
+.gradle/
+*.jar
+*.war
+*.ear
+.mvn/wrapper/maven-wrapper.jar
+
+# ==========================
+# Python (Environnements virtuels, caches, tests)
+# ==========================
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+env/
+venv/
+.venv/
+ENV/
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# ==========================
+# Front-end (Node, Vite, frameworks JS/TS)
+# ==========================
+node_modules/
+dist/
+dist-ssr/
+.cache/
+.npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ==========================
+# Variables d'environnement & Clés d'API (Sensible)
+# ==========================
+.env
+.env.local
+.env.*.local
+*.env
