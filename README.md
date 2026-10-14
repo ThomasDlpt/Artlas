@@ -1,5 +1,5 @@
 # Artlas
-Application web cartographique pour la découverte et la valorisation du patrimoine culturel (musées, galeries, monuments).
+```Application web cartographique pour la découverte et la valorisation du patrimoine culturel (musées, galeries, monuments).```
 
 ## OBJECTIF DU PROJET
 
@@ -18,30 +18,54 @@ et peu accessibles au grand public. Les outils existants se réduisent à des r�
 visibilité des pôles touristiques majeurs au détriment du patrimoine de proximité.
 ```
 
-## FONCTIONNALITÉS
+## FONCTIONNALITÉS (V1)
 
-- **Carte Interactive**: permet à l'utilisateur de zoomer/dézoomer et de visualiser les lieux culturels.
-- **Open Data Culturelles**: fonctionnalité propre à l'application qui s'occupe de faire des mises à jour quotidiennes sur les données des fichiers .csv (mise à jour des informations telles que numéro de téléphone, site internet....). 
-- **Fiches descriptives**: donnent des informations sur le lieu sélectionné par l'utilisateur.
-- **IA/CHATBOT**: aide l'utilisateur à découvrir de nouveaux lieux et de nouveaux itinéraires en le guidant dans sa recherche à l'aide de filtres. 
+- **Carte Interactive**: 
+
+```Rendu cartographique les lieux culturels grace à la géolocalisation sur OpenStreetMap.```
+
+- **Cherche et Filtres**: 
+
+```Recherche textuelle et filtrage des lieux par localisation géographique.```
+
+- **Fiches descriptives**: 
+
+```Visualisation détaillée des informations sur le lieu sélectionné par l'utilisateur.```
+
+## FONCTIONNALITÉS À DEVELOPPER PLUS TARD (V2)
+
+- **IA/CHATBOT**: 
+
+```Aide l'utilisateur à découvrir de nouveaux lieux et de nouveaux itinéraires en le guidant dans sa recherche à l'aide de filtres.```
+
 
 ## TECHNOLOGIES UTILISÉES
 
--**[BACKEND]**: PYTHON/JAVA
+* **[BACKEND]**: 
+    * **JAVA**: ```Gestion de la logique métier.```
 
--**[DATA]**: API https://www.data.gouv.fr/datasets/datatourisme-la-base-nationale-des-donnees-publiques-dinformation-touristique-en-open-data
+* **[DATA]**: 
+  * **JAVA (SpringBoot)**: ```Filtrage des données, normalisation de la donnée.```
 
--**[FRONTEND]**: À déterminer
+* **[CARTOGRAPHIE]**:
+    * **OpenStreetMap**: ```Rendu cartographique.```
+  
+* **[FRONTEND]**: ```À déterminer``` 
 
--**[IA/CHATBOT]**: À déterminer
+* **[IA/CHATBOT]**: 
+  * **PYTHON** 
+  * **(Ollama ?)**
 
 ## COUVERTURE DE TEST
 
-
+* **SP1 (V1)** : ```Objectif minimal de **50 %** de couverture de code.```
+* **SP2 (V2)** : ```Objectif cible de **70 % à 80 %** sur les services métier.```
 
 ## PARTICIPANTS
 
+```
 - KARLOV Youri
 - BEUREL Antoine
 - HAMAZ Chihab
 - DELAPORTE Thomas
+```
