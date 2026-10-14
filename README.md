@@ -32,12 +32,19 @@ visibilité des pôles touristiques majeurs au détriment du patrimoine de proxi
 
 ```Visualisation détaillée des informations sur le lieu sélectionné par l'utilisateur.```
 
+- **Création d'itinéraires**:
+
+```Créer un itinéraire en fonction des lieux sélectionnés, dans l'ordre sélection.```
+
 ## FONCTIONNALITÉS À DEVELOPPER PLUS TARD (V2)
 
 - **IA/CHATBOT**: 
 
 ```Aide l'utilisateur à découvrir de nouveaux lieux et de nouveaux itinéraires en le guidant dans sa recherche à l'aide de filtres.```
 
+**Création d'itinéraires optimisés**:
+
+```Créer un itinéraire en fonction des lieux sélectionnés tout en optimisant la distance entre chaque étapes.```
 
 ## TECHNOLOGIES UTILISÉES
 
