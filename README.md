@@ -42,6 +42,10 @@ visibilité des pôles touristiques majeurs au détriment du patrimoine de proxi
 
 ```Aide l'utilisateur à découvrir de nouveaux lieux et de nouveaux itinéraires en le guidant dans sa recherche à l'aide de filtres.```
 
+- **Compte Utilisateur**:
+
+```Création de compte pour les utilisateurs```
+
 **Création d'itinéraires optimisés**:
 
 ```Créer un itinéraire en fonction des lieux sélectionnés tout en optimisant la distance entre chaque étapes.```
