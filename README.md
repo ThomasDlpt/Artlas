@@ -60,8 +60,11 @@ visibilité des pôles touristiques majeurs au détriment du patrimoine de proxi
 
 * **[CARTOGRAPHIE]**:
     * **OpenStreetMap**: ```Rendu cartographique.```
+    * **Leaflet**
   
-* **[FRONTEND]**: ```À déterminer``` 
+* **[FRONTEND]**:
+  * **REACT**
+  * **JavaScript**
 
 * **[IA/CHATBOT]**: 
   * **PYTHON** 
