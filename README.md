@@ -48,7 +48,10 @@ visibilité des pôles touristiques majeurs au détriment du patrimoine de proxi
 
 **Création d'itinéraires optimisés**:
 
-```Créer un itinéraire en fonction des lieux sélectionnés tout en optimisant la distance entre chaque étapes.```
+```
+Créer un itinéraire en fonction des lieux sélectionnés tout en optimisant la distance entre chaque étape. Cette version demandera 
+à l'utilisateur de renseigner un point de départ à partir duquel sera calculé le chemin optimal.
+```
 
 ## TECHNOLOGIES UTILISÉES
 
