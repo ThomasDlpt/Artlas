@@ -1,4 +1,4 @@
-# Document d'Architecture Logicielle — Artlas (DESIGN.md)
+# Document d'Architecture Logicielle - Artlas
 
 Ce document décrit l'architecture logicielle du projet **Artlas**, incluant ses modèles statiques (organisation en packages, classes principales, responsabilités et instances) ainsi que ses modèles dynamiques (cas d'utilisation, cas nominaux et scénario exceptionnels).
 
