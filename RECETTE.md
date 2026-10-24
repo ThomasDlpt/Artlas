@@ -14,9 +14,9 @@
 
 ## LÉGENDE DES STATUTS
 
-- ✅ **OK** : ```Le résultat obtenu est conforme au résultat attendu.```
-- ❌ **KO** : ```Le résultat obtenu diffère du résultat attendu (créer une issue et noter son numéro).```
-- ⏸️ **NT** : ```Non testé.```
+- **OK** : ```Le résultat obtenu est conforme au résultat attendu.```
+- **KO** : ```Le résultat obtenu diffère du résultat attendu (créer une issue et noter son numéro).```
+- **NT** : ```Non testé.```
 
 ---
 
@@ -76,7 +76,7 @@
 
 ## BILAN DE LA RECETTE
 
-| Total | ✅ OK | ❌ KO | ⏸️ NT |
+| Total | OK | KO | NT |
 |---|---|---|---|
 | 22 | 0 | 0 | 22 |
 
