@@ -1,5 +1,7 @@
 package main.backend.synchronisation;
 
-public class Importeur {
-    
+public interface Importeur {
+    public int getSource();
+
+    public void importer();
 }
