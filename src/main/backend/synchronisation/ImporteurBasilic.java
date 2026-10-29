@@ -1,7 +1,9 @@
 package main.backend.synchronisation;
 
 import main.backend.lieux.TypeLieu;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ImporteurBasilic implements Importeur{
 
     @Override

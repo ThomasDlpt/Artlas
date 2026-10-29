@@ -20,6 +20,8 @@ Desktop.ini
 out/
 .vscode/
 .fleet/
+.gemini/
+.agents/
 *.sublime-project
 *.sublime-workspace
 
