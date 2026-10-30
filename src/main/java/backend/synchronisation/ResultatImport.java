@@ -1,9 +1,9 @@
-package main.backend.synchronisation;
+package backend.synchronisation;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import main.backend.lieux.Source;
+import backend.lieux.Source;
 
 public class ResultatImport {
     private Source source;

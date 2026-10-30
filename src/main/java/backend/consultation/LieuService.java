@@ -1,4 +1,4 @@
-package main.backend.consultation;
+package backend.consultation;
 
 public class LieuService {
     

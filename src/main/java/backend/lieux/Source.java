@@ -1,4 +1,4 @@
-package main.backend.lieux;
+package backend.lieux;
 
 public enum Source {
     BASILIC, 

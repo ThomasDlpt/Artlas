@@ -1,6 +1,6 @@
-package main.backend.synchronisation;
+package backend.synchronisation;
 
-import main.backend.lieux.TypeLieu;
+import backend.lieux.TypeLieu;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -1,4 +1,4 @@
-package main.backend.circuits;
+package backend.circuits;
 
 public class Circuit {
     

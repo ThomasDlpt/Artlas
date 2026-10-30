@@ -1,4 +1,4 @@
-package main.backend.synchronisation;
+package backend.synchronisation;
 
 public enum StatutSynchro {
     SUCCES,

@@ -1,7 +1,8 @@
-package main.backend.synchronisation;
+package backend.synchronisation;
 
 public class ImporteurDataTourisme implements Importeur{
-
+    private String urlFlux;
+    
     @Override
     public int getSource() {
         // TODO Auto-generated method stub
