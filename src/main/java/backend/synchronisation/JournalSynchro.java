@@ -14,7 +14,7 @@ public class JournalSynchro {
     private int nbMiseAJour;
     private int nbRejets;
     private StatutSynchro statut;
-    private List<String> errors;
+    private List<String> erreurs;
 
 
     public JournalSynchro(
@@ -26,7 +26,7 @@ public class JournalSynchro {
         int nbMiseAJour,
         int nbRejets,
         StatutSynchro statut,
-        List<String> errors
+        List<String> erreurs
     ){
         this.id = id;
         this.source = source;
@@ -36,6 +36,6 @@ public class JournalSynchro {
         this.nbMiseAJour = nbMiseAJour;
         this.nbRejets = nbRejets;
         this.statut = statut;
-        this.errors = errors;
+        this.erreurs = erreurs;
     }
 }

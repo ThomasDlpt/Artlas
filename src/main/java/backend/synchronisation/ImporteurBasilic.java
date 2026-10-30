@@ -1,5 +1,6 @@
 package backend.synchronisation;
 
+import backend.lieux.Source;
 import backend.lieux.TypeLieu;
 import org.springframework.stereotype.Component;
 
@@ -7,15 +8,15 @@ import org.springframework.stereotype.Component;
 public class ImporteurBasilic implements Importeur{
 
     @Override
-    public int getSource() {
+    public Source getSource() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getSource'");
     }
 
     @Override
-    public void importer() {
+    public ResultatImport importer() {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'importer'");
+        throw new UnsupportedOperationException("Unimplemented method 'getSource'");
     }
 
     private TypeLieu convertirCategories(String categories){

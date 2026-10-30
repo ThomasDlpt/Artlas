@@ -3,17 +3,20 @@ package backend.synchronisation;
 import java.util.ArrayList;
 import java.util.List;
 
+import backend.lieux.Lieu;
 import backend.lieux.Source;
 
 public class ResultatImport {
-    private Source source;
-    private int nbLignesLues;
-    private List<String> errors;
+    private final Source source;
+    private final int nbLignesLues;
+    private final List<String> erreurs;
+    private final List<Lieu> lieux;
 
-    public ResultatImport(Source source, int nbLignesLues, List<String> errors){
+    public ResultatImport(Source source, int nbLignesLues, List<String> erreurs, List<Lieu> lieux){
         this.source = source;
         this.nbLignesLues = nbLignesLues;
-        this.errors = List.copyOf(errors);
+        this.erreurs = List.copyOf(erreurs);
+        this.lieux = List.copyOf(lieux);
     }
 
     public Source getSource(){
@@ -25,7 +28,10 @@ public class ResultatImport {
     }
 
     public List<String> getErrors(){
-        return errors;
+        return erreurs;
     }
     
+    public List<Lieu> getLieux(){
+        return lieux;
+    }
 }

@@ -1,7 +1,9 @@
 package backend.synchronisation;
 
-public interface Importeur {
-    public int getSource();
+import backend.lieux.Source;
 
-    public void importer();
+public interface Importeur {
+    public Source getSource();
+
+    public ResultatImport importer();
 }
