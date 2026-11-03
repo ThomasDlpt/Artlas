@@ -35,7 +35,7 @@ public class ImporteurBasilic implements Importeur{
         for (JsonNode obj : res) {
             try{
                 String nom = obj.path("Nom").asText();
-                String id = obj.path("Identifiant origine").asText();
+                int id = obj.path("__id").asInt();
                 String adresse = obj.path("Adresse postale").asText();
                 String departement = obj.path("Département").asText();
                 String region = obj.path("Région").asText();
