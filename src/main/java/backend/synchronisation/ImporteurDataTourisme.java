@@ -42,51 +42,80 @@ public class ImporteurDataTourisme implements Importeur{
 
     @Override
     public ResultatImport importer() {
-        JsonNode res = client.get().uri(REQUETE).retrieve().body(JsonNode.class);
-       
-        int size = res.path("objects").size();
-        System.err.println(size);
 
+        String url = REQUETE;
         int lues = 0;
         List<String> erreurs = new ArrayList<>();
         List<Lieu> lieux = new ArrayList<>();
         
-        
-        for(JsonNode poi : res.path("objects")){
-            lues++;
-            try {
-                String nom = poi.path("label").path("@fr").asText();
-                System.err.println(nom);
-                String id_uri = poi.path("uri").asText();
-                System.err.println(id_uri);
-                String siteWeb = poi.path("hasContact").path(0).path("homepage").path(0).asText();
-                System.err.println(siteWeb);
-                String descriptionCourte = poi.path("hasDescription").path(0).path("shortDescription").path("@fr").asText();
-                
-                System.err.println(descriptionCourte);
-                List<String> types = new ArrayList<>();
-                for(JsonNode type : poi.path("type")){
-                    types.add(type.asText());
-                }
-                TypeLieu typeLieu = convertirCategories(types);
-                System.err.println(typeLieu);
+        while (url != null) {
+            
+            JsonNode res = client.get().uri(url).retrieve().body(JsonNode.class);
 
-                //A COMPLETER POUR CREER UN LIEU
-                Lieu l = new Lieu();
-        
-            } catch (Exception e) {
-                // TODO: handle exception
+            for(JsonNode poi : res.path("objects")){
+                lues++;
+                try {
+                    String nom = poi.path("label").path("@fr").asText();
+                    String id_uri = poi.path("uri").asText();
+                    String siteWeb = poi.path("hasContact").path(0).path("homepage").path(0).asText();
+                    String descriptionCourte = poi.path("hasDescription").path(0).path("shortDescription").path("@fr").asText();
+                    double latitude = poi.path("isLocatedAt").path(0).path("geo").path("latitude").asDouble();
+                    double longitude = poi.path("isLocatedAt").path(0).path("geo").path("longitude").asDouble();
+                    String codePostal = poi.path("isLocatedAt").path(0).path("address").path(0).path("postalCode").asText();
+                    String codeDep = codePostal.substring(0, 2);
+                    String nomCommune = poi.path("isLocatedAt").path(0).path("address").path(0).path("hasAddressCity").path("label").path("@fr").asText();
+                    System.err.println(nomCommune);
+                    JsonNode adresseRueLigne = poi.path("isLocatedAt").path(0).path("address").path(0).path("streetAddress");
+                    String adresseRue = "";
+                    //pour un meilleur affichage
+                    int nbLignes = adresseRueLigne.size();
+                    int counter = 0;
+                    for(JsonNode ligne :  adresseRueLigne){
+                        counter++;
+                        if (counter == nbLignes) {
+                            adresseRue += ligne.asText();
+                        }
+                        else{adresseRue += ligne.asText() + ", ";}
+                        
+                    }
+
+
+                    //System.err.println(nom);
+                    //System.err.println(id_uri);
+                    //System.err.println(siteWeb);
+                    //System.err.println(descriptionCourte);
+                    //System.err.println(codePostal);
+                    //System.err.println(latitude);
+                    //System.err.println(longitude);
+                    //System.err.println(adresseRue);
+                    //System.err.println(codeDep);
+                    List<String> types = new ArrayList<>();
+                    for(JsonNode type : poi.path("type")){
+                        types.add(type.asText());
+                    }
+                    TypeLieu typeLieu = convertirCategories(types);
+                    //System.err.println(typeLieu);
+
+                    //A COMPLETER POUR CREER UN LIEU
+                    Lieu l = new Lieu();
+                    lieux.add(l);
+                } catch (Exception e) {
+                    erreurs.add(e.toString() + poi.path("uuid").asText("?"));
+                }
+            }
+            JsonNode next = res.path("meta").path("next");
+            if(next.isTextual()){
+                url = next.asText();
+            }
+            else{
+                url = null;
             }
         }
         
-        return new ResultatImport(getSource(), size, new ArrayList<>(), new ArrayList<>());
+        return new ResultatImport(getSource(), lues, erreurs, lieux);
     }
 
-    /*That’s the right plan. Your four steps map directly onto the class:
-Read the docs and pick an endpoint. Done: /placeOfInterest.
-Store the query in an attribute.
-Fetch the JSON and loop over it.
-Convert each entry to a Lieu, collect them in a list, and return new ResultatImport(...). */
+
 
 
     private TypeLieu convertirCategories(List<String> categories){
@@ -106,10 +135,6 @@ Convert each entry to a Lieu, collect them in a list, and return new ResultatImp
        return TypeLieu.MONUMENT;
     }
 
-    private Lieu convertir(JsonNode poi) {
-        throw new UnsupportedOperationException("todo");
-    }
-
     public static void main(String[] args) throws IOException {
         Properties p = new Properties();
         try (FileInputStream in = new FileInputStream("src/main/resources/application-secret.properties")) {
@@ -118,11 +143,15 @@ Convert each entry to a Lieu, collect them in a list, and return new ResultatImp
         ImporteurDataTourisme test = new ImporteurDataTourisme(
                 "https://api.datatourisme.fr/v1",
                 p.getProperty("datatourisme.api-key"));
-        test.importer();
-        System.out.println(test.convertirCategories(List.of("PointOfInterest", "CulturalSite")));
+        ResultatImport res = test.importer();
+        System.err.println(res.getLieux().size());
+        System.err.println(res.getSource());
+        System.err.println(res.getNbLignesLues());
+        System.err.println(res.getErrors().size());
+        /*System.out.println(test.convertirCategories(List.of("PointOfInterest", "CulturalSite")));
         System.out.println(test.convertirCategories(List.of("PointOfInterest", "CulturalSite")));  
         System.out.println(test.convertirCategories(List.of("Museum", "CulturalSite")));           
-        System.out.println(test.convertirCategories(List.of("Cinematheque")));                     
+        System.out.println(test.convertirCategories(List.of("Cinematheque")));*/                     
     }
 }
 
