@@ -13,7 +13,7 @@ import java.util.List;
 @Component
 public class ImporteurBasilic implements Importeur{
 
-    private static final String REQUETE = "/dced78ee-0823-4b61-86e6-57717308d4e4/data/?page_size=100";
+    private static final String REQUETE = "/dced78ee-0823-4b61-86e6-57717308d4e4/data/?page_size=200";
 
     private final RestClient client;
 
