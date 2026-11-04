@@ -2,6 +2,8 @@ package backend.synchronisation;
 
 import backend.lieux.Source;
 import backend.lieux.TypeLieu;
+import backend.accesdonnees.CommuneRepository;
+import backend.geographie.Commune;
 import backend.lieux.Lieu;
 
 import java.util.List;
@@ -17,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Properties;
 @Component 
@@ -26,13 +29,17 @@ public class ImporteurDataTourisme implements Importeur{
 
     private RestClient client;
 
+    private CommuneRepository repo;
+    
     public ImporteurDataTourisme(
             @Value("${datatourisme.url}") String baseUrl,
-            @Value("${datatourisme.api-key}") String apiKey) {
+            @Value("${datatourisme.api-key}") String apiKey,
+            CommuneRepository repo) {
         this.client = RestClient.builder()
                 .baseUrl(baseUrl)                        
                 .defaultHeader("X-API-Key", apiKey)      
                 .build();
+        this.repo = repo;
     }
 
     @Override
@@ -62,9 +69,11 @@ public class ImporteurDataTourisme implements Importeur{
                     double latitude = poi.path("isLocatedAt").path(0).path("geo").path("latitude").asDouble();
                     double longitude = poi.path("isLocatedAt").path(0).path("geo").path("longitude").asDouble();
                     String codePostal = poi.path("isLocatedAt").path(0).path("address").path(0).path("postalCode").asText();
-                    String codeDep = codePostal.substring(0, 2);
+                    //String codeDep = codePostal.substring(0, 2);
                     String nomCommune = poi.path("isLocatedAt").path(0).path("address").path(0).path("hasAddressCity").path("label").path("@fr").asText();
-                    System.err.println(nomCommune);
+                    String insee = poi.path("isLocatedAt").path(0).path("address").path(0).path("hasAddressCity").path("insee").asText();
+                    System.err.println(insee);
+                    
                     JsonNode adresseRueLigne = poi.path("isLocatedAt").path(0).path("address").path(0).path("streetAddress");
                     String adresseRue = "";
                     //pour un meilleur affichage
@@ -79,23 +88,14 @@ public class ImporteurDataTourisme implements Importeur{
                         
                     }
 
-
-                    //System.err.println(nom);
-                    //System.err.println(id_uri);
-                    //System.err.println(siteWeb);
-                    //System.err.println(descriptionCourte);
-                    //System.err.println(codePostal);
-                    //System.err.println(latitude);
-                    //System.err.println(longitude);
-                    //System.err.println(adresseRue);
-                    //System.err.println(codeDep);
                     List<String> types = new ArrayList<>();
                     for(JsonNode type : poi.path("type")){
                         types.add(type.asText());
                     }
-                    TypeLieu typeLieu = convertirCategories(types);
-                    //System.err.println(typeLieu);
-
+                    TypeLieu typeLieu = convertirCategories(types);                    
+                    
+                    
+                    Commune c = repo.renvoieOuCreeCommune(insee, nomCommune);
                     //A COMPLETER POUR CREER UN LIEU
                     Lieu l = new Lieu();
                     lieux.add(l);
@@ -111,7 +111,6 @@ public class ImporteurDataTourisme implements Importeur{
                 url = null;
             }
         }
-        
         return new ResultatImport(getSource(), lues, erreurs, lieux);
     }
 
@@ -140,14 +139,17 @@ public class ImporteurDataTourisme implements Importeur{
         try (FileInputStream in = new FileInputStream("src/main/resources/application-secret.properties")) {
             p.load(in);
         }
+        CommuneRepository repo = new CommuneRepository();
         ImporteurDataTourisme test = new ImporteurDataTourisme(
                 "https://api.datatourisme.fr/v1",
-                p.getProperty("datatourisme.api-key"));
+                p.getProperty("datatourisme.api-key"), 
+            repo);
         ResultatImport res = test.importer();
         System.err.println(res.getLieux().size());
         System.err.println(res.getSource());
         System.err.println(res.getNbLignesLues());
-        System.err.println(res.getErrors().size());
+        System.err.println(res.getErrors().toString());
+        System.err.println(repo.tailleRepo());
         /*System.out.println(test.convertirCategories(List.of("PointOfInterest", "CulturalSite")));
         System.out.println(test.convertirCategories(List.of("PointOfInterest", "CulturalSite")));  
         System.out.println(test.convertirCategories(List.of("Museum", "CulturalSite")));           
