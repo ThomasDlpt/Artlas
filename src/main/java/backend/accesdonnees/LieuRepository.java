@@ -19,7 +19,6 @@ public class LieuRepository {
             lieux.add(lieu);
         }
     }
-
     public Lieu trouverParId(String id){
         for (Lieu lieu : lieux) {
             if (lieu.getId().equals(id)) {
@@ -77,8 +76,8 @@ public class LieuRepository {
 
         boolean typeOk = filtre.getTypes().isEmpty() || filtre.getTypes().contains(lieu.getType());
         boolean codeDepOk = filtre.getCodeDepartment() == null || lieu.getAdresse().getCommune().getDepartement().getCode().equals(filtre.getCodeDepartment());
-        boolean labelOk =  filtre.getLabel() = null || lieu.getLabels().contains(filtre.getLabel());
-        boolean texteOk =  filtre.getTexte() = null || lieu.getNom().toLowerCase().contains(filtre.getTexte().toLowerCase());
+        boolean labelOk =  filtre.getLabel() == null || lieu.getLabels().contains(filtre.getLabel());
+        boolean texteOk =  filtre.getTexte() == null || lieu.getNom().toLowerCase().contains(filtre.getTexte().toLowerCase());
 
         return typeOk && codeDepOk && labelOk && texteOk;
     }

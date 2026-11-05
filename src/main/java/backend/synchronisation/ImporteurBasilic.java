@@ -28,30 +28,40 @@ public class ImporteurBasilic implements Importeur{
 
     @Override
     public ResultatImport importer() {
-        JsonNode res = client.get().uri(REQUETE).retrieve().body(JsonNode.class).path("data");
+
         List<String> erreurs = new ArrayList<>();
         List<Lieu> lieux = new ArrayList<>();
+        int pageLues = 0;
+        int page = 1;
+        boolean pageSuivante = true;
 
-        for (JsonNode obj : res) {
-            try{
-                String nom = obj.path("Nom").asText();
-                int id = obj.path("__id").asInt();
-                String adresse = obj.path("Adresse postale").asText();
-                String departement = obj.path("Département").asText();
-                String region = obj.path("Région").asText();
-                String latitude = obj.path("Latitude").asText();
-                String longitude = obj.path("Longitude").asText();
-                String desc = obj.path("desc").asText();
-                String webSite = obj.path("Website").asText();
-                TypeLieu type = convertirCategories(obj.path("Type équipement ou lieu").asText());
-                //System.out.println(res.get(0));
-                System.out.println(nom + " | " + type + " | " + id + " | " + adresse + " | " + departement + " | " + region + " | " + latitude + " | " + longitude);
-                lieux.add(new Lieu());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+        while (pageSuivante) {
+            JsonNode res = client.get().uri(REQUETE + "&page=" + page).retrieve().body(JsonNode.class);
+            for (JsonNode obj : res.path("data")) {
+                pageLues ++;
+                try {
+                    String nom = obj.path("Nom").asText();
+                    int id = obj.path("__id").asInt();
+                    String adresse = obj.path("Adresse postale").asText();
+                    String departement = obj.path("Département").asText();
+                    String region = obj.path("Région").asText();
+                    String latitude = obj.path("Latitude").asText();
+                    String longitude = obj.path("Longitude").asText();
+                    String desc = obj.path("desc").asText();
+                    String webSite = obj.path("Website").asText();
+                    TypeLieu type = convertirCategories(obj.path("Type équipement ou lieu").asText());
+                    //System.out.println(res.get(0));
+                    System.out.println(id + " | " + nom + " | " + type + " | " + adresse + " | " + departement + " | " + region + " | (" + latitude + ", " + longitude + ")");
+                    lieux.add(new Lieu());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
+            System.out.println("Page Lues : " + pageLues + " | Pages : " + page);
+            pageSuivante = !res.path("links").path("next").isNull();
+            page ++;
         }
-        return new ResultatImport(getSource(), res.size(), erreurs, lieux);
+        return new ResultatImport(getSource(), pageLues, erreurs, lieux);
     }
 
     private TypeLieu convertirCategories(String types){
