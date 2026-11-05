@@ -94,7 +94,7 @@ public class ImporteurDataTourisme implements Importeur{
                     }
                     TypeLieu typeLieu = convertirCategories(types);                    
                     
-                    
+                    //sauvegarde dans le repo CommuneRepository
                     Commune c = repo.renvoieOuCreeCommune(insee, nomCommune);
                     //A COMPLETER POUR CREER UN LIEU
                     Lieu l = new Lieu();
