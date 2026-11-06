@@ -19,6 +19,7 @@ public class LieuRepository {
             lieux.add(lieu);
         }
     }
+/*
     public Lieu trouverParId(String id){
         for (Lieu lieu : lieux) {
             if (lieu.getId().equals(id)) {
@@ -83,6 +84,25 @@ public class LieuRepository {
     }
 
     public List<Lieu> trouverProche(Double latitude, Double longitude, Double rayon, FiltreRecherche filtre){
-        return null;
+        List<Lieu> res = new ArrayList<>();
+        for (Lieu lieu : lieux) {
+            double lat = lieu.getAdresse().getLatitude();
+            double lon = lieu.getAdresse().getLongitude();
+            if (calculDistance(latitude, longitude, lat, lon) <= rayon) {
+                res.add(lieu);
+            }
+        }
+        return res;
     }
+
+    public double calculDistance (double lat1, double lon1, double lat2, double lon2){
+        double r = 6371;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return r*c;
+    }
+*/
 }

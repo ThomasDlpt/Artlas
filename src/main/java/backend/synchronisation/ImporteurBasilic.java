@@ -14,6 +14,7 @@ import java.util.List;
 public class ImporteurBasilic implements Importeur{
 
     private static final String REQUETE = "/dced78ee-0823-4b61-86e6-57717308d4e4/data/?page_size=200";
+    //private static final String REQUETE = "/dced78ee-0823-4b61-86e6-57717308d4e4/data/?page_size=50&Type équipement ou lieu__exact=Musée";
 
     private final RestClient client;
 
@@ -36,30 +37,34 @@ public class ImporteurBasilic implements Importeur{
         boolean pageSuivante = true;
 
         while (pageSuivante) {
-            JsonNode res = client.get().uri(REQUETE + "&page=" + page).retrieve().body(JsonNode.class);
-            for (JsonNode obj : res.path("data")) {
-                pageLues ++;
-                try {
-                    String nom = obj.path("Nom").asText();
-                    int id = obj.path("__id").asInt();
-                    String adresse = obj.path("Adresse postale").asText();
-                    String departement = obj.path("Département").asText();
-                    String region = obj.path("Région").asText();
-                    String latitude = obj.path("Latitude").asText();
-                    String longitude = obj.path("Longitude").asText();
-                    String desc = obj.path("desc").asText();
-                    String webSite = obj.path("Website").asText();
-                    TypeLieu type = convertirCategories(obj.path("Type équipement ou lieu").asText());
-                    //System.out.println(res.get(0));
-                    System.out.println(id + " | " + nom + " | " + type + " | " + adresse + " | " + departement + " | " + region + " | (" + latitude + ", " + longitude + ")");
-                    lieux.add(new Lieu());
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+            try {
+                JsonNode res = client.get().uri(REQUETE + "&page=" + page).retrieve().body(JsonNode.class);
+                for (JsonNode obj : res.path("data")) {
+                    pageLues++;
+                    try {
+                        String nom = obj.path("Nom").asText();
+                        int id = obj.path("__id").asInt();
+                        String adresse = obj.path("Adresse postale").asText();
+                        String departement = obj.path("Département").asText();
+                        String region = obj.path("Région").asText();
+                        String latitude = obj.path("Latitude").asText();
+                        String longitude = obj.path("Longitude").asText();
+                        String desc = obj.path("desc").asText();
+                        String webSite = obj.path("Website").asText();
+                        TypeLieu type = convertirCategories(obj.path("Type équipement ou lieu").asText());
+                        //System.out.println(res);
+                        System.out.println(id + " | " + nom + " | " + type + " | " + adresse + " | " + departement + " | " + region + " | (" + latitude + ", " + longitude + ")");
+                        lieux.add(new Lieu());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 }
+                System.out.println(" Pages : " + page);
+                pageSuivante = !res.path("links").path("next").isNull();
+                page++;
+            }catch (Exception e){
+                System.out.println(e.getMessage());
             }
-            System.out.println("Page Lues : " + pageLues + " | Pages : " + page);
-            pageSuivante = !res.path("links").path("next").isNull();
-            page ++;
         }
         return new ResultatImport(getSource(), pageLues, erreurs, lieux);
     }
@@ -69,9 +74,9 @@ public class ImporteurBasilic implements Importeur{
             case "Musée" -> TypeLieu.MUSEE;
             case "Bibliothèque" -> TypeLieu.BIBLIOTHEQUE;
             case "Cinéma" -> TypeLieu.CINEMA;
-            case "Exposition" -> TypeLieu.LIEU_EXPOSITION;
-            case "Monument" -> TypeLieu.MONUMENT;
-            case "Théâtre" -> TypeLieu.THEATRE;
+            case "Centre d'art", "Fonds régional d'art contemporain", "Lieu d'exposition" -> TypeLieu.LIEU_EXPOSITION;
+            case "Monument", "Lieu archéologique", "Lieu de mémoire" -> TypeLieu.MONUMENT;
+            case "Théâtre", "Scène", "Opéra", "Cirque" -> TypeLieu.THEATRE;
             default -> TypeLieu.AUTRE;
         };
     }
