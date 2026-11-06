@@ -38,4 +38,40 @@ public class JournalSynchro {
         this.statut = statut;
         this.erreurs = erreurs;
     }
+
+    public String getId(){
+        return id;
+    }
+
+    public Source getSource(){
+        return source;
+    }
+
+    public LocalDateTime getDateDebut(){
+        return dateDebut;
+    }
+
+    public LocalDateTime getDateFin(){
+        return dateFin;
+    }
+
+    public int getNbAjouts(){
+        return nbAjouts;
+    }
+
+    public int getNbMisesAjour(){
+        return nbMiseAJour;
+    }
+
+    public int getNbRejets(){
+        return nbRejets;
+    }
+
+    public StatutSynchro getStatut(){
+        return statut;
+    }
+
+    public List<String> getErreurs(){
+        return erreurs;
+    }
 }
