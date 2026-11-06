@@ -19,7 +19,7 @@ public class LieuRepository {
             lieux.add(lieu);
         }
     }
-/*
+
     public Lieu trouverParId(String id){
         for (Lieu lieu : lieux) {
             if (lieu.getId().equals(id)) {
@@ -104,5 +104,5 @@ public class LieuRepository {
 
         return r*c;
     }
-*/
+
 }
