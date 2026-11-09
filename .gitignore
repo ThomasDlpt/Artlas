@@ -73,7 +73,7 @@ pnpm-debug.log*
 .env.local
 .env.*.local
 *.env
-
+./data/
 
 src/main/resources/application-secret.properties
 *.mv.db
