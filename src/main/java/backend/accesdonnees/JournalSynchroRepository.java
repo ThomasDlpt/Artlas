@@ -20,7 +20,7 @@ public class JournalSynchroRepository {
         JournalSynchro dernier = null;
         for (JournalSynchro j : journaux) {
             if (j.getSource() == src) {
-                if (dernier == null || j.getDateDebut().isAfter(dernier.getDateDebut())) {
+                if (dernier == null || j.getDateSynchro().isAfter(dernier.getDateSynchro())) {
                     dernier = j;
                 }
             }
