@@ -31,7 +31,7 @@ public class LieuRepository {
 
     public Lieu trouverParSource(Source src, String idExterne){
         for (Lieu lieu : lieux) {
-            for (SourceLieu source : lieu.getSource){
+            for (SourceLieu source : lieu.getSource()){
                 if (source.getSource() == src && source.getIdExterne().equals(idExterne)){
                     return lieu;
                 }
