@@ -12,22 +12,45 @@ import backend.accesdonnees.CommuneRepository;
 import backend.lieux.Lieu;
 import backend.lieux.Source;
 import backend.accesdonnees.JournalSynchroRepository;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 
+
+@Service
+@EnableScheduling
 public class SynchronisationService {
-    private double seulDoublonMetres;
-    private Importeur importeurDataTourisme;
-    private Importeur importeurBasilic;
+    private double seulDoublonMetres = 50;
+    private final Importeur importeurDataTourisme;
+    private final Importeur importeurBasilic;
     private JournalSynchroRepository repo;
 
+    public SynchronisationService(Importeur importeurDataTourisme, Importeur importeurBasilic, JournalSynchroRepository repo) {
+        this.importeurDataTourisme = importeurDataTourisme;
+        this.importeurBasilic = importeurBasilic;
+        this.repo = repo;
+    }
+
+    @Scheduled(fixedRate = 86_400_000)
     public List<JournalSynchro> synchroniser(){
         List<JournalSynchro> res = new ArrayList<>();
-        JournalSynchro jDataTourisme = synchronsiserSource(importeurDataTourisme);
-        JournalSynchro jBasilic = synchronsiserSource(importeurBasilic);
-        if (jDataTourisme != null) {
-            res.add(jDataTourisme);
+        try {
+            JournalSynchro jDataTourisme = synchronsiserSource(importeurDataTourisme);
+            if (jDataTourisme != null) {
+                res.add(jDataTourisme);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
-        if (jBasilic != null) {
-            res.add(jBasilic);
+        try {
+
+
+            JournalSynchro jBasilic = synchronsiserSource(importeurBasilic);
+            if (jBasilic != null) {
+                res.add(jBasilic);
+            }
+        }catch (Exception e){
+            System.out.println(e.getMessage());
         }
         return res;
     }
@@ -67,7 +90,7 @@ public class SynchronisationService {
         }
 
         JournalSynchro res = new JournalSynchro(
-                "SYNC_DATA_T: " + now.toString(), source, now, nbAjouts, nbRejets, nbLignesLues, statut, erreurs
+                "SYNC_" + source + ": " + now.toString(), source, now, nbAjouts, nbRejets, nbLignesLues, statut, erreurs
         );
         repo.enregistrer(res);
         return res;
