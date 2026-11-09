@@ -8,11 +8,10 @@ import backend.lieux.Source;
 public class JournalSynchro {
     private String id;
     private Source source;
-    private LocalDateTime dateDebut;
-    private LocalDateTime dateFin;
+    private LocalDateTime dateSynchro;
     private int nbAjouts;
-    private int nbMiseAJour;
     private int nbRejets;
+    private int nbLignesLues;
     private StatutSynchro statut;
     private List<String> erreurs;
 
@@ -20,21 +19,19 @@ public class JournalSynchro {
     public JournalSynchro(
         String id,
         Source source,
-        LocalDateTime dateDebut,
-        LocalDateTime dateFin,
+        LocalDateTime dateSynchro,
         int nbAjouts,
-        int nbMiseAJour,
         int nbRejets,
+        int nbLignesLues,
         StatutSynchro statut,
         List<String> erreurs
     ){
         this.id = id;
         this.source = source;
-        this.dateDebut = dateDebut;
-        this.dateFin = dateFin;
+        this.dateSynchro = dateSynchro;
         this.nbAjouts = nbAjouts;
-        this.nbMiseAJour = nbMiseAJour;
         this.nbRejets = nbRejets;
+        this.nbLignesLues = nbLignesLues;
         this.statut = statut;
         this.erreurs = erreurs;
     }
@@ -47,24 +44,20 @@ public class JournalSynchro {
         return source;
     }
 
-    public LocalDateTime getDateDebut(){
-        return dateDebut;
-    }
-
-    public LocalDateTime getDateFin(){
-        return dateFin;
+    public LocalDateTime getDateSynchro(){
+        return dateSynchro;
     }
 
     public int getNbAjouts(){
         return nbAjouts;
     }
 
-    public int getNbMisesAjour(){
-        return nbMiseAJour;
-    }
-
     public int getNbRejets(){
         return nbRejets;
+    }
+
+    public int getNbLignesLues(){
+        return nbLignesLues;
     }
 
     public StatutSynchro getStatut(){
