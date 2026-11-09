@@ -2,6 +2,7 @@ package backend.accesdonnees;
 
 import backend.lieux.Lieu;
 import backend.lieux.Source;
+import backend.lieux.SourceLieu;
 import backend.lieux.TypeLieu;
 import backend.recherche.Bbox;
 import backend.recherche.FiltreRecherche;
@@ -15,23 +16,37 @@ public class LieuRepository {
     private ArrayList<Lieu> lieux = new ArrayList<>();
 
     public void enregistrerLieu(Lieu lieu) {
-        if (lieu != null && !lieux.contains(lieu)) {
-            lieux.add(lieu);
+        if (lieu == null || lieu.getId() == null) {
+            return;
         }
+        // un lieu avec le meme id est deja enregistre
+        if (trouverParId(lieu.getId()) != null) {
+            return;
+        }
+        lieux.add(lieu);
     }
 
     public Lieu trouverParId(String id){
         for (Lieu lieu : lieux) {
-            if (lieu.getId().equals(id)) {
+            if (id.equals(lieu.getId())){
                 return lieu;
             }
         }
         return null;
     }
+    public List<Lieu> trouverParFiltre( FiltreRecherche filtre){
+        List<Lieu> res = new ArrayList<>();
+        for(Lieu lieu : lieux){
+            if(filtreOk(lieu,filtre)){
+                res.add(lieu);
+            }
+        }
+        return res;
+    }
 
     public Lieu trouverParSource(Source src, String idExterne){
         for (Lieu lieu : lieux) {
-            for (SourceLieu source : lieu.getSource){
+            for (SourceLieu source : lieu.getSource()){
                 if (source.getSource() == src && source.getIdExterne().equals(idExterne)){
                     return lieu;
                 }
@@ -43,7 +58,8 @@ public class LieuRepository {
     public List<Lieu> trouverParDepartement(String code){
         List<Lieu> res = new ArrayList<>();
         for (Lieu lieu : lieux) {
-            if (lieu.getAdresse().getCommune().getDepartement().getCode().equals(code)){
+            String codeDep = codeDepartement(lieu);
+            if (codeDep != null && codeDep.equals(code)){
                 res.add(lieu);
             }
         }
@@ -63,6 +79,7 @@ public class LieuRepository {
     public List<Lieu> trouverDansZone(Bbox zone, FiltreRecherche filtre){
         List<Lieu> res = new ArrayList<>();
         for (Lieu lieu : lieux) {
+            if (lieu.getAdresse() == null) continue;
             double lat = lieu.getAdresse().getLatitude();
             double lon = lieu.getAdresse().getLongitude();
             if (zone.contient(lat,lon) && filtreOk(lieu, filtre)) {
@@ -76,19 +93,28 @@ public class LieuRepository {
         if (filtre == null) return true;
 
         boolean typeOk = filtre.getTypes().isEmpty() || filtre.getTypes().contains(lieu.getType());
-        boolean codeDepOk = filtre.getCodeDepartment() == null || lieu.getAdresse().getCommune().getDepartement().getCode().equals(filtre.getCodeDepartment());
+        boolean codeDepOk = filtre.getCodeDepartment() == null || filtre.getCodeDepartment().equals(codeDepartement(lieu));
         boolean labelOk =  filtre.getLabel() == null || lieu.getLabels().contains(filtre.getLabel());
-        boolean texteOk =  filtre.getTexte() == null || lieu.getNom().toLowerCase().contains(filtre.getTexte().toLowerCase());
+        boolean texteOk =  filtre.getTexte() == null || (lieu.getNom() != null && lieu.getNom().toLowerCase().contains(filtre.getTexte().toLowerCase()));
 
         return typeOk && codeDepOk && labelOk && texteOk;
+    }
+
+    // code du departement du lieu, ou null si l'adresse est incomplete
+    private String codeDepartement(Lieu lieu){
+        if (lieu.getAdresse() == null || lieu.getAdresse().getCommune() == null || lieu.getAdresse().getCommune().getDepartement() == null) {
+            return null;
+        }
+        return lieu.getAdresse().getCommune().getDepartement().getCode();
     }
 
     public List<Lieu> trouverProche(Double latitude, Double longitude, Double rayon, FiltreRecherche filtre){
         List<Lieu> res = new ArrayList<>();
         for (Lieu lieu : lieux) {
+            if (lieu.getAdresse() == null) continue;
             double lat = lieu.getAdresse().getLatitude();
             double lon = lieu.getAdresse().getLongitude();
-            if (calculDistance(latitude, longitude, lat, lon) <= rayon) {
+            if (calculDistance(latitude, longitude, lat, lon) <= rayon && filtreOk(lieu,filtre)) {
                 res.add(lieu);
             }
         }

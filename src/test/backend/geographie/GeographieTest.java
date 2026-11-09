@@ -58,7 +58,7 @@ class GeographieTest {
 
     @Test
     void adresseValide() {
-        Adresse a = new Adresse("20 quai Émile Zola", "35000", 48.1097, -1.6744, rennes);
+        Adresse a = new Adresse("20 quai Émile Zola", "35000", rennes, 48.1097, -1.6744);
         assertEquals("20 quai Émile Zola", a.getRue());
         assertEquals("35000", a.getCodePostal());
         assertEquals(48.1097, a.getLatitude());
@@ -68,27 +68,27 @@ class GeographieTest {
 
     @Test
     void adresseSansRueAutorisee() {
-        Adresse a = new Adresse(null, "35000", 48.11, -1.67, rennes);
+        Adresse a = new Adresse(null, "35000", rennes, 48.11, -1.67);
         assertNull(a.getRue());
     }
 
     @Test
     void adresseCoordonneesInvalides() {
-        assertThrows(IllegalArgumentException.class, () -> new Adresse("r", "35000", 91, 0, rennes));
-        assertThrows(IllegalArgumentException.class, () -> new Adresse("r", "35000", -91, 0, rennes));
-        assertThrows(IllegalArgumentException.class, () -> new Adresse("r", "35000", 0, 181, rennes));
-        assertThrows(IllegalArgumentException.class, () -> new Adresse("r", "35000", 0, -181, rennes));
+        assertThrows(IllegalArgumentException.class, () -> new Adresse("r", "35000", rennes, 91, 0));
+        assertThrows(IllegalArgumentException.class, () -> new Adresse("r", "35000", rennes, -91, 0));
+        assertThrows(IllegalArgumentException.class, () -> new Adresse("r", "35000", rennes, 0, 181));
+        assertThrows(IllegalArgumentException.class, () -> new Adresse("r", "35000", rennes, 0, -181));
     }
 
     @Test
     void adresseSansCommuneRefusee() {
-        assertThrows(IllegalArgumentException.class, () -> new Adresse("r", "35000", 48.1, -1.6, null));
+        assertThrows(IllegalArgumentException.class, () -> new Adresse("r", "35000", null, 48.1, -1.6));
     }
 
     @Test
     void distanceEntreDeuxAdresses() {
-        Adresse parlement = new Adresse("Place du Parlement de Bretagne", "35000", 48.1124, -1.6781, rennes);
-        Adresse musee = new Adresse("20 quai Émile Zola", "35000", 48.1097, -1.6744, rennes);
+        Adresse parlement = new Adresse("Place du Parlement de Bretagne", "35000", rennes, 48.1124, -1.6781);
+        Adresse musee = new Adresse("20 quai Émile Zola", "35000", rennes, 48.1097, -1.6744);
         double d = parlement.distanceKm(musee);
         assertEquals(0.40, d, 0.02); // ~400 m entre le Parlement et le Musée des Beaux-Arts
         assertEquals(d, musee.distanceKm(parlement), 1e-9);
@@ -97,9 +97,9 @@ class GeographieTest {
 
     @Test
     void distanceRennesParis() {
-        Adresse a = new Adresse(null, "35000", 48.1173, -1.6778, rennes);
-        Adresse paris = new Adresse(null, "75001", 48.8566, 2.3522,
-                new Commune("75056", "Paris", new Departement("75", "Paris", new Region("11", "Île-de-France"))));
+        Adresse a = new Adresse(null, "35000", rennes, 48.1173, -1.6778);
+        Commune paris75 = new Commune("75056", "Paris", new Departement("75", "Paris", new Region("11", "Île-de-France")));
+        Adresse paris = new Adresse(null, "75001", paris75, 48.8566, 2.3522);
         assertEquals(308, a.distanceKm(paris), 5);
     }
 }

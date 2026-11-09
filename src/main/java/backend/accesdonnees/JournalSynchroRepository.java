@@ -2,30 +2,24 @@ package backend.accesdonnees;
 
 import backend.lieux.Source;
 import backend.synchronisation.JournalSynchro;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class JournalSynchroRepository {
+@Repository
+public interface JournalSynchroRepository extends JpaRepository<JournalSynchro, String> {
 
-    private final List<JournalSynchro> journaux = new ArrayList<>();
+    JournalSynchro findFirstBySourceOrderByDateSynchroDesc(Source src);
 
-    public void enregistrer(JournalSynchro journal) {
-        if (journal != null){
-            journaux.add(journal);
+    default void enregistrer(JournalSynchro journal) {
+        if (journal != null) {
+            save(journal);
         }
     }
 
-    public JournalSynchro trouverDernier (Source src){
-        JournalSynchro dernier = null;
-        for (JournalSynchro j : journaux) {
-            if (j.getSource() == src) {
-                if (dernier == null || j.getDateDebut().isAfter(dernier.getDateDebut())) {
-                    dernier = j;
-                }
-            }
-        }
-        return dernier;
+    default JournalSynchro trouverDernier(Source src) {
+        return findFirstBySourceOrderByDateSynchroDesc(src);
     }
-
 }

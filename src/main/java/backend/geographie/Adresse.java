@@ -8,11 +8,11 @@ public class Adresse {
 
     private final String rue;          // peut être null (certains lieux n'ont pas de rue précise)
     private final String codePostal;
+    private final Commune commune;
     private final double latitude;
     private final double longitude;
-    private final Commune commune;
 
-    public Adresse(String rue, String codePostal, double latitude, double longitude, Commune commune) {
+    public Adresse(String rue, String codePostal, Commune commune, double latitude, double longitude) {
         if (latitude < -90 || latitude > 90) {
             throw new IllegalArgumentException("latitude hors de [-90, 90] : " + latitude);
         }
@@ -24,9 +24,9 @@ public class Adresse {
         }
         this.rue = rue;
         this.codePostal = codePostal;
+        this.commune = commune;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.commune = commune;
     }
 
     public String getRue() {
@@ -37,16 +37,16 @@ public class Adresse {
         return codePostal;
     }
 
+    public Commune getCommune() {
+        return commune;
+    }
+
     public double getLatitude() {
         return latitude;
     }
 
     public double getLongitude() {
         return longitude;
-    }
-
-    public Commune getCommune() {
-        return commune;
     }
 
     /**
