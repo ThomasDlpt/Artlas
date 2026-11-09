@@ -2,6 +2,7 @@ package backend.synchronisation;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +20,17 @@ public class SynchronisationService {
     private JournalSynchroRepository repo;
 
     public List<JournalSynchro> synchroniser(){
+        List<JournalSynchro> res = new ArrayList<>();
+        JournalSynchro JdataTourisme = synchronsiserDataTourisme();
+        if(JdataTourisme != null){
+            res.add(JdataTourisme);
+        }
+        JournalSynchro JBasilic = synchronsiserBasilic();
+        if(JBasilic != null){
+            res.add(JBasilic);
+        }
         
-        
-        return new ArrayList<>();
+        return res;
     }
 
     //JE PENSE QU'IL FAUT FAIRE 2 METHODES SYNCHRONISERSOURCE (1 POUR CHAQUE IMPORTEUR)
@@ -29,20 +38,38 @@ public class SynchronisationService {
         Source source = importeurDataTourisme.getSource();
         JournalSynchro dernier = repo.trouverDernier(source);
         LocalDateTime derniereSynchro = dernier.getDateSynchro();
-        
-        ResultatImport res = importeurDataTourisme.importer();
+        LocalDateTime now = LocalDateTime.now();
 
-        int nbLignesLues = res.getNbLignesLues();
-        List<String> erreurs = res.getErrors();
+        if (dernier != null && now.isBefore(dernier.getDateSynchro().plusMonths(1))) {
+            throw new DateTimeException("délai synchro < à 1 mois");           
+        }
+
+        ResultatImport resImport = importeurDataTourisme.importer();
+
+        int nbLignesLues = resImport.getNbLignesLues();
+        List<String> erreurs = resImport.getErrors();
         int nbRejets = erreurs.size();
-        int nbAjouts = res.getNbLignesLues() - dernier.getNbLignesLues();
+        int nbAjouts = resImport.getNbLignesLues() - dernier.getNbLignesLues();
 
+        StatutSynchro statut;
+        if (nbRejets == 0) {
+            statut = StatutSynchro.SUCCES;
+        }
+        else if(nbAjouts != 0){
+            statut = StatutSynchro.PARTIEL;
+        }
+        else{
+            statut = StatutSynchro.ECHEC;
+            //SI LA SYNCHRO EST UN ECHEC, EST-CE QU'ON RETENTE DIRECT APRES?
+        }
 
+        JournalSynchro res = new JournalSynchro("SYNC_DATA_T: "+ now.toString(), source, now, nbAjouts, nbRejets, nbLignesLues, statut, erreurs);
+        repo.enregistrer(res);
+        return res;
         /* */
         //SYNCHRONISER 1 FOIS PAR MOIS, DONC UTILISER DateTime ET APPELER importer() QUI NOUS DONNE erreurs (ET IMPLICITEMENT nbRejets, nbAjouts)
         //POUR statut, statut = StatutSynchro.SUCCES si nbRejets == 0, statut = StatutSynchro.PARTIEL si nbRejets et (nbAjouts ou nbMisesAJour) != 0, et statut = StatutSynchro.PARTIEL.ECHEC si nbAjouts et nbMisesAJour == 0
-        return new JournalSynchro(null, source, null, nbAjouts, nbRejets, nbLignesLues, null, erreurs);
-
+        //COMMENTAIRE YOURI: PAS SCALABLE NI OPTI D'AVOIR DES IDENTIFIANTS STRING.
     }
 
     public JournalSynchro synchronsiserBasilic(){
