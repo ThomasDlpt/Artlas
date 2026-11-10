@@ -110,8 +110,10 @@ public class SynchronisationService {
     }
 
     private void fusionner(Lieu existant, Lieu nouveau){
-        
+        if (existant != null && nouveau != null) {
+            existant.mettreAJour(nouveau);
+
+        }
     }
-  
 
 }
