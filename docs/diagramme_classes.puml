@@ -1,0 +1,241 @@
+@startuml diagramme_classes
+' Diagramme de classes Artlas (transcription de docs/diagramme_classes.png)
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam linetype ortho
+hide empty members
+
+' ======================= Circuits =======================
+package "Circuits" {
+  class Circuit {
+    - id : String
+    - nom : String
+    - description : String
+    - codePartage : String
+    - /distanceKm : double
+    - /dureeMinutes : int
+    + ajouterEtape(lieu : Lieu, dureeVisiteMin : int) : void
+    + retirerEtape(position : int) : void
+    + reordonner(position : int, nouvellePosition : int) : void
+    + recalculer() : void
+  }
+
+  class EtapeCircuit {
+    - numOrdre : int
+    - dureeVisiteMin : int
+  }
+}
+
+' ======================= Consultation =======================
+package "Consultation" {
+  class LieuService {
+    + rechercher(filtre : FiltreRecherche) : List<Lieu>
+    + rechercherDansZone(zone : BBox, filtre : FiltreRecherche) : List<Lieu>
+    + selectionner(idLieu : String) : Lieu
+  }
+}
+
+' ======================= Lieux =======================
+package "Lieux" {
+  class Lieu {
+    - id : String
+    - nom : String
+    - description : String [0..1]
+    - type : TypeLieu
+    - siteWeb : String [0..1]
+    - photo : String [0..1]
+    - labels : List<String>
+    - dateMiseAJour : LocalDate
+    + distanceVers(autre : Lieu) : double
+    + ajouterSource(source : SourceLieu) : void
+    + mettreAJour(donnees : Lieu) : void
+  }
+
+  class SourceLieu {
+    - source : Source
+    - idExterne : String
+    - dateImport : LocalDateTime
+  }
+
+  enum TypeLieu {
+    MUSEE
+    MONUMENT
+    LIEU_EXPOSITION
+    THEATRE
+    CINEMA
+    BIBLIOTHEQUE
+    AUTRE
+  }
+
+  enum Source {
+    BASILIC
+    DATATOURISME
+  }
+}
+
+' ======================= Géographie =======================
+package "Géographie" {
+  class Adresse {
+    - rue : String
+    - codePostal : String
+    - latitude : double
+    - longitude : double
+  }
+
+  class Commune {
+    - codeInsee : String
+    - nom : String
+  }
+
+  class Departement {
+    - code : String
+    - nom : String
+  }
+
+  class Region {
+    - code : String
+    - nom : String
+  }
+}
+
+' ======================= Synchronisation =======================
+package "Synchronisation" {
+  class SynchronisationService {
+    - seuilDoublonMetres : double
+    + synchroniser() : List<JournalSynchro>
+    + synchroniserSource(importeur : Importeur) : JournalSynchro
+    - valider(lieu : Lieu) : boolean
+    - trouverDoublon(lieu : Lieu) : Lieu
+    - fusionner(existant : Lieu, nouveau : Lieu) : void
+  }
+
+  interface Importeur {
+    + getSource() : Source
+    + importer() : ResultatImport
+  }
+
+  class ImporteurDataTourisme {
+    - urlFlux : String
+    + getSource() : Source
+    + importer() : ResultatImport
+    - convertirCategories(categories : String) : TypeLieu
+  }
+
+  class ImporteurBasilic {
+    - urlFichier : String
+    + getSource() : Source
+    + importer() : ResultatImport
+    - convertirType(typeEquipement : String) : TypeLieu
+  }
+
+  class ResultatImport {
+    - source : Source
+    - nbLignesLues : int
+    - erreurs : List<String>
+  }
+
+  class JournalSynchro {
+    - id : String
+    - source : Source
+    - dateDebut : LocalDateTime
+    - dateFin : LocalDateTime
+    - nbAjouts : int
+    - nbMisesAJour : int
+    - nbRejets : int
+    - statut : StatutSynchro
+    - erreurs : List<String>
+  }
+
+  enum StatutSynchro {
+    SUCCES
+    PARTIEL
+    ECHEC
+  }
+}
+
+' ======================= Accès aux données =======================
+package "Accès aux données" {
+  class CommuneRepository {
+    + trouverParCodeInsee(code : String) : Commune
+    + trouverParCodePostalEtNom(codePostal : String, nom : String) : Commune
+  }
+
+  class LieuRepository {
+    + enregistrer(lieu : Lieu) : void
+    + trouverParId(id : String) : Lieu
+    + trouverParSource(source : Source, idExterne : String) : Lieu
+    + trouverParDepartement(code : String) : List<Lieu>
+    + trouverParType(type : TypeLieu) : List<Lieu>
+    + trouverDansZone(zone : BBox, filtre : FiltreRecherche) : List<Lieu>
+    + trouverProches(lat : double, lon : double, rayonKm : double, filtre : FiltreRecherche) : List<Lieu>
+  }
+
+  class CircuitRepository {
+    + enregistrer(circuit : Circuit) : void
+    + supprimer(circuit : Circuit) : void
+    + trouverParCodePartage(code : String) : Circuit
+    + trouverParRegion(code : String) : List<Circuit>
+    + trouverParDepartement(code : String) : List<Circuit>
+  }
+
+  class JournalSynchroRepository {
+    + enregistrer(journal : JournalSynchro) : void
+    + trouverDernier(source : Source) : JournalSynchro
+  }
+}
+
+' ======================= Recherche =======================
+package "Recherche" {
+  class FiltreRecherche {
+    - types : List<TypeLieu>
+    - codeDepartement : String
+    - label : String
+    - texte : String
+  }
+
+  class BBox {
+    - latMin : double
+    - latMax : double
+    - lonMin : double
+    - lonMax : double
+    + contient(lat : double, lon : double) : boolean
+  }
+}
+
+' ======================= Relations =======================
+
+' Circuits
+Circuit "1" *-- "2..*" EtapeCircuit
+EtapeCircuit "*" --> "1" Lieu
+Circuit "*" --> "1" Commune : +communeDepart
+
+' Lieux
+Lieu "1" *-- "1..*" SourceLieu
+Lieu "1" *-- "1" Adresse
+
+' Géographie
+Adresse "*" --> "1" Commune
+Departement "1" *-- "1..*" Commune
+Region "1" *-- "1..*" Departement
+
+' Consultation
+LieuService ..> Lieu
+LieuService --> LieuRepository
+
+' Synchronisation
+SynchronisationService "1" --> "1..*" Importeur : importeurs
+SynchronisationService ..> JournalSynchro : <<create>>
+SynchronisationService --> LieuRepository
+SynchronisationService --> JournalSynchroRepository
+Importeur <|.. ImporteurDataTourisme
+Importeur <|.. ImporteurBasilic
+Importeur ..> ResultatImport : <<create>>
+ResultatImport "1" --> "*" Lieu : lieux
+ImporteurDataTourisme ..> CommuneRepository
+ImporteurBasilic ..> CommuneRepository
+
+' Accès aux données -> Recherche
+LieuRepository ..> FiltreRecherche
+LieuRepository ..> BBox
+
+@enduml
