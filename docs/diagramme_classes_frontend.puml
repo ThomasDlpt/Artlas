@@ -1,0 +1,144 @@
+@startuml diagramme_classes_frontend
+title Artlas - Diagramme de classes du Frontend (services API et classes propres au front)
+
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+skinparam shadowing false
+hide empty members
+
+' ============================================================
+' 1. SERVICES API (accès HTTP au backend Spring Boot)
+' ============================================================
+package "services" {
+
+  class ApiClient {
+    - urlBase : String
+    - jeton : String [0..1]
+    + definirJeton(jeton : String) : void
+    + get(chemin : String, params) : Promise
+    + post(chemin : String, corps) : Promise
+    + put(chemin : String, corps) : Promise
+    + delete(chemin : String) : Promise
+    - gererErreur(reponse) : ErreurApi
+  }
+
+  class LieuApi {
+    + rechercher(filtre : FiltreRecherche) : Lieu[]
+    + rechercherDansZone(bbox : BBox, filtre : FiltreRecherche) : Lieu[]
+    + selectionner(idLieu : String) : Lieu
+  }
+
+  class CircuitApi {
+    + sauvegarder(circuit : Circuit) : Circuit
+    + modifier(circuit : Circuit) : Circuit
+    + supprimer(id : String) : void
+    + chargerParCode(codePartage : String) : Circuit
+  }
+
+  class AuthAdminApi {
+    + connexion(motDePasse : String) : SessionAdmin
+    + deconnexion() : void
+  }
+
+  class AdminApi {
+    + lancerSynchronisation() : JournalSynchro[]
+    + listerJournaux() : JournalSynchro[]
+    + masquerLieu(id : String) : void
+    + corrigerLieu(lieu : Lieu) : Lieu
+  }
+}
+
+' ============================================================
+' 2. CLASSES PROPRES AU FRONT (avec une logique côté navigateur)
+' ============================================================
+package "modeles front" {
+
+  class FiltreRecherche {
+    texte : String [0..1]
+    types : TypeLieu[]
+    codeDepartement : String [0..1]
+    label : String [0..1]
+    + estValide() : boolean
+    + estVide() : boolean
+  }
+
+  class BBox {
+    latMin : double
+    latMax : double
+    lonMin : double
+    lonMax : double
+    + {static} depuisCarte(boundsLeaflet) : BBox
+  }
+
+  class SessionAdmin {
+    jeton : String
+    expiration : Date
+  }
+
+  class ErreurApi {
+    statut : int
+    message : String
+  }
+}
+
+' ============================================================
+' 3. DONNEES RECUES DU BACKEND (simples objets JSON, sans logique)
+' ============================================================
+package "donnees backend" <<DTO JSON>> {
+  class Lieu <<DTO>>
+  class Circuit <<DTO>>
+  class JournalSynchro <<DTO>>
+  enum TypeLieu <<DTO>>
+}
+
+note bottom of Lieu
+  Les objets JSON renvoyés par l'API ont la
+  même structure que les classes Java du backend
+  (Lieu > Adresse > Commune, Circuit > EtapeCircuit,
+  JournalSynchro, TypeLieu...).
+  Détail : voir docs/diagramme_classes.png.
+  Aucune logique métier côté front : distance,
+  durée et codePartage d'un circuit sont
+  calculés par le backend.
+end note
+
+' ============================================================
+' RELATIONS
+' ============================================================
+LieuApi --> ApiClient
+CircuitApi --> ApiClient
+AuthAdminApi --> ApiClient
+AdminApi --> ApiClient
+
+ApiClient ..> ErreurApi : produit
+LieuApi ..> FiltreRecherche
+LieuApi ..> BBox
+AuthAdminApi ..> SessionAdmin
+
+LieuApi ..> Lieu
+CircuitApi ..> Circuit
+AdminApi ..> JournalSynchro
+AdminApi ..> Lieu
+FiltreRecherche --> "0..*" TypeLieu
+
+' ============================================================
+' Notes
+' ============================================================
+note right of FiltreRecherche
+  estValide() == false
+  => "Filtre invalide" (sans appel API).
+  codeDepartement choisi dans
+  departements.json (fichier statique).
+end note
+
+note right of ErreurApi
+  BDD inaccessible
+  => "Service indisponible, réessayez plus tard"
+end note
+
+note right of ApiClient
+  Le jeton n'est envoyé (en-tête Authorization)
+  que pour les appels /api/admin/**.
+end note
+
+@enduml

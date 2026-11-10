@@ -120,32 +120,70 @@ class TestLieu {
         assertNotSame(sl2,lieu.getSource().get(0));
     }
 
+    // ---------- mettreAJour ----------
     @Test
-    void mettreAJour_null_Ne_Modifie_Rien(){
-        Lieu lieu = new Lieu
-
+    void mettreAJour_null_neModifieRien(){
+        Lieu lieu = new Lieu("id1", "Nom", null, TypeLieu.MUSEE, null, null, null,
+                LocalDate.of(2020, 1, 1), null);
+        lieu.mettreAJour(null);
+        assertEquals("Nom", lieu.getNom());
+        assertEquals(LocalDate.of(2020, 1, 1), lieu.getDateMiseAJour());
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    @Test
+    void mettreAJour_tousLesChampsRenseignes_remplaceTout(){
+        Lieu lieu = new Lieu("id1", "Ancien", "ancienne", TypeLieu.MUSEE,
+                "http://ancien.fr", "ancienne.jpg", null, null, creerAdresse(1, 1));
+        Adresse nouvelle = creerAdresse(2, 2);
+        Lieu donnees = new Lieu("id2", "Nouveau", "nouvelle", TypeLieu.THEATRE,
+                "http://nouveau.fr", "nouvelle.jpg", null, null, nouvelle);
+        lieu.mettreAJour(donnees);
+        assertEquals("id1", lieu.getId());
+        assertEquals("Nouveau", lieu.getNom());
+        assertEquals("nouvelle", lieu.getDescription());
+        assertEquals(TypeLieu.THEATRE, lieu.getType());
+        assertEquals("http://nouveau.fr", lieu.getSiteWeb());
+        assertEquals("nouvelle.jpg", lieu.getPhoto());
+        assertSame(nouvelle, lieu.getAdresse());
+    }
+    @Test
+    void mettreAJour_champsNull_conserveLesAnciennesValeurs(){
+        Adresse adresse = creerAdresse(1, 1);
+        Lieu lieu = new Lieu("id1", "Ancien", "desc", TypeLieu.MUSEE,
+                "http://ancien.fr", "ancienne.jpg", null, null, adresse);
+        lieu.mettreAJour(new Lieu());
+        assertEquals("Ancien", lieu.getNom());
+        assertEquals("desc", lieu.getDescription());
+        assertEquals(TypeLieu.MUSEE, lieu.getType());
+        assertEquals("http://ancien.fr", lieu.getSiteWeb());
+        assertEquals("ancienne.jpg", lieu.getPhoto());
+        assertSame(adresse, lieu.getAdresse());
+    }
+    @Test
+    void mettreAJour_labels_fusionneSansDoublon(){
+        Lieu lieu = new Lieu("id1", "Nom", null, TypeLieu.MUSEE, null, null,
+                new ArrayList<>(List.of("A", "B")), null, null);
+        Lieu donnees = new Lieu("id2", "Nom", null, TypeLieu.MUSEE, null, null,
+                new ArrayList<>(List.of("B", "C")), null, null);
+        lieu.mettreAJour(donnees);
+        assertEquals(List.of("A", "B", "C"), lieu.getLabels());
+    }
+    @Test
+    void mettreAJour_sources_fusionneSansDoublon(){
+        Lieu lieu = new Lieu();
+        lieu.ajouterSource(creerSource(Source.BASILIC, "A1"));
+        Lieu donnees = new Lieu();
+        donnees.ajouterSource(creerSource(Source.BASILIC, "A1"));
+        donnees.ajouterSource(creerSource(Source.DATATOURISME, "D1"));
+        lieu.mettreAJour(donnees);
+        assertEquals(2, lieu.getSource().size());
+    }
+    @Test
+    void mettreAJour_miseAJourLaDate(){
+        Lieu lieu = new Lieu("id1", "Nom", null, TypeLieu.MUSEE, null, null, null,
+                LocalDate.of(2020, 1, 1), null);
+        lieu.mettreAJour(new Lieu());
+        assertEquals(LocalDate.now(), lieu.getDateMiseAJour());
+    }
 
     @Test
     void distanceVers_rennesParis_environ308km(){
