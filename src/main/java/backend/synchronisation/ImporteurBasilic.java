@@ -1,11 +1,11 @@
 package backend.synchronisation;
 
-import backend.lieux.Source;
-import backend.lieux.TypeLieu;
+import backend.lieu.Source;
+import backend.lieu.TypeLieu;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-import backend.lieux.Lieu;
+import backend.lieu.Lieu;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.ArrayList;
 import java.util.List;

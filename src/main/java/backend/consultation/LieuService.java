@@ -3,7 +3,7 @@ package backend.consultation;
 import backend.accesdonnees.LieuRepository;
 import backend.recherche.Bbox;
 import backend.recherche.FiltreRecherche;
-import backend.lieux.Lieu;
+import backend.lieu.Lieu;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ public class LieuService  {
     }
 
     public List<Lieu> rechercher(FiltreRecherche filtre){
-        return repo.trouverParFiltre(filtre);+
+        return repo.trouverParFiltre(filtre);
     }
 
     public Lieu selectionner (String idLieu){

@@ -8,7 +8,7 @@ import java.util.UUID;
 
 import backend.geographie.Adresse;
 import backend.geographie.Commune;
-import backend.lieux.Lieu;
+import backend.lieu.Lieu;
 
 /**
  * Itinéraire culturel composé d'étapes ordonnées (numOrdre de 1 à n).

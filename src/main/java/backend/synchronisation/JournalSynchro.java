@@ -3,7 +3,7 @@ package backend.synchronisation;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import backend.lieux.Source;
+import backend.lieu.Source;
 import jakarta.persistence.*;
 
 @Entity

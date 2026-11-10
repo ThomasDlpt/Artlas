@@ -1,4 +1,4 @@
-package backend.lieux;
+package backend.lieu;
 
 public enum TypeLieu {
     MUSEE, 

@@ -1,6 +1,6 @@
 package backend.recherche;
 
-import backend.lieux.TypeLieu;
+import backend.lieu.TypeLieu;
 
 import java.util.ArrayList;
 import java.util.List;

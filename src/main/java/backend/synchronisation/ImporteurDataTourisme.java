@@ -1,10 +1,10 @@
 package backend.synchronisation;
 
-import backend.lieux.Source;
-import backend.lieux.TypeLieu;
+import backend.lieu.Source;
+import backend.lieu.TypeLieu;
 import backend.accesdonnees.CommuneRepository;
 import backend.geographie.Commune;
-import backend.lieux.Lieu;
+import backend.lieu.Lieu;
 
 import java.util.List;
 import java.util.Map;
@@ -18,8 +18,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Properties;
 @Component 

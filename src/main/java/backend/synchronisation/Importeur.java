@@ -1,6 +1,6 @@
 package backend.synchronisation;
 
-import backend.lieux.Source;
+import backend.lieu.Source;
 
 public interface Importeur {
     public Source getSource();

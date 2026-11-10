@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import backend.circuits.Circuit;
-import backend.lieux.Source;
-import backend.synchronisation.JournalSynchro;
 
 public class CircuitRepository {
     private List<Circuit> circuits;
