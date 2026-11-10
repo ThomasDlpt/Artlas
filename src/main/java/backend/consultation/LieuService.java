@@ -18,7 +18,7 @@ public class LieuService  {
     }
 
     public List<Lieu> rechercher(FiltreRecherche filtre){
-        return repo.trouverParFiltre(filtre);
+        return repo.trouverParFiltre(filtre);+
     }
 
     public Lieu selectionner (String idLieu){
