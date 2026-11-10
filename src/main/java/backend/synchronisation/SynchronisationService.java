@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import backend.accesdonnees.LieuRepository;
 import backend.lieu.Lieu;
 import backend.lieu.Source;
 import backend.accesdonnees.JournalSynchroRepository;
@@ -15,10 +16,11 @@ import org.springframework.stereotype.Service;
 @Service
 @EnableScheduling
 public class SynchronisationService {
-    private double seulDoublonMetres = 50;
     private final Importeur importeurDataTourisme;
     private final Importeur importeurBasilic;
     private JournalSynchroRepository repo;
+    public final LieuRepository repoDataTourism =  new LieuRepository();
+    public final LieuRepository repoBasilic = new LieuRepository();
 
     public SynchronisationService(Importeur importeurDataTourisme, Importeur importeurBasilic, JournalSynchroRepository repo) {
         this.importeurDataTourisme = importeurDataTourisme;
@@ -96,22 +98,17 @@ public class SynchronisationService {
         //COMMENTAIRE YOURI: PAS SCALABLE NI OPTI D'AVOIR DES IDENTIFIANTS STRING.
     }
 
-    
-    private boolean valider(Lieu lieu){
-        if (lieu == null || lieu.getNom() == null || lieu.getAdresse() == null || lieu.getType() == null) {
-            return false;
-        }
-
-        boolean nomOk = !lieu.getNom().isEmpty();
-        double latitudeOk = lieu.getAdresse().getLatitude();
-        double longitudeOk = lieu.getAdresse().getLongitude();
-
-        return nomOk && latitudeOk == latitudeOk && longitudeOk == longitudeOk;
-    }
-
     private void fusionner(Lieu existant, Lieu nouveau){
-        
+        if (existant != null && nouveau != null) {
+            existant.mettreAJour(nouveau);
+        }
     }
-  
 
+    public LieuRepository getRepoDataTourism() {
+        return repoDataTourism;
+    }
+
+    public LieuRepository getRepoBasilic() {
+        return repoBasilic;
+    }
 }
