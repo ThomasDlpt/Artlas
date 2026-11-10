@@ -98,7 +98,15 @@ public class SynchronisationService {
 
     
     private boolean valider(Lieu lieu){
-        return false;
+        if (lieu == null || lieu.getNom() == null || lieu.getAdresse() == null || lieu.getType() == null) {
+            return false;
+        }
+
+        boolean nomOk = !lieu.getNom().isEmpty();
+        double latitudeOk = lieu.getAdresse().getLatitude();
+        double longitudeOk = lieu.getAdresse().getLongitude();
+
+        return nomOk && latitudeOk == latitudeOk && longitudeOk == longitudeOk;
     }
 
     private void fusionner(Lieu existant, Lieu nouveau){
