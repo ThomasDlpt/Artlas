@@ -1,16 +1,11 @@
 package backend.synchronisation;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
-import backend.accesdonnees.CommuneRepository;
-import backend.lieux.Lieu;
-import backend.lieux.Source;
+import backend.lieu.Lieu;
+import backend.lieu.Source;
 import backend.accesdonnees.JournalSynchroRepository;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;

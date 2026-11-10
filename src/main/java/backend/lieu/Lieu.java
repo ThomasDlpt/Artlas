@@ -1,4 +1,4 @@
-package backend.lieux;
+package backend.lieu;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

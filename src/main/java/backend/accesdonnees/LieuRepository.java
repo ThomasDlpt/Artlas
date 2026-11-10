@@ -1,15 +1,14 @@
 package backend.accesdonnees;
 
-import backend.lieux.Lieu;
-import backend.lieux.Source;
-import backend.lieux.SourceLieu;
-import backend.lieux.TypeLieu;
+import backend.lieu.Lieu;
+import backend.lieu.Source;
+import backend.lieu.SourceLieu;
+import backend.lieu.TypeLieu;
 import backend.recherche.Bbox;
 import backend.recherche.FiltreRecherche;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class LieuRepository {
 

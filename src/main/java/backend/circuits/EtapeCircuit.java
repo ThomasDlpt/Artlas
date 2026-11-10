@@ -1,6 +1,6 @@
 package backend.circuits;
 
-import backend.lieux.Lieu;
+import backend.lieu.Lieu;
 
 /**
  * Étape d'un circuit : un lieu, sa position dans le circuit (numOrdre, à partir de 1)

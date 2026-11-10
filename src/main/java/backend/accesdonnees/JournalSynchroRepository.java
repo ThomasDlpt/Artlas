@@ -1,12 +1,9 @@
 package backend.accesdonnees;
 
-import backend.lieux.Source;
+import backend.lieu.Source;
 import backend.synchronisation.JournalSynchro;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Repository
 public interface JournalSynchroRepository extends JpaRepository<JournalSynchro, String> {
