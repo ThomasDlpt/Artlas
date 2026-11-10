@@ -4,17 +4,25 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import backend.lieux.Source;
+import jakarta.persistence.*;
 
+@Entity
 public class JournalSynchro {
+    @Id
     private String id;
+    @Enumerated(EnumType.STRING)
     private Source source;
     private LocalDateTime dateSynchro;
     private int nbAjouts;
     private int nbRejets;
     private int nbLignesLues;
+    @Enumerated(EnumType.STRING)
     private StatutSynchro statut;
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> erreurs;
 
+    public JournalSynchro() {
+    }
 
     public JournalSynchro(
         String id,
