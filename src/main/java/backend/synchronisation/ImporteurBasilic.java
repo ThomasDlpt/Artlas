@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import backend.lieu.Lieu;
+import backend.lieu.LieuBasilic;
+import backend.lieu.LieuDataTourisme;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +55,9 @@ public class ImporteurBasilic implements Importeur{
                     pageLues++;
                     try {
                         String id = obj.path("Identifiant origine").asText();
+                        if (id.equals("")) {
+                            throw new IllegalArgumentException("Identifiant origine manquant");
+                        }
                         String nom = obj.path("Nom").asText();
                         TypeLieu type = convertirCategories(obj.path("Type équipement ou lieu").asText());
                         List<String> labels = new ArrayList<>();
@@ -74,6 +80,7 @@ public class ImporteurBasilic implements Importeur{
                             Region reg = new Region(codeReg, nomReg);
                             Departement dep = new Departement(codeDep, nomDep, reg);
                             c.setDepartement(dep);
+                            c = communeRepo.save(c);
                         }
                         Adresse adresse = new Adresse(rue, codePostal, c, latitude, longitude);
                         Lieu lieu = new LieuBasilic(id, nom, null, type, null, null, labels, LocalDate.now(), adresse);
@@ -83,10 +90,11 @@ public class ImporteurBasilic implements Importeur{
                     }
                 }
                 System.out.println(" Pages : " + page);
-                pageSuivante = !res.path("links").path("next").isNull();
+                pageSuivante = res.path("links").path("next").isTextual();
                 page++;
             }catch (Exception e){
                 System.out.println(e.getMessage());
+                pageSuivante = false; 
             }
         }
         return new ResultatImport(getSource(), pageLues, erreurs, lieux);
@@ -105,10 +113,10 @@ public class ImporteurBasilic implements Importeur{
     }
 /*
     public static void main(String[] args) {
-        CommuneRepository communeRepo = new CommuneRepository();
+        /*CommuneRepository communeRepo = new CommuneRepository();
         ImporteurBasilic test = new ImporteurBasilic("https://tabular-api.data.gouv.fr/api/resources", communeRepo);
         ResultatImport res = test.importer();
-        System.out.println("Lignes lues : " + res.getNbLignesLues() + ", Lieux : " + res.getLieux().size());
+        System.out.println("Lignes lues : " + res.getNbLignesLues() + ", Lieux : " + res.getLieux().size());*/
     }
 
  */
