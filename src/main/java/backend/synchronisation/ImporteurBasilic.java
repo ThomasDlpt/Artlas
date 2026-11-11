@@ -5,6 +5,7 @@ import backend.geographie.Commune;
 import backend.geographie.Departement;
 import backend.geographie.Region;
 import backend.geographie.Adresse;
+import backend.lieu.LieuBasilic;
 import backend.lieu.Source;
 import backend.lieu.TypeLieu;
 import org.springframework.beans.factory.annotation.Value;
@@ -75,7 +76,7 @@ public class ImporteurBasilic implements Importeur{
                             c.setDepartement(dep);
                         }
                         Adresse adresse = new Adresse(rue, codePostal, c, latitude, longitude);
-                        Lieu lieu = new Lieu(id, nom, null, type, null, null, labels, LocalDate.now(), adresse);
+                        Lieu lieu = new LieuBasilic(id, nom, null, type, null, null, labels, LocalDate.now(), adresse);
                         lieux.add(lieu);
                     } catch (Exception e) {
                         erreurs.add(e.getMessage());
@@ -102,11 +103,13 @@ public class ImporteurBasilic implements Importeur{
             default -> TypeLieu.AUTRE;
         };
     }
-
+/*
     public static void main(String[] args) {
         CommuneRepository communeRepo = new CommuneRepository();
         ImporteurBasilic test = new ImporteurBasilic("https://tabular-api.data.gouv.fr/api/resources", communeRepo);
         ResultatImport res = test.importer();
         System.out.println("Lignes lues : " + res.getNbLignesLues() + ", Lieux : " + res.getLieux().size());
     }
+
+ */
 }
