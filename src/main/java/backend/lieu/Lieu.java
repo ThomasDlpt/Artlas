@@ -2,6 +2,7 @@ package backend.lieu;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import backend.geographie.Adresse;
 
@@ -12,7 +13,7 @@ public class Lieu {
     private TypeLieu type;
     private String siteWeb; // [0..1]
     private String photo; // [0..1]
-    private List<String> labels;
+    private final List<String> labels;
     private LocalDate dateMiseAJour;
     private Adresse adresse;
     private final List<SourceLieu> source;
@@ -35,12 +36,19 @@ public class Lieu {
         Adresse adresse
     ){
         this.id = id;
-        this.nom = nom;
-        this.description = description;
+        this.nom = normaliser(nom);
+        this.description = normaliser(description);
         this.type = type;
-        this.siteWeb = siteWeb;
-        this.photo = photo;
-        this.labels = labels != null ? labels : new ArrayList<>();
+        this.siteWeb = normaliser(siteWeb);
+        this.photo = normaliser(photo);
+        this.labels = new ArrayList<>();
+        if(labels != null){
+            for(String label : labels){
+                if(estRenseigne(label) && !this.labels.contains(label)){
+                    this.labels.add(label);
+                }
+            }
+        }
         this.dateMiseAJour = dateMiseAJour;
         this.adresse = adresse;
         this.source = new ArrayList<>();
@@ -72,8 +80,9 @@ public class Lieu {
         return photo;
     }
 
+    // liste en lecture seule : les labels ne se modifient que via le constructeur ou mettreAJour
     public List<String> getLabels(){
-        return labels;
+        return Collections.unmodifiableList(labels);
     }
 
     public LocalDate getDateMiseAJour(){
@@ -84,8 +93,9 @@ public class Lieu {
         return adresse;
     }
 
+    // liste en lecture seule : les sources ne s'ajoutent que via ajouterSource
     public List<SourceLieu> getSource(){
-        return source;
+        return Collections.unmodifiableList(source);
     }
 
     // distance en km entre les deux lieux (formule de haversine)
@@ -132,15 +142,16 @@ public class Lieu {
         if(donnees== null){
             return;
         }
-        if(estRenseigne(donnees.nom)){this.nom = donnees.nom;}
-        if(estRenseigne(donnees.description)){this.description=donnees.description;}
+        // les chaînes vides ont déjà été converties en null par le constructeur
+        if(donnees.nom != null){this.nom = donnees.nom;}
+        if(donnees.description !=null){this.description=donnees.description;}
         if(donnees.type !=null){this.type=donnees.type;}
-        if(estRenseigne(donnees.siteWeb)){this.siteWeb=donnees.siteWeb;}
-        if(estRenseigne(donnees.photo)){this.photo=donnees.photo;}
+        if(donnees.siteWeb !=null){this.siteWeb=donnees.siteWeb;}
+        if(donnees.photo !=null){this.photo=donnees.photo;}
         if(donnees.adresse !=null){this.adresse=donnees.adresse;}
 
         for(String label :donnees.getLabels()){
-            if(estRenseigne(label) && !this.labels.contains(label)){
+            if(!this.labels.contains(label)){
                this.labels.add(label);
             }
         }
@@ -154,5 +165,10 @@ public class Lieu {
     // vrai si la chaîne n'est ni null, ni vide, ni composée uniquement d'espaces
     private static boolean estRenseigne(String valeur){
         return valeur != null && !valeur.trim().isEmpty();
+    }
+
+    // renvoie null si la chaîne est vide ou ne contient que des espaces
+    private static String normaliser(String valeur){
+        return estRenseigne(valeur) ? valeur : null;
     }
 }
