@@ -16,7 +16,7 @@ public class Commune {
     @Id
     private String codeInsee;
     private String nom;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Departement departement;
 
     public Commune() {

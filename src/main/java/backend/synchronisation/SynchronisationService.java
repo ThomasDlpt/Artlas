@@ -19,13 +19,13 @@ public class SynchronisationService {
     private final Importeur importeurDataTourisme;
     private final Importeur importeurBasilic;
     private JournalSynchroRepository repo;
-    private final LieuRepository repoDataTourism =  new LieuRepository();
-    private final LieuRepository repoBasilic = new LieuRepository();
+    private final LieuRepository lieuRepo;
 
-    public SynchronisationService(Importeur importeurDataTourisme, Importeur importeurBasilic, JournalSynchroRepository repo) {
+    public SynchronisationService(ImporteurDataTourisme importeurDataTourisme, ImporteurBasilic importeurBasilic, JournalSynchroRepository repo, LieuRepository lieuRepo) {
         this.importeurDataTourisme = importeurDataTourisme;
         this.importeurBasilic = importeurBasilic;
         this.repo = repo;
+        this.lieuRepo = lieuRepo;
     }
 
     @Scheduled(fixedRate = 86_400_000)
@@ -67,19 +67,14 @@ public class SynchronisationService {
         int nbAjouts = 0;
         int nbMisesAJour = 0;
         ResultatImport resImport = importeur.importer();
-        LieuRepository repoSource = switch(source){
-            case BASILIC -> repoBasilic;
-            case DATATOURISME -> repoDataTourism;
-            default -> throw new IllegalStateException("Source inconnue: " + source);  
-        };
         for(Lieu l : resImport.getLieux()){
-            Lieu existant = trouverExistant(repoSource, l);
+            Lieu existant = trouverExistant(lieuRepo, l);
             if (existant != null) {
                 fusionner(existant, l);
                 nbMisesAJour++;
             }
             else{
-                if(repoSource.enregistrerLieu(l)){
+                if(lieuRepo.enregistrerLieu(l)){
                     nbAjouts++;
                 }
                
@@ -110,16 +105,10 @@ public class SynchronisationService {
     private void fusionner(Lieu existant, Lieu nouveau){
         if (existant != null && nouveau != null) {
             existant.mettreAJour(nouveau);
+            lieuRepo.save(existant);
         }
     }
 
-    public LieuRepository getRepoDataTourism() {
-        return repoDataTourism;
-    }
-
-    public LieuRepository getRepoBasilic() {
-        return repoBasilic;
-    }
 
     private Lieu trouverExistant(LieuRepository repoSource, Lieu l){
         if (l.getId() == null) {

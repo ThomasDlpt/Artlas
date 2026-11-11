@@ -6,6 +6,8 @@ import backend.accesdonnees.CommuneRepository;
 import backend.geographie.Adresse;
 import backend.geographie.Commune;
 import backend.lieu.Lieu;
+import backend.lieu.LieuBasilic;
+import backend.lieu.LieuDataTourisme;
 
 import java.util.List;
 import java.util.Map;
@@ -98,7 +100,7 @@ public class ImporteurDataTourisme implements Importeur{
                     //sauvegarde dans le repo CommuneRepository
                     Commune c = repo.renvoieOuCreeCommune(insee, nomCommune);
                     //A COMPLETER POUR CREER UN LIEU
-                    Lieu l = new Lieu(id_uri, nom, descriptionCourte, typeLieu, siteWeb, null, types, LocalDate.now(), new Adresse(adresseRue, codePostal, c, latitude, longitude));
+                    Lieu l = new LieuDataTourisme(id_uri, nom, descriptionCourte, typeLieu, siteWeb, null, types, LocalDate.now(), new Adresse(adresseRue, codePostal, c, latitude, longitude));
                     lieux.add(l);
                 } catch (Exception e) {
                     erreurs.add(e.toString() + poi.path("uuid").asText("?"));
@@ -136,7 +138,7 @@ public class ImporteurDataTourisme implements Importeur{
     }
 
     public static void main(String[] args) throws IOException {
-        Properties p = new Properties();
+        /*Properties p = new Properties();
         try (FileInputStream in = new FileInputStream("src/main/resources/application-secret.properties")) {
             p.load(in);
         }

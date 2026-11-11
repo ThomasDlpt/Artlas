@@ -9,7 +9,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class Lieu {
+public abstract class Lieu {
     @Id
     private String id;
     private String nom;
@@ -20,7 +20,7 @@ public class Lieu {
     private String siteWeb; // [0..1]
     private String photo;
     @ElementCollection(fetch = FetchType.EAGER)// [0..1]
-    private final List<String> labels;
+    private List<String> labels;
     private LocalDate dateMiseAJour;
     @Embedded
     private Adresse adresse;

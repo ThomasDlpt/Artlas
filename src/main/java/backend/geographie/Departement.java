@@ -1,10 +1,9 @@
 package backend.geographie;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.CascadeType;
-
 import java.util.Objects;
 
 /**
@@ -15,7 +14,7 @@ public class Departement {
     @Id
     private String code;
     private String nom;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.MERGE)
     private Region region;
 
     public Departement() {

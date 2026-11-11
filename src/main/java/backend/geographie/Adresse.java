@@ -11,12 +11,12 @@ public class Adresse {
 
     private String rue;          // peut être null (certains lieux n'ont pas de rue précise)
     private String codePostal;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne 
     private Commune commune;
     private double latitude;
     private double longitude;
 
-    public Adresse() {
+    protected Adresse() {
     }
 
     public Adresse(String rue, String codePostal, Commune commune, double latitude, double longitude) {
