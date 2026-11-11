@@ -16,12 +16,12 @@ public class Lieu {
     private final List<String> labels;
     private LocalDate dateMiseAJour;
     private Adresse adresse;
-    private final List<SourceLieu> source;
+
 
 
     public Lieu(){
         this.labels = new ArrayList<>();
-        this.source = new ArrayList<>();
+
     }
 
     public Lieu(
@@ -51,7 +51,7 @@ public class Lieu {
         }
         this.dateMiseAJour = dateMiseAJour;
         this.adresse = adresse;
-        this.source = new ArrayList<>();
+
     }
 
 
@@ -94,9 +94,7 @@ public class Lieu {
     }
 
     // liste en lecture seule : les sources ne s'ajoutent que via ajouterSource
-    public List<SourceLieu> getSource(){
-        return Collections.unmodifiableList(source);
-    }
+
 
     // distance en km entre les deux lieux (formule de haversine)
     public double distanceVers(Lieu autre){
@@ -123,19 +121,6 @@ public class Lieu {
         return R*c;
     }
 
-    public void ajouterSource(SourceLieu source){
-        if(source == null){
-            return;
-        }
-        for(SourceLieu existante : this.source){
-            if(existante.getSource() == source.getSource() && existante.getIdExterne().equals(source.getIdExterne())){
-                return;
-            }
-        }
-        this.source.add(source);
-
-
-    }
 
     // remplace les champs par ceux de donnees quand ils sont renseignés
     public void mettreAJour(Lieu donnees){
@@ -155,9 +140,7 @@ public class Lieu {
                this.labels.add(label);
             }
         }
-        for(SourceLieu source :donnees.getSource()){
-            this.ajouterSource(source);
-        }
+
         this.dateMiseAJour =LocalDate.now();
 
     }

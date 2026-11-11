@@ -2,7 +2,6 @@ package backend.accesdonnees;
 
 import backend.lieu.Lieu;
 import backend.lieu.Source;
-import backend.lieu.SourceLieu;
 import backend.lieu.TypeLieu;
 import backend.recherche.Bbox;
 import backend.recherche.FiltreRecherche;
