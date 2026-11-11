@@ -9,12 +9,14 @@ import backend.recherche.FiltreRecherche;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public class LieuRepository {
+@Repository 
+public interface LieuRepository extends JpaRepository<Lieu, String>{
 
-    private ArrayList<Lieu> lieux = new ArrayList<>();
 
-    public boolean enregistrerLieu(Lieu lieu) {
+    default boolean enregistrerLieu(Lieu lieu) {
         if (lieu == null || lieu.getId() == null) {
             return false;
         }
@@ -22,74 +24,34 @@ public class LieuRepository {
         if (trouverParId(lieu.getId()) != null) {
             return false;
         }
-        lieux.add(lieu);
+        save(lieu);
         return true;
     }
 
-    public Lieu trouverParId(String id){
-        for (Lieu lieu : lieux) {
-            if (id.equals(lieu.getId())){
-                return lieu;
-            }
-        }
-        return null;
+    default Lieu trouverParId(String id){
+        return findById(id).orElse(null);
     }
-    public List<Lieu> trouverParFiltre( FiltreRecherche filtre){
-        List<Lieu> res = new ArrayList<>();
-        for(Lieu lieu : lieux){
-            if(filtreOk(lieu,filtre)){
-                res.add(lieu);
-            }
-        }
-        return res;
+    default List<Lieu> trouverParFiltre( FiltreRecherche filtre){
+        return findAll().stream().filter(l -> filtreOk(l, filtre)).toList();
     }
 
-    public Lieu trouverParSource(Source src, String idExterne){
-        for (Lieu lieu : lieux) {
-            for (SourceLieu source : lieu.getSource()){
-                if (source.getSource() == src && source.getIdExterne().equals(idExterne)){
-                    return lieu;
-                }
-            }
-        }
-        return null;
+
+    default List<Lieu> trouverParDepartement(String code){
+        return findAll().stream().filter(l -> code.equals(codeDepartement(l))).toList();
     }
 
-    public List<Lieu> trouverParDepartement(String code){
-        List<Lieu> res = new ArrayList<>();
-        for (Lieu lieu : lieux) {
-            String codeDep = codeDepartement(lieu);
-            if (codeDep != null && codeDep.equals(code)){
-                res.add(lieu);
-            }
-        }
-        return res;
+    default List<Lieu> trouverParType(TypeLieu type){
+        return findAll().stream().filter(l -> l.getType() == type).toList();
     }
 
-    public  List<Lieu> trouverParType(TypeLieu type){
-        List<Lieu> res = new ArrayList<>();
-        for (Lieu lieu : lieux) {
-            if (lieu.getType() == type){
-                res.add(lieu);
-            }
-        }
-        return res;
+    default List<Lieu> trouverDansZone(Bbox zone, FiltreRecherche filtre){
+        return findAll().stream()
+            .filter(l -> l.getAdresse() != null)
+            .filter(l -> zone.contient(l.getAdresse().getLatitude(), l.getAdresse().getLongitude()) && filtreOk(l, filtre))
+            .toList();
     }
 
-    public List<Lieu> trouverDansZone(Bbox zone, FiltreRecherche filtre){
-        List<Lieu> res = new ArrayList<>();
-        for (Lieu lieu : lieux) {
-            if (lieu.getAdresse() == null) continue;
-            double lat = lieu.getAdresse().getLatitude();
-            double lon = lieu.getAdresse().getLongitude();
-            if (zone.contient(lat,lon) && filtreOk(lieu, filtre)) {
-                res.add(lieu);
-            }
-        }
-        return res;
-    }
-
-    public boolean filtreOk(Lieu lieu, FiltreRecherche filtre){
+    default boolean filtreOk(Lieu lieu, FiltreRecherche filtre){
         if (filtre == null) return true;
 
         boolean typeOk = filtre.getTypes().isEmpty() || filtre.getTypes().contains(lieu.getType());
@@ -108,20 +70,14 @@ public class LieuRepository {
         return lieu.getAdresse().getCommune().getDepartement().getCode();
     }
 
-    public List<Lieu> trouverProche(Double latitude, Double longitude, Double rayon, FiltreRecherche filtre){
-        List<Lieu> res = new ArrayList<>();
-        for (Lieu lieu : lieux) {
-            if (lieu.getAdresse() == null) continue;
-            double lat = lieu.getAdresse().getLatitude();
-            double lon = lieu.getAdresse().getLongitude();
-            if (calculDistance(latitude, longitude, lat, lon) <= rayon && filtreOk(lieu,filtre)) {
-                res.add(lieu);
-            }
-        }
-        return res;
+    default List<Lieu> trouverProche(Double latitude, Double longitude, Double rayon, FiltreRecherche filtre){
+        return findAll().stream()
+            .filter(l -> l.getAdresse() != null)
+            .filter(l -> calculDistance(latitude, longitude, l.getAdresse().getLatitude(), l.getAdresse().getLongitude()) <= rayon && filtreOk(l, filtre))
+            .toList();
     }
 
-    public double calculDistance (double lat1, double lon1, double lat2, double lon2){
+    static double calculDistance (double lat1, double lon1, double lat2, double lon2){
         double r = 6371;
         double dLat = Math.toRadians(lat2 - lat1);
         double dLon = Math.toRadians(lon2 - lon1);
