@@ -8,6 +8,7 @@ import backend.geographie.Adresse;
 import jakarta.persistence.*;
 
 @Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Lieu {
     @Id
     private String id;
