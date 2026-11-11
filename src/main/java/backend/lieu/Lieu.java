@@ -15,7 +15,7 @@ public class Lieu {
     private List<String> labels;
     private LocalDate dateMiseAJour;
     private Adresse adresse;
-    private List<SourceLieu> source;
+    private final List<SourceLieu> source;
 
 
     public Lieu(){
@@ -132,15 +132,15 @@ public class Lieu {
         if(donnees== null){
             return;
         }
-        if(donnees.nom != null){this.nom = donnees.nom;}
-        if(donnees.description !=null){this.description=donnees.description;}
+        if(estRenseigne(donnees.nom)){this.nom = donnees.nom;}
+        if(estRenseigne(donnees.description)){this.description=donnees.description;}
         if(donnees.type !=null){this.type=donnees.type;}
-        if(donnees.siteWeb !=null){this.siteWeb=donnees.siteWeb;}
-        if(donnees.photo !=null){this.photo=donnees.photo;}
+        if(estRenseigne(donnees.siteWeb)){this.siteWeb=donnees.siteWeb;}
+        if(estRenseigne(donnees.photo)){this.photo=donnees.photo;}
         if(donnees.adresse !=null){this.adresse=donnees.adresse;}
 
         for(String label :donnees.getLabels()){
-            if(!this.labels.contains(label)){
+            if(estRenseigne(label) && !this.labels.contains(label)){
                this.labels.add(label);
             }
         }
@@ -149,5 +149,10 @@ public class Lieu {
         }
         this.dateMiseAJour =LocalDate.now();
 
+    }
+
+    // vrai si la chaîne n'est ni null, ni vide, ni composée uniquement d'espaces
+    private static boolean estRenseigne(String valeur){
+        return valeur != null && !valeur.trim().isEmpty();
     }
 }
