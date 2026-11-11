@@ -4,62 +4,56 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
 import backend.geographie.Commune;
+import org.springframework.stereotype.Repository;
 
-@Component 
-public class CommuneRepository {    
-    
-    private Map<String, Commune> m;
-    
-    public CommuneRepository(){
-        this.m = new LinkedHashMap<>();
-    }
+@Repository
+public interface CommuneRepository extends JpaRepository<Commune, String> {
 
-    public Commune trouverParCodeInsee(String codeInsee){
-        /*for(String c : m.keySet()){
-            if (c.equals(code)) {
-                return m.get(c);
-            }
+    default Commune trouverParCodeInsee(String codeInsee){
+        if (codeInsee == null){
+            return null;
         }
-        return null;*/
-        return m.get(codeInsee);
+        return findById(codeInsee).orElse(null);
     }
 
-    public Commune trouverParCodePostalEtNom(String codePostal, String nom){
-        for(String c : m.keySet()){
-            Commune commune = m.get(c);
-            if (commune.getNom().equals(nom)) {
-                return commune;
+    default Commune trouverParCodePostalEtNom(String codePostal, String nom){
+        for(Commune c : findAll()){
+            if (c.getNom().equals(nom)) {
+                return c;
             }
         }
         return null;
     }
 
-    public Commune renvoieOuCreeCommune(String codeInsee, String nom){
+    default Commune renvoieOuCreeCommune(String codeInsee, String nom){
         
         if (codeInsee == null || codeInsee.equals("")|| nom == null || nom.equals("")) {
             throw new IllegalArgumentException("paramètre null ou invalide");
         }
         
-        Commune c = m.get(codeInsee);
+        Commune c = trouverParCodeInsee(codeInsee);
         if (c != null) {
             return c;
         }
         else{
             Commune newC = new Commune(codeInsee, nom);
-            m.put(codeInsee, newC);
-            return newC;
+            return save(newC);
         }
     }
 
-    public int tailleRepo(){
-        return m.size();
+    default int tailleRepo(){
+        return  (int) count();
     }
+
+    /*
     public static void main(String[] args) {
         CommuneRepository repo = new CommuneRepository();
         Commune c1 = repo.renvoieOuCreeCommune("79126", "Les Fosses");
         System.err.println(c1.getCodeInsee() + " - " + c1.getNom());
     }
+    */
 }
