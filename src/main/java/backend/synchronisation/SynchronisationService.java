@@ -19,8 +19,8 @@ public class SynchronisationService {
     private final Importeur importeurDataTourisme;
     private final Importeur importeurBasilic;
     private JournalSynchroRepository repo;
-    public final LieuRepository repoDataTourism =  new LieuRepository();
-    public final LieuRepository repoBasilic = new LieuRepository();
+    private final LieuRepository repoDataTourism =  new LieuRepository();
+    private final LieuRepository repoBasilic = new LieuRepository();
 
     public SynchronisationService(Importeur importeurDataTourisme, Importeur importeurBasilic, JournalSynchroRepository repo) {
         this.importeurDataTourisme = importeurDataTourisme;
@@ -32,7 +32,7 @@ public class SynchronisationService {
     public List<JournalSynchro> synchroniser(){
         List<JournalSynchro> res = new ArrayList<>();
         try {
-            JournalSynchro jDataTourisme = synchronsiserSource(importeurDataTourisme);
+            JournalSynchro jDataTourisme = synchroniserSource(importeurDataTourisme);
             if (jDataTourisme != null) {
                 res.add(jDataTourisme);
             }
@@ -42,7 +42,7 @@ public class SynchronisationService {
         try {
 
 
-            JournalSynchro jBasilic = synchronsiserSource(importeurBasilic);
+            JournalSynchro jBasilic = synchroniserSource(importeurBasilic);
             if (jBasilic != null) {
                 res.add(jBasilic);
             }
@@ -54,7 +54,7 @@ public class SynchronisationService {
 
     //JE PENSE QU'IL FAUT FAIRE 2 METHODES SYNCHRONISERSOURCE (1 POUR CHAQUE IMPORTEUR)
  
-    public JournalSynchro synchronsiserSource(Importeur importeur) {
+    public JournalSynchro synchroniserSource(Importeur importeur) {
         Source source = importeur.getSource();
         JournalSynchro dernier = repo.trouverDernier(source);
         LocalDateTime now = LocalDateTime.now();
@@ -65,22 +65,34 @@ public class SynchronisationService {
             return null;
         }
 
+        int nbAjouts = 0;
+        int nbMisesAJour = 0;
         ResultatImport resImport = importeur.importer();
-
+        LieuRepository repoSource = switch(source){
+            case BASILIC -> repoBasilic;
+            case DATATOURISME -> repoDataTourism;
+            default -> throw new IllegalStateException("Source inconnue: " + source);  
+        };
+        for(Lieu l : resImport.getLieux()){
+            Lieu existant = trouverExistant(repoSource, l);
+            if (existant != null) {
+                fusionner(existant, l);
+                nbMisesAJour++;
+            }
+            else{
+                repoSource.enregistrerLieu(l);
+                nbAjouts++;
+            }
+        }
         int nbLignesLues = resImport.getNbLignesLues();
         List<String> erreurs = resImport.getErrors();
         int nbRejets = erreurs.size();
 
-        int anciennesLignes = 0;
-        if (dernier != null) {
-            anciennesLignes = dernier.getNbLignesLues();
-        }
-        int nbAjouts = nbLignesLues - anciennesLignes;
 
         StatutSynchro statut;
         if (nbRejets == 0) {
             statut = StatutSynchro.SUCCES;
-        } else if (nbAjouts != 0) {
+        } else if (nbAjouts != 0 || nbMisesAJour != 0) {
             statut = StatutSynchro.PARTIEL;
         } else {
             statut = StatutSynchro.ECHEC;
@@ -92,10 +104,6 @@ public class SynchronisationService {
         repo.enregistrer(res);
         return res;
     
-        /* */
-        //SYNCHRONISER 1 FOIS PAR MOIS, DONC UTILISER DateTime ET APPELER importer() QUI NOUS DONNE erreurs (ET IMPLICITEMENT nbRejets, nbAjouts)
-        //POUR statut, statut = StatutSynchro.SUCCES si nbRejets == 0, statut = StatutSynchro.PARTIEL si nbRejets et (nbAjouts ou nbMisesAJour) != 0, et statut = StatutSynchro.PARTIEL.ECHEC si nbAjouts et nbMisesAJour == 0
-        //COMMENTAIRE YOURI: PAS SCALABLE NI OPTI D'AVOIR DES IDENTIFIANTS STRING.
     }
 
     private void fusionner(Lieu existant, Lieu nouveau){
@@ -110,5 +118,12 @@ public class SynchronisationService {
 
     public LieuRepository getRepoBasilic() {
         return repoBasilic;
+    }
+
+    private Lieu trouverExistant(LieuRepository repoSource, Lieu l){
+        if (l.getId() == null) {
+            return null;
+        }   
+        return repoSource.trouverParId(l.getId());
     }
 }
