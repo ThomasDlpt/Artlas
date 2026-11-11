@@ -1,16 +1,23 @@
 package backend.geographie;
 
+import jakarta.persistence.*;
+
 /**
  * Adresse postale et position GPS d'un lieu, rattachée à une commune.
  */
+@Embeddable
 public class Adresse {
     private static final double RAYON_TERRE_KM = 6371.0;
 
-    private final String rue;          // peut être null (certains lieux n'ont pas de rue précise)
-    private final String codePostal;
-    private final Commune commune;
-    private final double latitude;
-    private final double longitude;
+    private String rue;          // peut être null (certains lieux n'ont pas de rue précise)
+    private String codePostal;
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Commune commune;
+    private double latitude;
+    private double longitude;
+
+    public Adresse() {
+    }
 
     public Adresse(String rue, String codePostal, Commune commune, double latitude, double longitude) {
         if (latitude < -90 || latitude > 90) {

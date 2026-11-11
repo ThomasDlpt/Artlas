@@ -1,13 +1,21 @@
 package backend.geographie;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
 import java.util.Objects;
 
 /**
  * Région administrative française (ex : code "53", nom "Bretagne").
  */
+@Entity
 public class Region {
-    private final String code;
-    private final String nom;
+    @Id
+    private String code;
+    private String nom;
+
+    public Region() {
+    }
 
     public Region(String code, String nom) {
         if (code == null || code.isBlank() || nom == null || nom.isBlank()) {

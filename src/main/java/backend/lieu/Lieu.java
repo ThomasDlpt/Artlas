@@ -5,16 +5,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import backend.geographie.Adresse;
+import jakarta.persistence.*;
 
+@Entity
 public class Lieu {
+    @Id
     private String id;
     private String nom;
-    private String description; // [0..1]
+    @Column(length = 2000)
+    private String description;
+    @Enumerated(EnumType.STRING)// [0..1]
     private TypeLieu type;
     private String siteWeb; // [0..1]
-    private String photo; // [0..1]
+    private String photo;
+    @ElementCollection(fetch = FetchType.EAGER)// [0..1]
     private final List<String> labels;
     private LocalDate dateMiseAJour;
+    @Embedded
     private Adresse adresse;
 
 

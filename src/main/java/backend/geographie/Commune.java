@@ -1,15 +1,26 @@
 package backend.geographie;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+
 import java.util.Objects;
 
 /**
  * Commune française identifiée par son code INSEE (ex : "35238" pour Rennes).
  * Le département peut être renseigné après la création (cas de CommuneRepository).
  */
+@Entity
 public class Commune {
-    private final String codeInsee;
-    private final String nom;
+    @Id
+    private String codeInsee;
+    private String nom;
+    @ManyToOne(cascade = CascadeType.ALL)
     private Departement departement;
+
+    public Commune() {
+    }
 
     /** Constructeur utilisé par CommuneRepository : le département est ajouté ensuite. */
     public Commune(String codeInsee, String nom) {

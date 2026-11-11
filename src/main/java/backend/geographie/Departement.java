@@ -1,14 +1,25 @@
 package backend.geographie;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.CascadeType;
+
 import java.util.Objects;
 
 /**
  * Département français (ex : code "35", nom "Ille-et-Vilaine"), rattaché à une région.
  */
+@Entity
 public class Departement {
-    private final String code;
-    private final String nom;
-    private final Region region;
+    @Id
+    private String code;
+    private String nom;
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Region region;
+
+    public Departement() {
+    }
 
     public Departement(String code, String nom, Region region) {
         if (code == null || code.isBlank() || nom == null || nom.isBlank()) {
