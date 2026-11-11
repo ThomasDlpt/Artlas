@@ -52,8 +52,7 @@ public class SynchronisationService {
         return res;
     }
 
-    //JE PENSE QU'IL FAUT FAIRE 2 METHODES SYNCHRONISERSOURCE (1 POUR CHAQUE IMPORTEUR)
- 
+    
     public JournalSynchro synchroniserSource(Importeur importeur) {
         Source source = importeur.getSource();
         JournalSynchro dernier = repo.trouverDernier(source);
@@ -80,8 +79,10 @@ public class SynchronisationService {
                 nbMisesAJour++;
             }
             else{
-                repoSource.enregistrerLieu(l);
-                nbAjouts++;
+                if(repoSource.enregistrerLieu(l)){
+                    nbAjouts++;
+                }
+               
             }
         }
         int nbLignesLues = resImport.getNbLignesLues();

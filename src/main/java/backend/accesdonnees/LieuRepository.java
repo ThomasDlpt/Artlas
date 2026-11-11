@@ -15,15 +15,16 @@ public class LieuRepository {
 
     private ArrayList<Lieu> lieux = new ArrayList<>();
 
-    public void enregistrerLieu(Lieu lieu) {
+    public boolean enregistrerLieu(Lieu lieu) {
         if (lieu == null || lieu.getId() == null) {
-            return;
+            return false;
         }
         // un lieu avec le meme id est deja enregistre
         if (trouverParId(lieu.getId()) != null) {
-            return;
+            return false;
         }
         lieux.add(lieu);
+        return true;
     }
 
     public Lieu trouverParId(String id){

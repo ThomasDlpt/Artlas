@@ -18,6 +18,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Properties;
@@ -71,7 +73,7 @@ public class ImporteurDataTourisme implements Importeur{
                     //String codeDep = codePostal.substring(0, 2);
                     String nomCommune = poi.path("isLocatedAt").path(0).path("address").path(0).path("hasAddressCity").path("label").path("@fr").asText();
                     String insee = poi.path("isLocatedAt").path(0).path("address").path(0).path("hasAddressCity").path("insee").asText();
-                    System.err.println(insee);
+                    //System.err.println(insee);
                     
                     JsonNode adresseRueLigne = poi.path("isLocatedAt").path(0).path("address").path(0).path("streetAddress");
                     String adresseRue = "";
@@ -96,7 +98,7 @@ public class ImporteurDataTourisme implements Importeur{
                     //sauvegarde dans le repo CommuneRepository
                     Commune c = repo.renvoieOuCreeCommune(insee, nomCommune);
                     //A COMPLETER POUR CREER UN LIEU
-                    Lieu l = new Lieu(id_uri, nom, descriptionCourte, typeLieu, siteWeb, null, types, null, new Adresse(adresseRue, codePostal, c, latitude, longitude));
+                    Lieu l = new Lieu(id_uri, nom, descriptionCourte, typeLieu, siteWeb, null, types, LocalDate.now(), new Adresse(adresseRue, codePostal, c, latitude, longitude));
                     lieux.add(l);
                 } catch (Exception e) {
                     erreurs.add(e.toString() + poi.path("uuid").asText("?"));
