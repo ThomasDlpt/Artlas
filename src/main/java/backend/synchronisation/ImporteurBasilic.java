@@ -111,7 +111,7 @@ public class ImporteurBasilic implements Importeur{
             default -> TypeLieu.AUTRE;
         };
     }
-/*
+    
     public static void main(String[] args) {
         /*CommuneRepository communeRepo = new CommuneRepository();
         ImporteurBasilic test = new ImporteurBasilic("https://tabular-api.data.gouv.fr/api/resources", communeRepo);
@@ -119,5 +119,5 @@ public class ImporteurBasilic implements Importeur{
         System.out.println("Lignes lues : " + res.getNbLignesLues() + ", Lieux : " + res.getLieux().size());*/
     }
 
- */
+ 
 }
