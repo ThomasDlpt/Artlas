@@ -1,0 +1,200 @@
+@startuml diagramme_composants_frontend
+title Artlas - Diagramme de composants du Frontend (React + Leaflet)
+
+skinparam componentStyle rectangle
+skinparam shadowing false
+skinparam packageStyle rectangle
+
+' ============================================================
+' 1. VUE (composants React)
+' ============================================================
+package "Vue (composants React)" {
+
+  component App
+  component Routeur
+  component ZoneNotifications
+
+  package "Pages" {
+    component PageCarte
+    component PageCircuitPartage
+    component PageConnexionAdmin
+    component RouteAdminProtegee
+    component PageAdmin
+  }
+
+  package "Recherche" {
+    component BarreRecherche
+    component PanneauFiltres
+    component ListeResultats
+  }
+
+  package "Carte" {
+    component CarteLeaflet
+    component MarqueurLieu
+    component TraceCircuit
+  }
+
+  package "Fiche" {
+    component FicheLieu
+  }
+
+  package "Itineraire" {
+    component PanneauCircuit
+    component EtapeItem
+  }
+
+  package "Administration" {
+    component TableauSynchronisation
+    component FormulaireCorrectionLieu
+  }
+}
+
+' ============================================================
+' 2. ETAT (hooks & contextes)
+' ============================================================
+package "Etat (hooks & contextes)" {
+  component useLieux <<hook>>
+  component useFicheLieu <<hook>>
+  component CircuitContext <<context>>
+  component AdminAuthContext <<context>>
+  component useAdministration <<hook>>
+  component useNotification <<hook>>
+}
+
+' ============================================================
+' 3. SERVICES API (détaillés dans diagramme_classes_frontend)
+' ============================================================
+package "Services API" {
+  component LieuApi
+  component CircuitApi
+  component AdminApi
+  component AuthAdminApi
+  component ApiClient
+}
+
+' ============================================================
+' Ressources externes
+' ============================================================
+artifact "departements.json\n(données statiques)" as departements
+component "Leaflet / OpenStreetMap" as leaflet <<bibliotheque>>
+node "Backend Spring Boot\n(API REST)" as backend
+
+' ============================================================
+' Composition des vues
+' ============================================================
+App --> Routeur
+App --> ZoneNotifications
+
+Routeur --> PageCarte : /
+Routeur --> PageCircuitPartage : /circuit/:codePartage
+Routeur --> PageConnexionAdmin : /admin/connexion
+Routeur --> RouteAdminProtegee : /admin
+RouteAdminProtegee --> PageAdmin : si connecté\nsinon redirection
+
+PageCarte --> BarreRecherche
+PageCarte --> ListeResultats
+PageCarte --> CarteLeaflet
+PageCarte --> FicheLieu
+PageCarte --> PanneauCircuit
+
+PageCircuitPartage --> CarteLeaflet
+PageCircuitPartage --> PanneauCircuit
+
+BarreRecherche --> PanneauFiltres
+CarteLeaflet --> MarqueurLieu : 0..*
+CarteLeaflet --> TraceCircuit : 0..1
+PanneauCircuit --> EtapeItem : 0..*
+
+PageAdmin --> TableauSynchronisation
+PageAdmin --> FormulaireCorrectionLieu
+
+' ============================================================
+' Vue -> Etat
+' ============================================================
+BarreRecherche ..> useLieux : lancerRecherche()
+PanneauFiltres ..> useLieux : modifierFiltre()
+ListeResultats ..> useLieux : resultats
+CarteLeaflet ..> useLieux : surDeplacementCarte(bounds)
+MarqueurLieu ..> useFicheLieu : clic -> ouvrir(id)
+FicheLieu ..> useFicheLieu
+FicheLieu ..> CircuitContext : ajouterEtape()
+TraceCircuit ..> CircuitContext
+PanneauCircuit ..> CircuitContext : sauvegarder()
+EtapeItem ..> CircuitContext : retirer / reordonner
+PageCircuitPartage ..> CircuitContext : charger(codePartage)
+PageConnexionAdmin ..> AdminAuthContext : connecter(motDePasse)
+RouteAdminProtegee ..> AdminAuthContext : estConnecte
+TableauSynchronisation ..> useAdministration
+FormulaireCorrectionLieu ..> useAdministration
+ZoneNotifications ..> useNotification
+
+' ============================================================
+' Etat -> Services
+' ============================================================
+useLieux ..> LieuApi
+useFicheLieu ..> LieuApi
+CircuitContext ..> CircuitApi
+useAdministration ..> AdminApi
+AdminAuthContext ..> AuthAdminApi
+AdminAuthContext ..> ApiClient : definirJeton()
+
+useLieux ..> useNotification : erreurs / aucun résultat
+useFicheLieu ..> useNotification
+CircuitContext ..> useNotification
+useAdministration ..> useNotification
+
+' ============================================================
+' Services -> exterieur
+' ============================================================
+LieuApi --> ApiClient
+CircuitApi --> ApiClient
+AdminApi --> ApiClient
+AuthAdminApi --> ApiClient
+ApiClient --> backend : HTTP / JSON
+
+PanneauFiltres ..> departements
+CarteLeaflet ..> leaflet
+
+' ============================================================
+' Notes
+' ============================================================
+note right of useLieux
+  Fusion de la recherche et de la carte :
+  - filtre : FiltreRecherche
+  - bbox : BBox (zone visible)
+  - resultats : Lieu[]
+  - chargement, erreur
+  + modifierFiltre(champ, valeur)
+  + lancerRecherche()
+  + surDeplacementCarte(bounds)
+  + reinitialiser()
+  Une seule source de vérité :
+  les marqueurs = la liste de résultats.
+end note
+
+note right of CircuitContext
+  Contexte global : partagé par la fiche,
+  la carte (tracé) et le panneau circuit.
+  - circuitEnCours : Circuit
+  + ajouterEtape / retirerEtape / reordonner
+  + sauvegarder() / charger(codePartage)
+  Bouton "Sauvegarder" actif seulement
+  si le circuit a au moins 2 étapes.
+end note
+
+note right of AdminAuthContext
+  V1 : un seul mot de passe admin,
+  défini côté serveur (application.properties).
+  - jeton : String
+  + connecter(motDePasse) / deconnecter()
+  + estConnecte : boolean
+end note
+
+note bottom of RouteAdminProtegee
+  Le front ne fait que masquer les pages admin.
+  La vraie protection est côté backend :
+  /api/admin/** refuse toute requête
+  sans jeton valide.
+end note
+
+@enduml

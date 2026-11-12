@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Artlas · Carte mobile</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/artlas/tokens.css">
+<link rel="stylesheet" href="ds/artlas/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&amp;family=Source+Sans+3:ital,wght@0,400..700;1,400..700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f2f1ee}
+a{color:#a8401f}a:hover{color:#86321a}
+</style>
+</helmet>
+<div class="atl" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: var(--map-ground)">
+
+  <div class="atl-map" role="region" aria-label="Carte des lieux" style="position: absolute; inset: 0 0 64px 0">
+    <svg class="atl-map__tiles" viewBox="0 0 620 836" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <rect width="620" height="836" fill="#f2f1ee"></rect>
+      <g fill="#e8e6e1"><rect x="49.6" y="83.6" width="111.6" height="183.9" rx="2"></rect><rect x="341" y="518.3" width="124" height="209" rx="2"></rect><rect x="434" y="66.9" width="86.8" height="150.5" rx="2"></rect></g>
+      <g fill="#e3ebdf"><circle cx="508.4" cy="376.2" r="43.4"></circle></g>
+      <path d="M-10 434.7 C155 367.8 217 484.9 341 434.7 C465 384.6 527 351.1 630 392.9" fill="none" stroke="#d4dadc" stroke-width="10"></path>
+      <g fill="none" stroke="#ffffff" stroke-linecap="round"><path d="M0 250.8 L620 183.9" stroke-width="7"></path><path d="M186 0 L260.4 836" stroke-width="7"></path><path d="M384.4 0 C359.6 334.4 434 501.6 409.2 836" stroke-width="6"></path><path d="M74.4 0 L124 836" stroke-width="4"></path><path d="M533.2 0 L558 836" stroke-width="4"></path></g>
+      <g font-family="Source Sans 3, sans-serif" fill="#8a8780" font-size="12" letter-spacing=".12em"><text x="272.8" y="410">LA VILAINE</text><text x="49.6" y="66.9">THABOR</text></g>
+    </svg>
+    <svg class="atl-map__tiles" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polyline points="40,27 43,31 50,34 55,40" fill="none" stroke="#a8401f" stroke-width="3" stroke-dasharray="1 8" stroke-linecap="round" vector-effect="non-scaling-stroke"></polyline></svg>
+    <div class="atl-pin" style="left: 40%; top: 27%"><button class="atl-marker is-selected" data-type="MONUMENT" aria-label="Monument, Parlement de Bretagne, étape 1" aria-pressed="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 21V9h10v12"></path><path d="M6 9V4.5h2.5v2h2.3v-2h2.4v2h2.3v-2H18V9"></path><path d="M10.5 21v-3.5a1.5 1.5 0 0 1 3 0V21"></path><path d="M4.5 21h15"></path></svg><span class="atl-marker__step">1</span></button></div>
+    <div class="atl-pin" style="left: 55%; top: 40%"><button class="atl-marker" data-type="MUSEE" aria-label="Musée, Musée des Beaux-Arts de Rennes, étape 2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9.5 12 4l9 5.5"></path><path d="M4 9.5h16"></path><path d="M6.5 12.5v5M10.2 12.5v5M13.8 12.5v5M17.5 12.5v5"></path><path d="M3.5 20.5h17"></path></svg><span class="atl-marker__step">2</span></button></div>
+    <div class="atl-pin" style="left: 24%; top: 36%"><button class="atl-marker" data-type="CINEMA" aria-label="Cinéma, Cinéma l’Arvor"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10h18v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"></path><path d="m3.2 10-.7-3 16.4-4 .8 3z"></path><path d="m7.6 5.9 2.2 3M12.6 4.7l2.2 3"></path></svg></button></div>
+    <div class="atl-pin" style="left: 80%; top: 30%"><button class="atl-cluster" aria-label="12 lieux, zoomer pour les voir">12</button></div>
+  </div>
+
+  <!-- recherche + puces flottantes -->
+  <div style="position: absolute; left: 12px; right: 12px; top: 12px; display: flex; flex-direction: column; gap: 10px">
+    <div style="display: flex; align-items: center; gap: 2px; min-height: 48px; padding: 0 4px; border-radius: 24px; background: var(--paper-50); box-shadow: 0 1px 2px rgba(31,27,22,.08), 0 4px 14px rgba(31,27,22,.12)">
+      <button class="atl-btn atl-btn--ghost atl-btn--icon" aria-label="Afficher la liste des lieux visibles" style="color: var(--ink); width: 44px; border-radius: 999px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button>
+      <label for="mq" class="sr-only">Rechercher un lieu ou une commune</label>
+      <input id="mq" placeholder="Un lieu, une commune…" style="flex: 1; min-width: 0; border: 0; background: none; outline-offset: 4px; font: 400 16px/22px var(--font-sans); color: var(--ink)">
+      <button class="atl-btn atl-btn--ghost atl-btn--icon" aria-label="Filtres" style="color: var(--ink-muted); width: 44px; border-radius: 999px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg></button>
+    </div>
+    <div role="group" aria-label="Types de lieu" style="display: flex; gap: 8px; overflow-x: auto; margin: 0 -12px; padding: 0 12px 6px">
+      <button class="atl-chip" data-type="MUSEE" aria-pressed="false" style="min-height: 36px; flex: none; border-radius: 999px; border-color: transparent; box-shadow: 0 1px 2px rgba(31,27,22,.08), 0 3px 10px rgba(31,27,22,.08); padding-right: 14px"><span class="atl-chip__dot" style="width: 22px; height: 22px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9.5 12 4l9 5.5"></path><path d="M4 9.5h16"></path><path d="M6.5 12.5v5M10.2 12.5v5M13.8 12.5v5M17.5 12.5v5"></path></svg></span>Musées</button>
+      <button class="atl-chip" data-type="MONUMENT" aria-pressed="true" style="min-height: 36px; flex: none; border-radius: 999px; border-color: transparent; box-shadow: 0 1px 2px rgba(31,27,22,.08), 0 3px 10px rgba(31,27,22,.08); padding-right: 14px"><span class="atl-chip__dot" style="width: 22px; height: 22px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 21V9h10v12"></path><path d="M6 9V4.5h2.5v2h2.3v-2h2.4v2h2.3v-2H18V9"></path></svg></span>Monuments</button>
+      <button class="atl-chip" data-type="LIEU_EXPOSITION" aria-pressed="false" style="min-height: 36px; flex: none; border-radius: 999px; border-color: transparent; box-shadow: 0 1px 2px rgba(31,27,22,.08), 0 3px 10px rgba(31,27,22,.08); padding-right: 14px"><span class="atl-chip__dot" style="width: 22px; height: 22px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4.5" width="16" height="12.5" rx="1"></rect><path d="M12 17v3.5M8.5 20.5h7"></path></svg></span>Expositions</button>
+      <button class="atl-chip" data-type="CINEMA" aria-pressed="false" style="min-height: 36px; flex: none; border-radius: 999px; border-color: transparent; box-shadow: 0 1px 2px rgba(31,27,22,.08), 0 3px 10px rgba(31,27,22,.08); padding-right: 14px"><span class="atl-chip__dot" style="width: 22px; height: 22px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10h18v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"></path><path d="m3.2 10-.7-3 16.4-4 .8 3z"></path></svg></span>Cinémas</button>
+    </div>
+  </div>
+
+  <!-- FicheLieu en bottom sheet (cran mi-hauteur) -->
+  <section data-type="MONUMENT" aria-label="Fiche du lieu" style="position: absolute; left: 0; right: 0; bottom: 64px; height: 452px; background: var(--paper-50); border-radius: 20px 20px 0 0; box-shadow: 0 -2px 6px rgba(31,27,22,.05), 0 -12px 32px rgba(31,27,22,.12); display: flex; flex-direction: column; overflow: hidden">
+    <div aria-hidden="true" style="width: 36px; height: 4px; border-radius: 2px; background: var(--line); margin: 8px auto 4px"></div>
+    <div style="padding: 8px 16px 0; display: flex; gap: 12px; align-items: flex-start">
+      <div style="flex: 1; min-width: 0">
+        <h2 style="margin: 0; font: 600 20px/26px var(--font-serif); font-variation-settings: 'opsz' 28; color: var(--ink)">Parlement de Bretagne</h2>
+        <p style="margin: 2px 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; font: 400 14px/20px var(--font-sans); color: var(--ink-muted)"><span style="display: inline-flex; align-items: center; gap: 4px; color: var(--t); font-weight: 600"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 21V9h10v12"></path><path d="M6 9V4.5h2.5v2h2.3v-2h2.4v2h2.3v-2H18V9"></path><path d="M4.5 21h15"></path></svg>Monument</span><span aria-hidden="true">·</span><span>Rennes</span></p>
+      </div>
+      <button class="atl-btn atl-btn--icon" aria-label="Fermer la fiche" style="width: 36px; min-height: 36px; margin-top: -2px; border: 0; border-radius: 999px; background: var(--paper-100); color: var(--ink-muted)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"></path></svg></button>
+    </div>
+    <div style="display: flex; gap: 8px; padding: 12px 16px 0; overflow-x: auto">
+      <button class="atl-btn atl-btn--primary atl-btn--sm" disabled="" style="flex: none; border-radius: 999px; min-height: 40px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 12.5 4 4 8-9"></path></svg>Déjà dans le circuit</button>
+      <button class="atl-btn atl-btn--secondary atl-btn--sm" style="flex: none; border-radius: 999px; min-height: 40px; border-color: var(--line)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3.5"></path><path d="m7.5 8 4.5-4.5L16.5 8"></path><path d="M5 12.5V19a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 19v-6.5"></path></svg>Partager</button>
+    </div>
+    <div style="height: 120px; margin: 14px 16px 0; border-radius: 14px; background: var(--paper-200); display: grid; place-items: center; color: var(--t)"><span style="display: flex; flex-direction: column; align-items: center; gap: 6px"><span style="width: 44px; height: 44px; border-radius: 50%; background: var(--paper-50); display: grid; place-items: center; box-shadow: 0 1px 3px rgba(31,27,22,.10)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 21V9h10v12"></path><path d="M6 9V4.5h2.5v2h2.3v-2h2.4v2h2.3v-2H18V9"></path><path d="M10.5 21v-3.5a1.5 1.5 0 0 1 3 0V21"></path><path d="M4.5 21h15"></path></svg></span><span style="font: 400 12px/16px var(--font-sans); color: var(--ink-muted)">Pas de photo fournie par la source</span></span></div>
+    <div style="padding: 12px 16px 0; display: flex; gap: 6px; flex-wrap: wrap"><span style="display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; background: var(--paper-200); font: 600 12px/16px var(--font-sans)"><span style="width: 5px; height: 5px; background: var(--accent); transform: rotate(45deg)"></span>Monument historique</span></div>
+    <p style="margin: 0; padding: 10px 16px 0; font: 400 15px/23px var(--font-sans); color: var(--ink)">Ancien siège du parlement de Bretagne, achevé au XVIIᵉ siècle ; il abrite aujourd’hui la cour d’appel de Rennes.</p>
+    <p style="margin: 0; padding: 10px 16px; display: flex; gap: 12px; align-items: flex-start; font: 400 14px/20px var(--font-sans); color: var(--ink)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ink-muted)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><path d="M3.5 6.5 9 4l6 2.5L20.5 4v13.5L15 20l-6-2.5-5.5 2.5z"></path><path d="M9 4v13.5M15 6.5V20"></path></svg>Place du Parlement de Bretagne, <span class="tnum">35000</span> Rennes</p>
+  </section>
+
+  <nav aria-label="Navigation" style="position: absolute; left: 0; right: 0; bottom: 0; height: 64px; display: flex; background: var(--paper-50); border-top: 1px solid var(--paper-200)">
+    <a href="#" aria-current="page" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; font: 600 12px/16px var(--font-sans); color: var(--accent)"><span style="padding: 2px 16px; border-radius: 999px; background: var(--accent-tint); display: grid; place-items: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 6.5 9 4l6 2.5L20.5 4v13.5L15 20l-6-2.5-5.5 2.5z"></path><path d="M9 4v13.5M15 6.5V20"></path></svg></span>Carte</a>
+    <a href="#" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; font: 600 12px/16px var(--font-sans); color: var(--ink-muted)"><span style="padding: 2px 16px; display: grid; place-items: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6.5h11M9 12h11M9 17.5h11"></path><circle cx="4.5" cy="6.5" r=".9"></circle><circle cx="4.5" cy="12" r=".9"></circle><circle cx="4.5" cy="17.5" r=".9"></circle></svg></span>Liste</a>
+    <a href="#" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-decoration: none; font: 600 12px/16px var(--font-sans); color: var(--ink-muted)"><span style="padding: 2px 16px; display: grid; place-items: center; position: relative"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="18" r="2.2"></circle><circle cx="18" cy="6" r="2.2"></circle><path d="M8.2 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.8"></path></svg><span class="tnum" style="position: absolute; top: -4px; right: 6px; min-width: 18px; height: 18px; border-radius: 999px; background: var(--accent); color: var(--ink-inverse); font: 700 11px/18px var(--font-sans); text-align: center">2</span></span>Circuit</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

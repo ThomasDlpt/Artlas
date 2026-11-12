@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Artlas · États du circuit</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/artlas/tokens.css">
+<link rel="stylesheet" href="ds/artlas/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&amp;family=Source+Sans+3:ital,wght@0,400..700;1,400..700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f2f1ee}
+a{color:#a8401f}a:hover{color:#86321a}
+@keyframes atlPulse{0%,100%{opacity:1}50%{opacity:.55}}
+.sk{background:#efe8d9;border-radius:6px;animation:atlPulse 1.6s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){.sk{animation:none}}
+</style>
+</helmet>
+<div class="atl" style="width: 1840px; height: 1100px; box-sizing: border-box; padding: 32px 40px; background: var(--map-ground); display: flex; flex-direction: column; gap: 40px">
+
+  <div style="display: flex; gap: 28px; align-items: flex-start">
+
+    <!-- 1 · Vide -->
+    <div style="width: 380px; display: flex; flex-direction: column; gap: 10px">
+      <p style="margin: 0; display: flex; gap: 8px; align-items: center; font: 600 14px/20px var(--font-sans); color: var(--ink)"><span class="tnum" style="width: 22px; height: 22px; border-radius: 50%; background: var(--paper-50); display: grid; place-items: center; font-size: 12px; box-shadow: var(--shadow-1)">1</span>Circuit vide</p>
+      <aside aria-label="Votre circuit" style="height: 620px; background: var(--paper-50); border-radius: 16px; box-shadow: 0 1px 2px rgba(31,27,22,.06), 0 10px 32px rgba(31,27,22,.13); overflow: hidden; display: flex; flex-direction: column">
+        <div style="padding: 14px 20px 0; display: flex; align-items: center; justify-content: space-between"><p style="margin: 0; font: 600 13px/18px var(--font-sans); color: var(--accent)">Votre circuit</p><button class="atl-btn atl-btn--ghost atl-btn--icon atl-btn--sm" aria-label="Fermer le circuit" style="width: 36px; border-radius: 999px; color: var(--ink-muted); margin-right: -8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"></path></svg></button></div>
+        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 10px; padding: 0 36px 24px">
+          <svg width="140" height="80" viewBox="0 0 140 80" aria-hidden="true"><path d="M20 62 C50 14 90 70 120 20" fill="none" stroke="#a8401f" stroke-width="3" stroke-dasharray="1 8" stroke-linecap="round"></path><circle cx="20" cy="62" r="12" fill="#fffdf8" stroke="#d9cfbc" stroke-width="2" stroke-dasharray="4 4"></circle><circle cx="120" cy="20" r="12" fill="#fffdf8" stroke="#d9cfbc" stroke-width="2" stroke-dasharray="4 4"></circle><path d="M20 57v10M15 62h10M120 15v10M115 20h10" stroke="#8c8170" stroke-width="2" stroke-linecap="round"></path></svg>
+          <p style="margin: 6px 0 0; font: 600 18px/24px var(--font-serif); color: var(--ink)">Votre circuit commence ici</p>
+          <p style="margin: 0; font: 400 15px/22px var(--font-sans); color: var(--ink-muted)">Ouvrez la fiche d’un lieu et touchez « Ajouter au circuit ». Dès deux lieux, vous pourrez le sauvegarder et le partager.</p>
+        </div>
+        <div style="padding: 0 16px 18px"><button class="atl-btn atl-btn--primary" disabled="" aria-describedby="why-0" style="width: 100%; border-radius: 999px">Sauvegarder</button><p id="why-0" style="margin: 6px 0 0; text-align: center; font: 400 12px/16px var(--font-sans); color: var(--ink-muted)">Disponible à partir de 2 lieux</p></div>
+      </aside>
+      <p style="margin: 0; font: 400 13px/19px var(--font-sans); color: var(--ink-muted)">Pas de totaux vides ni de tirets : on montre seulement comment commencer.</p>
+    </div>
+
+    <!-- 2 · Une étape -->
+    <div style="width: 380px; display: flex; flex-direction: column; gap: 10px">
+      <p style="margin: 0; display: flex; gap: 8px; align-items: center; font: 600 14px/20px var(--font-sans); color: var(--ink)"><span class="tnum" style="width: 22px; height: 22px; border-radius: 50%; background: var(--paper-50); display: grid; place-items: center; font-size: 12px; box-shadow: var(--shadow-1)">2</span>Un seul lieu</p>
+      <aside aria-label="Votre circuit" style="height: 620px; background: var(--paper-50); border-radius: 16px; box-shadow: 0 1px 2px rgba(31,27,22,.06), 0 10px 32px rgba(31,27,22,.13); overflow: hidden; display: flex; flex-direction: column">
+        <div style="padding: 14px 20px 12px; display: flex; flex-direction: column; gap: 10px">
+          <div style="display: flex; align-items: center; justify-content: space-between"><p style="margin: 0; font: 600 13px/18px var(--font-sans); color: var(--accent)">Votre circuit · <span class="tnum">1</span> étape</p><button class="atl-btn atl-btn--ghost atl-btn--icon atl-btn--sm" aria-label="Fermer le circuit" style="width: 36px; border-radius: 999px; color: var(--ink-muted); margin-right: -8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"></path></svg></button></div>
+          <div><label for="c1-nom" class="sr-only">Nom du circuit</label><input id="c1-nom" placeholder="Donnez-lui un nom" style="width: 100%; box-sizing: border-box; border: 0; border-bottom: 1px dashed var(--line); background: none; padding: 0 0 4px; font: 600 20px/26px var(--font-serif); color: var(--ink)"></div>
+        </div>
+        <ol style="list-style: none; margin: 0; padding: 6px 0; border-top: 1px solid var(--line)">
+          <li style="display: grid; grid-template-columns: 20px 26px minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 6px 8px 6px 10px"><span style="color: var(--ink-subtle); display: grid; place-items: center" aria-label="Déplacer l’étape 1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="7" r=".9"></circle><circle cx="15" cy="7" r=".9"></circle><circle cx="9" cy="12" r=".9"></circle><circle cx="15" cy="12" r=".9"></circle><circle cx="9" cy="17" r=".9"></circle><circle cx="15" cy="17" r=".9"></circle></svg></span><span class="atl-step__n tnum" style="width: 26px; height: 26px; font-size: 12px">1</span><span style="min-width: 0"><span style="display: block; font: 600 15px/20px var(--font-serif); color: var(--ink)">Parlement de Bretagne</span><span style="font: 400 12px/16px var(--font-sans); color: var(--ink-muted)">Monument · Rennes</span></span><span style="display: inline-flex; align-items: center; border-radius: 999px; background: var(--paper-100); height: 32px"><input aria-label="Durée de visite en minutes" value="45" class="tnum" style="width: 32px; border: 0; background: none; text-align: right; font: 600 14px/20px var(--font-sans); color: var(--ink)"><span style="font: 400 12px/16px var(--font-sans); color: var(--ink-muted); padding: 0 10px 0 3px">min</span></span><button class="atl-btn atl-btn--ghost atl-btn--icon" aria-label="Retirer Parlement de Bretagne" style="color: var(--ink-muted); width: 40px; border-radius: 999px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"></path></svg></button></li>
+          <li style="margin: 4px 16px 0 46px; padding: 12px 14px; border-radius: 12px; border: 1.5px dashed var(--line); display: flex; gap: 10px; align-items: center; font: 400 14px/20px var(--font-sans); color: var(--ink-muted)"><span style="width: 26px; height: 26px; border-radius: 50%; border: 1.5px dashed var(--line-strong); display: grid; place-items: center; flex: none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></span>Choisissez un deuxième lieu sur la carte</li>
+        </ol>
+        <div style="flex: 1"></div>
+        <div style="margin: 0 16px; padding: 12px 4px; border-radius: 12px; background: var(--paper-100); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+          <div style="padding: 0 12px"><span style="display: block; font: 600 12px/16px var(--font-sans); color: var(--ink-muted)">Distance</span><span class="tnum" style="font: 600 20px/26px var(--font-sans)">0 km</span></div>
+          <div style="padding: 0 12px; border-left: 1px solid var(--line)"><span style="display: block; font: 600 12px/16px var(--font-sans); color: var(--ink-muted)">Durée</span><span class="tnum" style="font: 600 20px/26px var(--font-sans)">45 min</span></div>
+          <div style="padding: 0 12px; border-left: 1px solid var(--line)"><span style="display: block; font: 600 12px/16px var(--font-sans); color: var(--ink-muted)">Départ</span><span style="font: 600 16px/26px var(--font-sans)">Rennes</span></div>
+        </div>
+        <div style="padding: 14px 16px 18px">
+          <button class="atl-btn atl-btn--primary" disabled="" aria-describedby="why-1" style="width: 100%; border-radius: 999px">Sauvegarder</button>
+          <p id="why-1" style="margin: 8px 0 0; display: flex; gap: 8px; justify-content: center; align-items: center; font: 400 13px/18px var(--font-sans); color: var(--ink-muted)"><span aria-hidden="true" style="display: inline-flex; gap: 4px"><span style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent)"></span><span style="width: 8px; height: 8px; border-radius: 50%; background: var(--line)"></span></span>Encore un lieu et vous pourrez le sauvegarder</p>
+        </div>
+      </aside>
+      <p style="margin: 0; font: 400 13px/19px var(--font-sans); color: var(--ink-muted)">Pas d’alerte : une place libre montre où va la suite, et deux points disent ce qu’il manque.</p>
+    </div>
+
+    <!-- 3 · Valide -->
+    <div style="width: 380px; display: flex; flex-direction: column; gap: 10px">
+      <p style="margin: 0; display: flex; gap: 8px; align-items: center; font: 600 14px/20px var(--font-sans); color: var(--ink)"><span class="tnum" style="width: 22px; height: 22px; border-radius: 50%; background: var(--paper-50); display: grid; place-items: center; font-size: 12px; box-shadow: var(--shadow-1)">3</span>Prêt à sauvegarder</p>
+      <aside aria-label="Votre circuit" style="height: 620px; background: var(--paper-50); border-radius: 16px; box-shadow: 0 1px 2px rgba(31,27,22,.06), 0 10px 32px rgba(31,27,22,.13); overflow: hidden; display: flex; flex-direction: column">
+        <div style="padding: 14px 20px 12px; display: flex; flex-direction: column; gap: 10px">
+          <div style="display: flex; align-items: center; justify-content: space-between"><p style="margin: 0; font: 600 13px/18px var(--font-sans); color: var(--accent)">Votre circuit · <span class="tnum">2</span> étapes</p><button class="atl-btn atl-btn--ghost atl-btn--icon atl-btn--sm" aria-label="Fermer le circuit" style="width: 36px; border-radius: 999px; color: var(--ink-muted); margin-right: -8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"></path></svg></button></div>
+          <div><label for="c2-nom" class="sr-only">Nom du circuit</label><input id="c2-nom" value="Rennes, cœur historique" style="width: 100%; box-sizing: border-box; border: 0; border-bottom: 1px dashed var(--line); background: none; padding: 0 0 4px; font: 600 20px/26px var(--font-serif); color: var(--ink)"></div>
+          <div><label for="c2-desc" class="sr-only">Description</label><textarea id="c2-desc" rows="2" style="width: 100%; box-sizing: border-box; resize: none; border: 0; border-radius: 8px; background: var(--paper-100); padding: 8px 10px; font: 400 16px/22px var(--font-sans); color: var(--ink)">Du Parlement aux quais de la Vilaine, une demi-journée à pied.</textarea></div>
+        </div>
+        <ol style="list-style: none; margin: 0; padding: 6px 0; border-top: 1px solid var(--line)">
+          <li style="display: grid; grid-template-columns: 20px 26px minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 6px 8px 6px 10px"><span style="color: var(--ink-subtle); display: grid; place-items: center" aria-label="Déplacer l’étape 1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="7" r=".9"></circle><circle cx="15" cy="7" r=".9"></circle><circle cx="9" cy="12" r=".9"></circle><circle cx="15" cy="12" r=".9"></circle><circle cx="9" cy="17" r=".9"></circle><circle cx="15" cy="17" r=".9"></circle></svg></span><span class="atl-step__n tnum" style="width: 26px; height: 26px; font-size: 12px">1</span><span style="min-width: 0"><span style="display: block; font: 600 15px/20px var(--font-serif); color: var(--ink)">Parlement de Bretagne</span><span style="font: 400 12px/16px var(--font-sans); color: var(--ink-muted)">Monument · Rennes</span></span><span style="display: inline-flex; align-items: center; border-radius: 999px; background: var(--paper-100); height: 32px"><input aria-label="Durée de visite en minutes" value="45" class="tnum" style="width: 32px; border: 0; background: none; text-align: right; font: 600 14px/20px var(--font-sans); color: var(--ink)"><span style="font: 400 12px/16px var(--font-sans); color: var(--ink-muted); padding: 0 10px 0 3px">min</span></span><button class="atl-btn atl-btn--ghost atl-btn--icon" aria-label="Retirer Parlement de Bretagne" style="color: var(--ink-muted); width: 40px; border-radius: 999px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"></path></svg></button></li>
+          <li aria-hidden="true" style="margin-left: 52px; padding: 4px 0 4px 14px; border-left: 2px dotted var(--accent); display: flex; gap: 6px; align-items: center; font: 600 12px/16px var(--font-sans); color: var(--ink-muted)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4.5" r="1.6"></circle><path d="m10 21 2-6 2.5 2.5V21"></path><path d="m8 11 3-3.5h2.5l2 3.5 2.5 1"></path></svg><span class="tnum">0,9 km · 11 min à pied</span></li>
+          <li style="display: grid; grid-template-columns: 20px 26px minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 6px 8px 6px 10px"><span style="color: var(--ink-subtle); display: grid; place-items: center" aria-label="Déplacer l’étape 2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="7" r=".9"></circle><circle cx="15" cy="7" r=".9"></circle><circle cx="9" cy="12" r=".9"></circle><circle cx="15" cy="12" r=".9"></circle><circle cx="9" cy="17" r=".9"></circle><circle cx="15" cy="17" r=".9"></circle></svg></span><span class="atl-step__n tnum" style="width: 26px; height: 26px; font-size: 12px">2</span><span style="min-width: 0"><span style="display: block; font: 600 15px/20px var(--font-serif); color: var(--ink)">Musée des Beaux-Arts de Rennes</span><span style="font: 400 12px/16px var(--font-sans); color: var(--ink-muted)">Musée · Rennes</span></span><span style="display: inline-flex; align-items: center; border-radius: 999px; background: var(--paper-100); height: 32px"><input aria-label="Durée de visite en minutes" value="60" class="tnum" style="width: 32px; border: 0; background: none; text-align: right; font: 600 14px/20px var(--font-sans); color: var(--ink)"><span style="font: 400 12px/16px var(--font-sans); color: var(--ink-muted); padding: 0 10px 0 3px">min</span></span><button class="atl-btn atl-btn--ghost atl-btn--icon" aria-label="Retirer Musée des Beaux-Arts de Rennes" style="color: var(--ink-muted); width: 40px; border-radius: 999px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"></path></svg></button></li>
+        </ol>
+        <div style="flex: 1"></div>
+        <div style="margin: 0 16px; padding: 12px 4px; border-radius: 12px; background: var(--paper-100); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+          <div style="padding: 0 12px"><span style="display: block; font: 600 12px/16px var(--font-sans); color: var(--ink-muted)">Distance</span><span class="tnum" style="font: 600 20px/26px var(--font-sans)">0,9 km</span></div>
+          <div style="padding: 0 12px; border-left: 1px solid var(--line)"><span style="display: block; font: 600 12px/16px var(--font-sans); color: var(--ink-muted)">Durée</span><span class="tnum" style="font: 600 20px/26px var(--font-sans)">1 h 56</span></div>
+          <div style="padding: 0 12px; border-left: 1px solid var(--line)"><span style="display: block; font: 600 12px/16px var(--font-sans); color: var(--ink-muted)">Départ</span><span style="font: 600 16px/26px var(--font-sans)">Rennes</span></div>
+        </div>
+        <p style="margin: 8px 20px 0; font: 400 12px/16px var(--font-sans); color: var(--ink-muted)">105 min de visite et 11 min de marche</p>
+        <div style="padding: 14px 16px 18px"><button class="atl-btn atl-btn--primary" style="width: 100%; border-radius: 999px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3.5"></path><path d="m7.5 8 4.5-4.5L16.5 8"></path><path d="M5 12.5V19a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 19v-6.5"></path></svg>Sauvegarder et partager</button></div>
+      </aside>
+      <p style="margin: 0; font: 400 13px/19px var(--font-sans); color: var(--ink-muted)">Distance, durée et tronçons viennent de l’API ; le front les met seulement en forme.</p>
+    </div>
+
+    <!-- 4 · Réordonner -->
+    <div style="width: 380px; display: flex; flex-direction: column; gap: 10px">
+      <p style="margin: 0; display: flex; gap: 8px; align-items: center; font: 600 14px/20px var(--font-sans); color: var(--ink)"><span class="tnum" style="width: 22px; height: 22px; border-radius: 50%; background: var(--paper-50); display: grid; place-items: center; font-size: 12px; box-shadow: var(--shadow-1)">4</span>On change l’ordre</p>
+      <aside aria-label="Votre circuit" style="height: 620px; background: var(--paper-50); border-radius: 16px; box-shadow: 0 1px 2px rgba(31,27,22,.06), 0 10px 32px rgba(31,27,22,.13); overflow: hidden; display: flex; flex-direction: column">
+        <div style="padding: 14px 20px 12px; display: flex; flex-direction: column; gap: 4px">
+          <p style="margin: 0; font: 600 13px/18px var(--font-sans); color: var(--accent)">Votre circuit · <span class="tnum">3</span> étapes</p>
+          <p style="margin: 0; font: 600 20px/26px var(--font-serif); color: var(--ink)">Rennes, cœur historique</p>
+        </div>
+        <ol style="list-style: none; margin: 0; padding: 8px 0; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px">
+          <li style="display: grid; grid-template-columns: 20px 26px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 6px 16px 6px 10px"><span style="color: var(--ink-subtle)" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="9" cy="7" r=".9"></circle><circle cx="15" cy="7" r=".9"></circle><circle cx="9" cy="12" r=".9"></circle><circle cx="15" cy="12" r=".9"></circle><circle cx="9" cy="17" r=".9"></circle><circle cx="15" cy="17" r=".9"></circle></svg></span><span class="atl-step__n tnum" style="width: 26px; height: 26px; font-size: 12px">1</span><span style="font: 600 15px/20px var(--font-serif)">Parlement de Bretagne</span><span class="tnum" style="font: 600 13px/18px var(--font-sans); color: var(--ink-muted)">45 min</span></li>
+          <li aria-grabbed="true" style="margin: 2px 10px; display: grid; grid-template-columns: 20px 26px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 12px 10px 8px; border-radius: 12px; background: var(--paper-50); box-shadow: 0 2px 4px rgba(31,27,22,.08), 0 12px 28px rgba(31,27,22,.16); transform: scale(1.02)"><span style="color: var(--ink); cursor: grabbing" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="9" cy="7" r=".9"></circle><circle cx="15" cy="7" r=".9"></circle><circle cx="9" cy="12" r=".9"></circle><circle cx="15" cy="12" r=".9"></circle><circle cx="9" cy="17" r=".9"></circle><circle cx="15" cy="17" r=".9"></circle></svg></span><span class="atl-step__n tnum" style="width: 26px; height: 26px; font-size: 12px">2</span><span style="font: 600 15px/20px var(--font-serif)">Opéra de Rennes</span><span class="tnum" style="font: 600 13px/18px var(--font-sans); color: var(--ink-muted)">30 min</span></li>
+          <li style="display: grid; grid-template-columns: 20px 26px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 6px 16px 6px 10px; opacity: .7"><span style="color: var(--ink-subtle)" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="9" cy="7" r=".9"></circle><circle cx="15" cy="7" r=".9"></circle><circle cx="9" cy="12" r=".9"></circle><circle cx="15" cy="12" r=".9"></circle><circle cx="9" cy="17" r=".9"></circle><circle cx="15" cy="17" r=".9"></circle></svg></span><span class="atl-step__n tnum" style="width: 26px; height: 26px; font-size: 12px">3</span><span style="font: 600 15px/20px var(--font-serif)">Musée des Beaux-Arts de Rennes</span><span class="tnum" style="font: 600 13px/18px var(--font-sans); color: var(--ink-muted)">60 min</span></li>
+        </ol>
+        <p class="sr-only" role="status">Opéra de Rennes saisi. Flèches haut et bas pour déplacer, Espace pour déposer.</p>
+        <div style="flex: 1"></div>
+        <div aria-busy="true" style="margin: 0 16px; padding: 12px 4px; border-radius: 12px; background: var(--paper-100); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+          <div style="padding: 0 12px"><span style="display: block; font: 600 12px/16px var(--font-sans); color: var(--ink-muted)">Distance</span><span class="sk" style="display: block; width: 64px; height: 22px; margin-top: 3px"></span></div>
+          <div style="padding: 0 12px; border-left: 1px solid var(--line)"><span style="display: block; font: 600 12px/16px var(--font-sans); color: var(--ink-muted)">Durée</span><span class="sk" style="display: block; width: 72px; height: 22px; margin-top: 3px"></span></div>
+          <div style="padding: 0 12px; border-left: 1px solid var(--line)"><span style="display: block; font: 600 12px/16px var(--font-sans); color: var(--ink-muted)">Départ</span><span style="font: 600 16px/26px var(--font-sans)">Rennes</span></div>
+        </div>
+        <p role="status" style="margin: 8px 20px 0; font: 400 12px/16px var(--font-sans); color: var(--ink-muted)">On recalcule le trajet…</p>
+        <div style="padding: 14px 16px 18px"><button class="atl-btn atl-btn--primary" aria-disabled="true" style="width: 100%; border-radius: 999px; background: var(--paper-300); color: var(--ink-subtle)">Sauvegarder et partager</button></div>
+      </aside>
+      <p style="margin: 0; font: 400 13px/19px var(--font-sans); color: var(--ink-muted)">La ligne saisie se soulève simplement ; les totaux respirent le temps que l’API réponde. Au clavier : flèches puis Espace.</p>
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 28px; align-items: flex-start">
+    <!-- 5 · Replié -->
+    <div style="width: 380px; display: flex; flex-direction: column; gap: 10px">
+      <p style="margin: 0; display: flex; gap: 8px; align-items: center; font: 600 14px/20px var(--font-sans); color: var(--ink)"><span class="tnum" style="width: 22px; height: 22px; border-radius: 50%; background: var(--paper-50); display: grid; place-items: center; font-size: 12px; box-shadow: var(--shadow-1)">5</span>Panneau replié</p>
+      <button aria-expanded="false" style="display: flex; align-items: center; gap: 12px; width: 100%; min-height: 60px; padding: 8px 16px 8px 10px; background: var(--paper-50); border: 0; border-radius: 999px; box-shadow: 0 1px 2px rgba(31,27,22,.08), 0 6px 18px rgba(31,27,22,.12); cursor: pointer; text-align: left; font: inherit; color: var(--ink)"><span style="width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: var(--ink-inverse); display: grid; place-items: center; flex: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="18" r="2.2"></circle><circle cx="18" cy="6" r="2.2"></circle><path d="M8.2 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.8"></path></svg></span><span style="flex: 1; min-width: 0"><span style="display: block; font: 600 15px/20px var(--font-serif)">Rennes, cœur historique</span><span class="tnum" style="font: 400 13px/18px var(--font-sans); color: var(--ink-muted)">2 étapes · 0,9 km · 1 h 56</span></span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color: var(--ink-muted)"><path d="m15 6-6 6 6 6"></path></svg></button>
+      <p style="margin: 0; font: 400 13px/19px var(--font-sans); color: var(--ink-muted)">Une pastille discrète en bas à droite de la carte ; on la touche pour rouvrir.</p>
+    </div>
+
+    <!-- 6 · Sauvegardé -->
+    <div style="width: 380px; display: flex; flex-direction: column; gap: 10px">
+      <p style="margin: 0; display: flex; gap: 8px; align-items: center; font: 600 14px/20px var(--font-sans); color: var(--ink)"><span class="tnum" style="width: 22px; height: 22px; border-radius: 50%; background: var(--paper-50); display: grid; place-items: center; font-size: 12px; box-shadow: var(--shadow-1)">6</span>C’est sauvegardé</p>
+      <div style="padding: 16px; background: var(--paper-50); border-radius: 16px; box-shadow: 0 1px 2px rgba(31,27,22,.06), 0 10px 32px rgba(31,27,22,.13)">
+        <div role="status" style="padding: 14px; border-radius: 12px; background: var(--success-tint); display: flex; align-items: center; gap: 12px">
+          <div style="flex: 1; min-width: 0"><p style="margin: 0; font: 400 13px/18px var(--font-sans); color: var(--success)">Votre circuit est en ligne. Partagez ce code :</p><p class="tnum" style="margin: 2px 0 0; font: 600 22px/28px var(--font-sans); letter-spacing: .12em; color: var(--ink)">K7PQ2MXA</p></div>
+          <button class="atl-btn atl-btn--primary atl-btn--sm" style="border-radius: 999px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="11" height="11" rx="1.5"></rect><path d="M15.5 8.5V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v8A1.5 1.5 0 0 0 6 15.5h2.5"></path></svg>Copier le lien</button>
+        </div>
+      </div>
+      <p style="margin: 0; font: 400 13px/19px var(--font-sans); color: var(--ink-muted)">Le code remplace le bouton, là où l’on regardait déjà. Après « Copier », un seul message : « Lien copié ».</p>
+    </div>
+
+    <!-- 7 · Échec -->
+    <div style="width: 380px; display: flex; flex-direction: column; gap: 10px">
+      <p style="margin: 0; display: flex; gap: 8px; align-items: center; font: 600 14px/20px var(--font-sans); color: var(--ink)"><span class="tnum" style="width: 22px; height: 22px; border-radius: 50%; background: var(--paper-50); display: grid; place-items: center; font-size: 12px; box-shadow: var(--shadow-1)">7</span>La sauvegarde n’a pas abouti</p>
+      <div style="padding: 16px; background: var(--paper-50); border-radius: 16px; box-shadow: 0 1px 2px rgba(31,27,22,.06), 0 10px 32px rgba(31,27,22,.13); display: flex; flex-direction: column; gap: 12px">
+        <p role="alert" style="margin: 0; display: flex; gap: 10px; align-items: flex-start; font: 400 14px/20px var(--font-sans); color: var(--ink)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--error)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 7.5v5.5"></path><circle cx="12" cy="16.3" r=".6"></circle></svg><span>Service indisponible, réessayez plus tard. Vos étapes restent ici, rien n’est perdu.</span></p>
+        <button class="atl-btn atl-btn--primary" style="width: 100%; border-radius: 999px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19.5 8.5A8 8 0 0 0 5 7.5"></path><path d="M4.5 3.5v4h4"></path><path d="M4.5 15.5A8 8 0 0 0 19 16.5"></path><path d="M19.5 20.5v-4h-4"></path></svg>Réessayer</button>
+      </div>
+      <p style="margin: 0; font: 400 13px/19px var(--font-sans); color: var(--ink-muted)">Une phrase rassurante au-dessus du bouton, sans cadre rouge. Si le panneau est replié, le même message passe en toast avec « Réessayer ».</p>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1840,"height":1100}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
