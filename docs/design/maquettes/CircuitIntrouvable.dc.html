@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Artlas · Circuit introuvable</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/artlas/tokens.css">
+<link rel="stylesheet" href="ds/artlas/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&amp;family=Source+Sans+3:ital,wght@0,400..700;1,400..700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f2f1ee}
+a{color:#a8401f}a:hover{color:#86321a}
+</style>
+</helmet>
+<div class="atl" style="position: relative; min-height: 900px; overflow: hidden; background: var(--map-ground); display: grid; place-items: center; padding: 24px; box-sizing: border-box">
+  <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: .6">
+    <rect width="1440" height="900" fill="#f2f1ee"></rect>
+    <g fill="#e8e6e1"><rect x="160" y="120" width="220" height="190" rx="2"></rect><rect x="820" y="560" width="230" height="200" rx="2"></rect><rect x="1010" y="90" width="190" height="160" rx="2"></rect></g>
+    <g fill="#e3ebdf"><path d="M40 640 q140 -70 280 0 t140 170 v120 h-420z"></path><circle cx="1180" cy="400" r="70"></circle></g>
+    <path d="M-20 470 C300 400 480 520 760 470 C1040 420 1200 380 1460 420" fill="none" stroke="#d4dadc" stroke-width="16"></path>
+    <g fill="none" stroke="#ffffff" stroke-linecap="round"><path d="M0 270 L1440 200" stroke-width="10"></path><path d="M430 0 L600 900" stroke-width="10"></path><path d="M890 0 C840 360 1000 540 950 900" stroke-width="8"></path><path d="M0 760 L1440 690" stroke-width="7"></path></g>
+  </svg>
+  <a href="#" class="atl-logo" style="position: absolute; top: 16px; left: 16px; font-size: 20px; padding: 10px 18px; background: var(--paper-50); border-radius: 999px; box-shadow: 0 1px 2px rgba(31,27,22,.08), 0 3px 10px rgba(31,27,22,.10)">Art<i>las</i></a>
+
+  <main style="position: relative; width: 100%; max-width: 440px; background: var(--paper-50); border-radius: 20px; box-shadow: 0 1px 2px rgba(31,27,22,.06), 0 16px 40px rgba(31,27,22,.14); padding: 32px 32px 28px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px">
+    <svg width="132" height="72" viewBox="0 0 132 72" aria-hidden="true"><path d="M12 56 C40 14 72 66 100 26" fill="none" stroke="#a8401f" stroke-width="3" stroke-dasharray="1 8" stroke-linecap="round"></path><circle cx="12" cy="56" r="7" fill="#fffdf8" stroke="#8c8170" stroke-width="2"></circle><circle cx="112" cy="20" r="13" fill="#fffdf8" stroke="#d9cfbc" stroke-width="2" stroke-dasharray="4 4"></circle><path d="M108 16a4.5 4.5 0 1 1 6 4.2c-1 .5-2 1.3-2 2.6" fill="none" stroke="#8c8170" stroke-width="2" stroke-linecap="round"></path><circle cx="112" cy="27" r="1.2" fill="#8c8170"></circle></svg>
+    <h1 style="margin: 8px 0 0; font: 600 22px/28px var(--font-serif); font-variation-settings: 'opsz' 32; color: var(--ink)">Ce circuit est introuvable</h1>
+    <p style="margin: 0; font: 400 15px/22px var(--font-sans); color: var(--ink-muted)">Aucun circuit ne correspond au code <span class="tnum" style="font-weight: 600; letter-spacing: .08em; color: var(--ink)">K7PQ2MXZ</span>. Le lien a peut-être été mal copié : vérifiez-le, ou saisissez le code ci-dessous.</p>
+    <form style="width: 100%; margin-top: 10px; display: flex; flex-direction: column; gap: 6px; text-align: left">
+      <label for="code" style="font: 600 12px/16px var(--font-sans); color: var(--ink-muted); padding-left: 4px">Code de partage</label>
+      <div style="display: flex; align-items: center; gap: 6px; padding: 4px 4px 4px 16px; background: var(--paper-100); border-radius: 999px">
+        <input id="code" maxlength="8" autocomplete="off" aria-describedby="code-aide" placeholder="K7PQ2MXA" class="tnum" style="flex: 1; min-width: 0; min-height: 40px; border: 0; background: none; outline-offset: 4px; font: 600 17px/22px var(--font-sans); letter-spacing: .14em; text-transform: uppercase; color: var(--ink)">
+        <button type="submit" class="atl-btn atl-btn--primary" style="border-radius: 999px">Ouvrir</button>
+      </div>
+      <p id="code-aide" style="margin: 0; padding-left: 4px; font: 400 12px/16px var(--font-sans); color: var(--ink-subtle)">8 lettres ou chiffres</p>
+    </form>
+    <a href="#" class="atl-btn atl-btn--ghost atl-btn--sm" style="margin-top: 6px; border-radius: 999px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 6.5 9 4l6 2.5L20.5 4v13.5L15 20l-6-2.5-5.5 2.5z"></path><path d="M9 4v13.5M15 6.5V20"></path></svg>Explorer la carte</a>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

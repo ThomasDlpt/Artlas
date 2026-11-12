@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Artlas · Administration</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/artlas/tokens.css">
+<link rel="stylesheet" href="ds/artlas/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&amp;family=Source+Sans+3:ital,wght@0,400..700;1,400..700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f7f3ea}
+a{color:#a8401f}a:hover{color:#86321a}
+</style>
+</helmet>
+<div class="atl" style="min-height: 1400px; position: relative; background: var(--paper-100)">
+  <header style="display: flex; align-items: center; gap: 12px; padding: 16px 24px; flex-wrap: wrap">
+    <a class="atl-logo" href="#" style="font-size: 20px">Art<i>las</i></a>
+    <span style="padding: 3px 10px; border-radius: 999px; background: var(--paper-200); font: 600 12px/16px var(--font-sans); color: var(--ink-muted)">Administration</span>
+    <div style="margin-left: auto; display: flex; gap: 8px"><a href="#" class="atl-btn atl-btn--ghost atl-btn--sm" style="border-radius: 999px">Voir la carte</a><button class="atl-btn atl-btn--secondary atl-btn--sm" style="border-radius: 999px; border-color: var(--line)">Se déconnecter</button></div>
+  </header>
+
+  <main style="max-width: 1160px; margin: 0 auto; padding: 12px 24px 96px; display: flex; flex-direction: column; gap: 28px">
+
+    <!-- TableauSynchronisation -->
+    <section aria-labelledby="sync-titre" style="background: var(--paper-50); border-radius: 20px; box-shadow: 0 1px 2px rgba(31,27,22,.05), 0 8px 28px rgba(31,27,22,.08); padding: 24px 28px 12px">
+      <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 12px">
+        <div style="flex: 1 1 400px">
+          <h1 id="sync-titre" style="margin: 0; font: 600 24px/30px var(--font-serif); font-variation-settings: 'opsz' 36; color: var(--ink)">Synchronisation des données</h1>
+          <p style="margin: 4px 0 0; font: 400 14px/20px var(--font-sans); color: var(--ink-muted)">Basilic et DataTourisme · dernier passage aujourd’hui à <span class="tnum">9 h 14</span></p>
+        </div>
+        <button class="atl-btn atl-btn--primary" style="border-radius: 999px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19.5 8.5A8 8 0 0 0 5 7.5"></path><path d="M4.5 3.5v4h4"></path><path d="M4.5 15.5A8 8 0 0 0 19 16.5"></path><path d="M19.5 20.5v-4h-4"></path></svg>Lancer une synchronisation</button>
+      </div>
+      <div style="overflow-x: auto">
+        <table style="width: 100%; min-width: 820px; border-collapse: collapse; font: 400 15px/22px var(--font-sans)">
+          <caption class="sr-only">Journaux de synchronisation</caption>
+          <thead>
+            <tr style="text-align: left">
+              <th scope="col" style="padding: 10px 8px 10px 0; font: 600 12px/16px var(--font-sans); color: var(--ink-muted); border-bottom: 1px solid var(--line)">Date</th>
+              <th scope="col" style="padding: 10px 8px; font: 600 12px/16px var(--font-sans); color: var(--ink-muted); border-bottom: 1px solid var(--line)">Source</th>
+              <th scope="col" style="padding: 10px 8px; font: 600 12px/16px var(--font-sans); color: var(--ink-muted); text-align: right; border-bottom: 1px solid var(--line)">Ajouts</th>
+              <th scope="col" style="padding: 10px 8px; font: 600 12px/16px var(--font-sans); color: var(--ink-muted); text-align: right; border-bottom: 1px solid var(--line)">Mises à jour</th>
+              <th scope="col" style="padding: 10px 8px; font: 600 12px/16px var(--font-sans); color: var(--ink-muted); text-align: right; border-bottom: 1px solid var(--line)">Rejets</th>
+              <th scope="col" style="padding: 10px 8px; font: 600 12px/16px var(--font-sans); color: var(--ink-muted); border-bottom: 1px solid var(--line)">Statut</th>
+              <th scope="col" style="padding: 10px 0 10px 8px; font: 600 12px/16px var(--font-sans); color: var(--ink-muted); text-align: right; border-bottom: 1px solid var(--line)"><span class="sr-only">Détail</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{logs}}" as="r" hint-placeholder-count="4">
+              <tr style="{{r.rowStyle}}">
+                <td class="tnum" style="padding: 12px 8px 12px 0; white-space: nowrap; color: var(--ink)">{{r.date}}</td>
+                <td style="padding: 12px 8px; font-weight: 600">{{r.source}}</td>
+                <td class="tnum" style="padding: 12px 8px; text-align: right">{{r.ajouts}}</td>
+                <td class="tnum" style="padding: 12px 8px; text-align: right">{{r.maj}}</td>
+                <td class="tnum" style="{{r.rejetStyle}}">{{r.rejets}}</td>
+                <td style="padding: 12px 8px"><span title="Statut API : {{r.code}}" style="display: flex; align-items: flex-start; gap: 10px"><span aria-hidden="true" style="{{r.dotStyle}}"></span><span><span style="display: block; font: 600 14px/20px var(--font-sans); color: var(--ink)">{{r.statut}}</span><span style="display: block; font: 400 13px/18px var(--font-sans); color: var(--ink-muted)">{{r.note}}</span></span></span></td>
+                <td style="padding: 6px 0 6px 8px; text-align: right">
+                  <sc-if value="{{r.hasErreurs}}" hint-placeholder-val="{{ true }}"><button class="atl-btn atl-btn--ghost atl-btn--sm" aria-expanded="{{r.expandedStr}}" onClick="{{r.toggle}}" style="border-radius: 999px">{{r.toggleLabel}}<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{r.chevronStyle}}"><path d="m6 9 6 6 6-6"></path></svg></button></sc-if>
+                </td>
+              </tr>
+              <sc-if value="{{r.expanded}}" hint-placeholder-val="{{ false }}">
+                <tr>
+                  <td colspan="7" style="padding: 0 0 14px; border-bottom: 1px solid var(--line)">
+                    <div style="{{r.detailStyle}}">
+                      <p style="margin: 0 0 8px; font: 600 13px/18px var(--font-sans); color: var(--ink)">{{r.detailTitre}}</p>
+                      <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px">
+                        <sc-for list="{{r.erreurs}}" as="e" hint-placeholder-count="3"><li style="display: grid; grid-template-columns: 110px 1fr; gap: 12px; font: 400 14px/20px var(--font-sans)"><span class="tnum" style="color: var(--ink-muted)">{{e.ref}}</span><span style="color: var(--ink)">{{e.msg}}</span></li></sc-for>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+              </sc-if>
+            </sc-for>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- FormulaireCorrectionLieu -->
+    <section aria-labelledby="corr-titre" style="background: var(--paper-50); border-radius: 20px; box-shadow: 0 1px 2px rgba(31,27,22,.05), 0 8px 28px rgba(31,27,22,.08); padding: 24px 28px 28px; display: flex; flex-direction: column; gap: 20px">
+      <div>
+        <h2 id="corr-titre" style="margin: 0; font: 600 24px/30px var(--font-serif); font-variation-settings: 'opsz' 36; color: var(--ink)">Corriger un lieu</h2>
+        <p style="margin: 4px 0 0; font: 400 14px/20px var(--font-sans); color: var(--ink-muted)">Vos corrections passent avant la source, jusqu’à sa prochaine modification.</p>
+      </div>
+
+      <div style="max-width: 520px">
+        <label for="adm-q" class="sr-only">Rechercher un lieu</label>
+        <div style="display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 16px; border-radius: 999px; background: var(--paper-100); color: var(--ink-muted)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg><input id="adm-q" role="combobox" aria-expanded="false" defaultValue="Opéra de Rennes" style="flex: 1; min-width: 0; border: 0; background: none; outline-offset: 4px; font: 400 16px/22px var(--font-sans); color: var(--ink)"></div>
+      </div>
+
+      <div style="display: flex; gap: 28px; flex-wrap: wrap; align-items: flex-start">
+        <form aria-label="Champs du lieu" style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap">
+            <span data-type="THEATRE" style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px 4px 8px; border-radius: 999px; background: var(--t); color: var(--ink-inverse); font: 600 13px/18px var(--font-sans)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h14v7a7 7 0 0 1-14 0z"></path><path d="M8.3 8.8h2.2M13.5 8.8h2.2"></path><path d="M9 13.8a4 4 0 0 0 6 0"></path></svg>Théâtre</span>
+            <span style="font: 400 13px/18px var(--font-sans); color: var(--ink-subtle)">DataTourisme · mis à jour le <span class="tnum">12 sept. 2026</span></span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+            <div style="grid-column: span 2"><label for="l-nom" style="display: block; font: 600 12px/16px var(--font-sans); color: var(--ink-muted); margin: 0 0 6px 4px">Nom</label><input id="l-nom" defaultValue="Opéra de Rennes" style="width: 100%; box-sizing: border-box; min-height: 44px; padding: 0 14px; background: var(--paper-100); border: 0; border-radius: 10px; font: 400 16px/22px var(--font-sans); color: var(--ink)"></div>
+            <div style="grid-column: span 2"><label for="l-desc" style="display: block; font: 600 12px/16px var(--font-sans); color: var(--ink-muted); margin: 0 0 6px 4px">Description</label><textarea id="l-desc" rows="3" defaultValue="Salle à l’italienne du XIXᵉ siècle face à l’hôtel de ville : opéra, concerts et danse." style="width: 100%; box-sizing: border-box; padding: 10px 14px; resize: vertical; background: var(--paper-100); border: 0; border-radius: 10px; font: 400 16px/22px var(--font-sans); color: var(--ink)"></textarea></div>
+            <div><label for="l-type" style="display: block; font: 600 12px/16px var(--font-sans); color: var(--ink-muted); margin: 0 0 6px 4px">Type</label><select id="l-type" style="width: 100%; min-height: 44px; padding: 0 12px; background: var(--paper-100); border: 0; border-radius: 10px; font: 400 16px/22px var(--font-sans); color: var(--ink)"><option>Théâtre</option><option>Musée</option><option>Monument</option><option>Lieu d’exposition</option><option>Cinéma</option><option>Bibliothèque</option><option>Autre lieu</option></select></div>
+            <div><label for="l-site" style="display: block; font: 600 12px/16px var(--font-sans); color: var(--ink-muted); margin: 0 0 6px 4px">Site web</label><input id="l-site" type="url" defaultValue="https://www.opera-rennes.fr" style="width: 100%; box-sizing: border-box; min-height: 44px; padding: 0 14px; background: var(--paper-100); border: 0; border-radius: 10px; font: 400 16px/22px var(--font-sans); color: var(--ink)"></div>
+            <div style="grid-column: span 2; display: flex; gap: 12px; align-items: flex-end">
+              <div style="width: 64px; height: 64px; flex: none; border-radius: 12px; display: grid; place-items: center; color: var(--type-theatre); background: var(--paper-200)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="1"></rect><path d="m3.5 16 5-5 4 4 2.5-2.5 5.5 5.5"></path><circle cx="15.5" cy="9" r="1.5"></circle></svg></div>
+              <div style="flex: 1; min-width: 0"><label for="l-photo" style="display: block; font: 600 12px/16px var(--font-sans); color: var(--ink-muted); margin: 0 0 6px 4px">Photo · adresse de l’image</label><input id="l-photo" type="url" placeholder="https://…" style="width: 100%; box-sizing: border-box; min-height: 44px; padding: 0 14px; background: var(--paper-100); border: 0; border-radius: 10px; font: 400 16px/22px var(--font-sans); color: var(--ink)"></div>
+            </div>
+          </div>
+          <fieldset style="border: 0; padding: 0; margin: 4px 0 0">
+            <legend style="padding: 0; margin: 0 0 8px 4px; font: 600 15px/22px var(--font-sans); color: var(--ink)">Adresse</legend>
+            <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
+              <div style="grid-column: span 4"><label for="l-rue" style="display: block; font: 600 12px/16px var(--font-sans); color: var(--ink-muted); margin: 0 0 6px 4px">Rue</label><input id="l-rue" defaultValue="Place de la Mairie" style="width: 100%; box-sizing: border-box; min-height: 44px; padding: 0 14px; background: var(--paper-100); border: 0; border-radius: 10px; font: 400 16px/22px var(--font-sans); color: var(--ink)"></div>
+              <div><label for="l-cp" style="display: block; font: 600 12px/16px var(--font-sans); color: var(--ink-muted); margin: 0 0 6px 4px">Code postal</label><input id="l-cp" defaultValue="35000" inputmode="numeric" class="tnum" style="width: 100%; box-sizing: border-box; min-height: 44px; padding: 0 14px; background: var(--paper-100); border: 0; border-radius: 10px; font: 400 16px/22px var(--font-sans); color: var(--ink)"></div>
+              <div style="grid-column: span 3"><label for="l-commune" style="display: block; font: 600 12px/16px var(--font-sans); color: var(--ink-muted); margin: 0 0 6px 4px">Commune</label><input id="l-commune" defaultValue="Rennes (35238)" style="width: 100%; box-sizing: border-box; min-height: 44px; padding: 0 14px; background: var(--paper-100); border: 0; border-radius: 10px; font: 400 16px/22px var(--font-sans); color: var(--ink)"></div>
+            </div>
+          </fieldset>
+          <div style="display: flex; gap: 8px; padding-top: 6px"><button type="button" class="atl-btn atl-btn--primary" style="border-radius: 999px">Enregistrer les corrections</button><button type="button" class="atl-btn atl-btn--ghost" style="border-radius: 999px">Annuler</button></div>
+        </form>
+
+        <aside aria-label="Visibilité du lieu" style="flex: 1 1 300px; min-width: 0; padding: 18px; border-radius: 16px; background: var(--paper-100); display: flex; flex-direction: column; gap: 10px">
+          <h3 style="margin: 0; font: 600 15px/22px var(--font-sans); color: var(--ink)">Visibilité</h3>
+          <p style="margin: 0; font: 400 14px/20px var(--font-sans); color: var(--ink-muted)">Un lieu masqué disparaît de la carte, des résultats et des circuits partagés. Ses données restent en base.</p>
+          <sc-if value="{{confirmClosed}}" hint-placeholder-val="{{ false }}"><button class="atl-btn atl-btn--secondary atl-btn--sm" onClick="{{askHide}}" style="align-self: flex-start; border-radius: 999px; border-color: var(--line); color: var(--error)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"></path><path d="M10.6 5.6A9.6 9.6 0 0 1 12 5.5c5 0 8.5 4.5 9.5 6.5a13 13 0 0 1-2.6 3.4M6.6 6.6C4.4 8 3 10.5 2.5 12c1 2 4.5 6.5 9.5 6.5 1.7 0 3.2-.5 4.5-1.2"></path><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path></svg>Masquer ce lieu</button></sc-if>
+          <sc-if value="{{confirmOpen}}" hint-placeholder-val="{{ true }}">
+            <div role="alertdialog" aria-labelledby="conf-t" aria-describedby="conf-d" style="margin-top: 4px; padding: 14px; border-radius: 12px; background: var(--paper-50); box-shadow: 0 1px 2px rgba(31,27,22,.06), 0 6px 18px rgba(31,27,22,.10); display: flex; flex-direction: column; gap: 10px">
+              <p id="conf-t" style="margin: 0; font: 600 15px/20px var(--font-sans); color: var(--ink)">Masquer « Opéra de Rennes » ?</p>
+              <p id="conf-d" style="margin: 0; font: 400 14px/20px var(--font-sans); color: var(--ink-muted)">Le public ne le verra plus. Vous pourrez le réafficher d’ici à tout moment.</p>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap"><button class="atl-btn atl-btn--primary atl-btn--sm" style="background: var(--error); border-radius: 999px" onClick="{{cancelHide}}">Oui, masquer</button><button class="atl-btn atl-btn--ghost atl-btn--sm" style="border-radius: 999px" onClick="{{cancelHide}}">Annuler</button></div>
+            </div>
+          </sc-if>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <div aria-live="polite" style="position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%)">
+    <div role="status" style="display: inline-flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 18px; border-radius: 999px; background: var(--ink); color: var(--ink-inverse); box-shadow: 0 6px 20px rgba(31,27,22,.22); font: 400 15px/20px var(--font-sans); white-space: nowrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9fd0a9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 12.5 4 4 8-9"></path></svg>Synchronisation terminée pour les 2 sources</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1400}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const s = Object.assign({ open: ['dt-11'], confirm: true }, this.state || {});
+    const LOGS = [
+      { id: 'dt-11', date: '11/11/2026 · 9 h 14', source: 'DataTourisme', ajouts: 37, maj: 402, rejets: 6, statut: 'PARTIEL', erreurs: [
+        { ref: 'Ligne 1 284', msg: 'Code postal manquant pour « Chapelle de Bonne-Nouvelle »' },
+        { ref: 'Ligne 2 017', msg: 'Coordonnées hors de France (id DT-88412)' },
+        { ref: 'Ligne 2 940', msg: 'Type « PATRIMOINE_IMMATERIEL » inconnu, lieu ignoré' },
+        { ref: '3 autres', msg: 'Identifiants externes en double' }
+      ] },
+      { id: 'b-11', date: '11/11/2026 · 9 h 12', source: 'Basilic', ajouts: 12, maj: 148, rejets: 0, statut: 'SUCCES', erreurs: [] },
+      { id: 'dt-04', date: '04/11/2026 · 9 h 10', source: 'DataTourisme', ajouts: '—', maj: '—', rejets: '—', statut: 'ECHEC', erreurs: [
+        { ref: '9 h 10', msg: 'Le flux n’a pas répondu en 60 s. Rien n’a été modifié.' }
+      ] },
+      { id: 'b-04', date: '04/11/2026 · 9 h 08', source: 'Basilic', ajouts: 3, maj: 96, rejets: 1, statut: 'PARTIEL', erreurs: [
+        { ref: 'Ligne 412', msg: 'Nom vide (id B-0098812)' }
+      ] }
+    ];
+    const C = { SUCCES: ['success', 'Terminé'], PARTIEL: ['warning', 'Terminé, à vérifier'], ECHEC: ['error', 'Interrompu'] };
+    const logs = LOGS.map((l, i) => {
+      const c = C[l.statut]; const ex = s.open.indexOf(l.id) >= 0;
+      return Object.assign({}, l, {
+        statut: c[1],
+        ok: l.statut === 'SUCCES', partiel: l.statut === 'PARTIEL', echec: l.statut === 'ECHEC',
+        rowStyle: ex ? '' : (i < LOGS.length - 1 ? 'border-bottom: 1px solid var(--line)' : ''),
+        code: l.statut,
+        note: l.statut === 'ECHEC' ? 'Aucune donnée modifiée' : (l.rejets > 0 ? l.rejets + (l.rejets > 1 ? ' lignes écartées' : ' ligne écartée') : 'Rien à signaler'),
+        dotStyle: 'flex: none; width: 10px; height: 10px; margin-top: 5px; border-radius: 50%; ' + (l.statut === 'SUCCES' ? 'background: var(--success)' : (l.statut === 'PARTIEL' ? 'background: linear-gradient(90deg, var(--warning) 50%, transparent 50%); box-shadow: inset 0 0 0 1.5px var(--warning)' : 'box-shadow: inset 0 0 0 2px var(--error)')),
+        rejetStyle: 'padding: 12px 8px; text-align: right; ' + (l.rejets > 0 ? 'color: var(--error); font-weight: 600' : 'color: var(--ink-subtle)'),
+        hasErreurs: l.erreurs.length > 0,
+        expanded: ex, expandedStr: ex ? 'true' : 'false', toggleLabel: ex ? 'Masquer' : 'Détails',
+        chevronStyle: ex ? 'transform: rotate(180deg); transition: transform .2s' : 'transition: transform .2s',
+        detailTitre: l.statut === 'ECHEC' ? 'Pourquoi ça a échoué' : l.rejets + (l.rejets > 1 ? ' lignes mises de côté' : ' ligne mise de côté'),
+        detailStyle: 'padding: 14px 16px; border-radius: 12px; background: var(--' + c[0] + '-tint)',
+        toggle: () => this.setState({ open: ex ? s.open.filter((x) => x !== l.id) : s.open.concat([l.id]) })
+      });
+    });
+    return {
+      logs: logs,
+      confirmOpen: s.confirm, confirmClosed: !s.confirm,
+      askHide: () => this.setState({ confirm: true }),
+      cancelHide: () => this.setState({ confirm: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

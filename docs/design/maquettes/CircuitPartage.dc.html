@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Artlas · Circuit partagé</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/artlas/tokens.css">
+<link rel="stylesheet" href="ds/artlas/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&amp;family=Source+Sans+3:ital,wght@0,400..700;1,400..700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f2f1ee}
+a{color:#a8401f}a:hover{color:#86321a}
+</style>
+</helmet>
+<div class="atl" style="position: relative; height: 900px; overflow: hidden; background: var(--map-ground)">
+  <div class="atl-map" role="region" aria-label="Carte du circuit" style="position: absolute; inset: 0">
+    <svg class="atl-map__tiles" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <rect width="1440" height="900" fill="#f2f1ee"></rect>
+      <g fill="#e8e6e1"><rect x="160" y="120" width="220" height="190" rx="2"></rect><rect x="820" y="560" width="230" height="200" rx="2"></rect><rect x="1010" y="90" width="190" height="160" rx="2"></rect><rect x="420" y="620" width="160" height="150" rx="2"></rect></g>
+      <g fill="#e3ebdf"><path d="M40 640 q140 -70 280 0 t140 170 v120 h-420z"></path><circle cx="1180" cy="400" r="70"></circle><rect x="700" y="160" width="120" height="90" rx="40"></rect></g>
+      <path d="M-20 470 C300 400 480 520 760 470 C1040 420 1200 380 1460 420" fill="none" stroke="#d4dadc" stroke-width="16"></path>
+      <g fill="none" stroke="#ffffff" stroke-linecap="round"><path d="M0 270 L1440 200" stroke-width="10"></path><path d="M430 0 L600 900" stroke-width="10"></path><path d="M890 0 C840 360 1000 540 950 900" stroke-width="8"></path><path d="M0 760 L1440 690" stroke-width="7"></path><path d="M170 0 L280 900" stroke-width="5"></path><path d="M1240 0 L1290 900" stroke-width="5"></path><path d="M0 560 L1440 520" stroke-width="4"></path></g>
+      <g fill="none" stroke="#dcd9d3" stroke-width="1"><path d="M0 60 L1440 30"></path><path d="M0 180 L1440 150"></path><path d="M0 340 L1440 310"></path><path d="M0 420 L1440 390"></path><path d="M0 640 L1440 610"></path><path d="M0 840 L1440 810"></path><path d="M60 0 L80 900"></path><path d="M340 0 L360 900"></path><path d="M520 0 L540 900"></path><path d="M700 0 L720 900"></path><path d="M780 0 L800 900"></path><path d="M1080 0 L1100 900"></path><path d="M1360 0 L1380 900"></path></g>
+      <g font-family="Source Sans 3, sans-serif" fill="#8a8780" font-size="13" letter-spacing=".14em"><text x="640" y="452">LA VILAINE</text><text x="712" y="150">THABOR</text><text x="980" y="800">SUD-GARE</text></g>
+    </svg>
+    <svg class="atl-map__tiles" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polyline points="52,30 55,36 60,41 66,50" fill="none" stroke="#a8401f" stroke-width="3" stroke-dasharray="1 8" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></polyline></svg>
+    <div class="atl-pin" style="left: 52%; top: 30%"><button class="atl-marker" data-type="MONUMENT" aria-label="Monument, Parlement de Bretagne, étape 1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 21V9h10v12"></path><path d="M6 9V4.5h2.5v2h2.3v-2h2.4v2h2.3v-2H18V9"></path><path d="M10.5 21v-3.5a1.5 1.5 0 0 1 3 0V21"></path><path d="M4.5 21h15"></path></svg><span class="atl-marker__step">1</span></button></div>
+    <div class="atl-pin" style="left: 66%; top: 50%"><button class="atl-marker" data-type="MUSEE" aria-label="Musée, Musée des Beaux-Arts de Rennes, étape 2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9.5 12 4l9 5.5"></path><path d="M4 9.5h16"></path><path d="M6.5 12.5v5M10.2 12.5v5M13.8 12.5v5M17.5 12.5v5"></path><path d="M3.5 20.5h17"></path></svg><span class="atl-marker__step">2</span></button></div>
+    <div style="position: absolute; left: 59%; top: 40%; transform: translate(-50%, -50%); background: var(--paper-50); color: var(--ink-muted); padding: 3px 10px; border-radius: 999px; box-shadow: 0 1px 2px rgba(31,27,22,.08), 0 3px 10px rgba(31,27,22,.10); font: 600 12px/16px var(--font-sans); white-space: nowrap"><span class="tnum">0,9 km · 11 min</span></div>
+  </div>
+
+  <!-- Panneau lecture seule -->
+  <aside aria-label="Circuit partagé" style="position: absolute; left: 16px; top: 16px; bottom: 16px; width: 400px; max-width: calc(100% - 32px); background: var(--paper-50); border-radius: 16px; box-shadow: 0 1px 2px rgba(31,27,22,.06), 0 10px 32px rgba(31,27,22,.13); overflow-y: auto; display: flex; flex-direction: column">
+    <div style="display: flex; align-items: center; gap: 10px; padding: 14px 20px 6px">
+      <a class="atl-logo" href="#" style="font-size: 20px">Art<i>las</i></a>
+      <span style="margin-left: auto; display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; background: var(--paper-100); font: 600 12px/16px var(--font-sans); color: var(--ink-muted)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3.5"></path><path d="m7.5 8 4.5-4.5L16.5 8"></path><path d="M5 12.5V19a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 19v-6.5"></path></svg>Circuit partagé</span>
+    </div>
+    <div style="padding: 12px 20px 16px; display: flex; flex-direction: column; gap: 6px">
+      <h1 style="margin: 0; font: 600 24px/30px var(--font-serif); font-variation-settings: 'opsz' 36; letter-spacing: -.005em; color: var(--ink)">Rennes, cœur historique</h1>
+      <p style="margin: 0; font: italic 400 16px/24px var(--font-serif); color: var(--ink-muted)">Du Parlement aux quais de la Vilaine, une demi-journée à pied.</p>
+      <p style="margin: 4px 0 0; font: 400 13px/18px var(--font-sans); color: var(--ink-subtle)">Code <span class="tnum" style="font-weight: 600; letter-spacing: .08em; color: var(--ink-muted)">K7PQ2MXA</span> · en lecture seule</p>
+    </div>
+
+    <div role="group" aria-label="Récapitulatif" style="margin: 0 16px; padding: 12px 4px; border-radius: 12px; background: var(--paper-100); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+      <div style="padding: 0 12px"><span style="display: block; font: 600 12px/16px var(--font-sans); color: var(--ink-muted)">Distance</span><span class="tnum" style="font: 600 20px/26px var(--font-sans)">0,9 km</span></div>
+      <div style="padding: 0 12px; border-left: 1px solid var(--line)"><span style="display: block; font: 600 12px/16px var(--font-sans); color: var(--ink-muted)">Durée</span><span class="tnum" style="font: 600 20px/26px var(--font-sans)">1 h 56</span></div>
+      <div style="padding: 0 12px; border-left: 1px solid var(--line)"><span style="display: block; font: 600 12px/16px var(--font-sans); color: var(--ink-muted)">Départ</span><span style="font: 600 16px/26px var(--font-sans)">Rennes</span></div>
+    </div>
+
+    <ol aria-label="Étapes" style="list-style: none; margin: 0; padding: 14px 0 6px">
+      <li style="display: flex; gap: 12px; align-items: center; padding: 8px 20px"><span class="atl-step__n tnum" style="width: 28px; height: 28px; font-size: 12px; flex: none">1</span><span style="flex: 1; min-width: 0"><span style="display: block; font: 600 16px/21px var(--font-serif); color: var(--ink)">Parlement de Bretagne</span><span style="font: 400 13px/18px var(--font-sans); color: var(--ink-muted)">Monument · Monument historique</span></span><span class="tnum" style="font: 600 13px/18px var(--font-sans); color: var(--ink-muted); white-space: nowrap">45 min</span></li>
+      <li aria-hidden="true" style="margin-left: 33px; padding: 4px 0 4px 21px; border-left: 2px dotted var(--accent); display: flex; gap: 6px; align-items: center; font: 600 12px/16px var(--font-sans); color: var(--ink-muted)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4.5" r="1.6"></circle><path d="m10 21 2-6 2.5 2.5V21"></path><path d="m8 11 3-3.5h2.5l2 3.5 2.5 1"></path></svg><span class="tnum">0,9 km · 11 min à pied</span></li>
+      <li style="display: flex; gap: 12px; align-items: center; padding: 8px 20px"><span class="atl-step__n tnum" style="width: 28px; height: 28px; font-size: 12px; flex: none">2</span><span style="flex: 1; min-width: 0"><span style="display: block; font: 600 16px/21px var(--font-serif); color: var(--ink)">Musée des Beaux-Arts de Rennes</span><span style="font: 400 13px/18px var(--font-sans); color: var(--ink-muted)">Musée · Musée de France</span></span><span class="tnum" style="font: 600 13px/18px var(--font-sans); color: var(--ink-muted); white-space: nowrap">60 min</span></li>
+    </ol>
+    <p style="margin: 0 20px; font: 400 12px/16px var(--font-sans); color: var(--ink-subtle)">105 min de visite et 11 min de marche · Ille-et-Vilaine, Bretagne</p>
+
+    <div style="flex: 1"></div>
+    <div style="padding: 16px; display: flex; flex-direction: column; gap: 8px">
+      <button class="atl-btn atl-btn--primary" style="border-radius: 999px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="11" height="11" rx="1.5"></rect><path d="M15.5 8.5V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v8A1.5 1.5 0 0 0 6 15.5h2.5"></path></svg>Dupliquer et modifier</button>
+      <button class="atl-btn atl-btn--secondary" style="border-radius: 999px; border-color: var(--line)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3.5"></path><path d="m7.5 8 4.5-4.5L16.5 8"></path><path d="M5 12.5V19a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 19v-6.5"></path></svg>Copier le lien</button>
+      <p style="margin: 2px 0 0; text-align: center; font: 400 12px/16px var(--font-sans); color: var(--ink-muted)">La copie devient votre circuit ; l’original ne bouge pas.</p>
+    </div>
+  </aside>
+
+  <a class="atl-btn atl-btn--map" href="#" style="position: absolute; top: 16px; right: 16px; border-color: transparent; border-radius: 999px; box-shadow: 0 1px 2px rgba(31,27,22,.08), 0 3px 10px rgba(31,27,22,.10); text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 6.5 9 4l6 2.5L20.5 4v13.5L15 20l-6-2.5-5.5 2.5z"></path><path d="M9 4v13.5M15 6.5V20"></path></svg>Explorer la carte</a>
+  <div class="atl-map__zoom" style="right: 16px; bottom: 28px; top: auto; border: 0; border-radius: 12px; box-shadow: 0 1px 2px rgba(31,27,22,.08), 0 3px 10px rgba(31,27,22,.10)"><button aria-label="Zoomer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg></button><button aria-label="Dézoomer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path></svg></button></div>
+  <div class="atl-map__attrib">© OpenStreetMap contributors © CARTO</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

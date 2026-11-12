@@ -1,0 +1,82 @@
+/* Artlas — generated from tokens.json */
+:root, [data-theme="papier"] {
+  --paper-100: #f7f3ea;
+  --paper-50: #fffdf8;
+  --paper-200: #efe8d9;
+  --paper-300: #e4dac6;
+  --line: #d9cfbc;
+  --line-strong: #8c8170;
+  --ink: #1f1b16;
+  --ink-muted: #5b5247;
+  --ink-subtle: #6f6455;
+  --ink-inverse: #fffdf8;
+  --accent: #a8401f;
+  --accent-hover: #86321a;
+  --accent-tint: #f6e5dc;
+  --focus: #1a56b0;
+  --type-musee: #8a2846;
+  --type-monument: #7a5a12;
+  --type-exposition: #1d6b66;
+  --type-theatre: #5f3f8f;
+  --type-cinema: #1f4f8c;
+  --type-bibliotheque: #356428;
+  --type-autre: #4a4e57;
+  --success: #2e6b3c;
+  --success-tint: #e3f0e5;
+  --warning: #8a5300;
+  --warning-tint: #fbefd6;
+  --error: #b0261b;
+  --error-tint: #fbe5e2;
+  --info: #1f5a96;
+  --info-tint: #e3edf8;
+  --map-ground: #f2f1ee;
+  --map-water: #d4dadc;
+  --scrim: rgba(31, 27, 22, 0.45);
+  --shadow-1: 0 1px 0 rgba(31, 27, 22, 0.06), 0 1px 3px rgba(31, 27, 22, 0.08);
+  --shadow-2: 0 2px 6px rgba(31, 27, 22, 0.10), 0 8px 24px rgba(31, 27, 22, 0.10);
+  --shadow-3: 0 -4px 24px rgba(31, 27, 22, 0.16);
+  --shadow-marker: 0 1px 2px rgba(31, 27, 22, 0.35);
+}
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-full: 999px;
+  --header-h: 64px;
+  --sidebar-w: 400px;
+  --detail-w: 420px;
+  --marker-size: 32px;
+  --marker-size-active: 40px;
+  --touch-min: 44px;
+  --icon-size: 20px;
+  --z-map-controls: 800;
+  --z-panel: 900;
+  --z-overlay: 1000;
+  --z-toast: 1100;
+  --font-serif: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --font-sans: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+}
+.display { font-family: var(--font-serif); font-size: 56px; line-height: 60px; font-weight: 600; letter-spacing: -0.02em; font-variation-settings: 'opsz' 96; }
+.h1 { font-family: var(--font-serif); font-size: 40px; line-height: 46px; font-weight: 600; letter-spacing: -0.015em; font-variation-settings: 'opsz' 72; }
+.h2 { font-family: var(--font-serif); font-size: 30px; line-height: 36px; font-weight: 600; letter-spacing: -0.01em; font-variation-settings: 'opsz' 48; }
+.h3 { font-family: var(--font-serif); font-size: 23px; line-height: 30px; font-weight: 600; letter-spacing: -0.005em; font-variation-settings: 'opsz' 32; }
+.place-name { font-family: var(--font-serif); font-size: 19px; line-height: 24px; font-weight: 600; letter-spacing: 0em; font-variation-settings: 'opsz' 24; }
+.quote { font-family: var(--font-serif); font-size: 17px; line-height: 26px; font-weight: 400; font-style: italic; font-variation-settings: 'opsz' 18; }
+.h4 { font-family: var(--font-sans); font-size: 17px; line-height: 24px; font-weight: 700; letter-spacing: 0em; }
+.body-lg { font-family: var(--font-sans); font-size: 17px; line-height: 26px; font-weight: 400; }
+.body { font-family: var(--font-sans); font-size: 15px; line-height: 22px; font-weight: 400; }
+.body-strong { font-family: var(--font-sans); font-size: 15px; line-height: 22px; font-weight: 600; }
+.small { font-family: var(--font-sans); font-size: 13px; line-height: 18px; font-weight: 400; }
+.caption { font-family: var(--font-sans); font-size: 12px; line-height: 16px; font-weight: 400; letter-spacing: 0.01em; }
+.label { font-family: var(--font-sans); font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.08em; }
+.num { font-family: var(--font-sans); font-size: 15px; line-height: 20px; font-weight: 600; }
+.num-lg { font-family: var(--font-sans); font-size: 28px; line-height: 32px; font-weight: 600; letter-spacing: -0.01em; }

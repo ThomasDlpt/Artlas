@@ -1,0 +1,123 @@
+/* Artlas — tokens CSS
+   À importer une fois (ex. dans main.jsx) avant les styles des composants.
+   Source : maquette Artlas, novembre 2026. */
+
+:root {
+  /* Papier et encre */
+  --color-paper-50:  #fffdf8;  /* surfaces, panneaux */
+  --color-paper-100: #f7f3ea;  /* fond de page, champs */
+  --color-paper-200: #efe8d9;  /* survol, retraits */
+  --color-paper-300: #e4dac6;  /* désactivé */
+  --color-line:        #d9cfbc;
+  --color-line-strong: #8c8170;
+  --color-ink:         #1f1b16;
+  --color-ink-muted:   #5b5247;
+  --color-ink-subtle:  #6f6455;
+  --color-ink-inverse: #fffdf8;
+
+  /* Action : une seule couleur */
+  --color-accent:       #a8401f;  /* garance */
+  --color-accent-hover: #86321a;
+  --color-accent-tint:  #f6e5dc;
+  --color-focus:        #1a56b0;
+
+  /* Types de lieu (code API) */
+  --color-type-musee:        #8a2846;
+  --color-type-monument:     #7a5a12;
+  --color-type-exposition:   #1d6b66;
+  --color-type-theatre:      #5f3f8f;
+  --color-type-cinema:       #1f4f8c;
+  --color-type-bibliotheque: #356428;
+  --color-type-autre:        #4a4e57;
+
+  /* États */
+  --color-success: #2e6b3c;  --color-success-tint: #e3f0e5;
+  --color-warning: #8a5300;  --color-warning-tint: #fbefd6;
+  --color-error:   #b0261b;  --color-error-tint:   #fbe5e2;
+  --color-info:    #1f5a96;  --color-info-tint:    #e3edf8;
+
+  /* Carte */
+  --color-map-ground: #f2f1ee;
+  --color-map-water:  #d4dadc;
+  --color-scrim: rgba(31, 27, 22, .45);
+  --color-toast: #1f1b16;      /* pilule de notification */
+
+  /* Typographie */
+  --font-serif: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --font-sans: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --font-size-display: 56px;
+  --font-size-h1: 40px;
+  --font-size-h2: 30px;
+  --font-size-h3: 23px;
+  --font-size-title: 24px;     /* titre de page (admin, partage) */
+  --font-size-place: 20px;     /* nom dans la fiche, nom du circuit */
+  --font-size-place-sm: 16px;  /* nom en liste */
+  --font-size-step: 15px;      /* nom d'étape */
+  --font-size-body-lg: 17px;
+  --font-size-body: 15px;
+  --font-size-small: 13px;
+  --font-size-caption: 12px;
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --letter-spacing-label: .08em;
+
+  /* Espacements : grille de 4 px */
+  --space-1: 4px;   --space-2: 8px;
+  --space-3: 12px;  --space-4: 16px;
+  --space-5: 24px;  --space-6: 32px;
+  --space-7: 48px;  --space-8: 64px;
+
+  /* Rayons */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-field: 10px;  /* champs de formulaire */
+  --radius-row: 10px;    /* ligne de liste */
+  --radius-card: 12px;   /* encadrés internes */
+  --radius-lg: 16px;     /* panneaux flottants */
+  --radius-xl: 20px;     /* cartes centrées, volet mobile */
+  --radius-full: 999px;  /* recherche, puces, boutons, bulles, marqueurs */
+
+  /* Ombres : seulement ce qui flotte au-dessus de la carte */
+  --shadow-float: 0 1px 2px rgba(31,27,22,.08), 0 4px 14px rgba(31,27,22,.12);
+  --shadow-panel: 0 1px 2px rgba(31,27,22,.06), 0 10px 32px rgba(31,27,22,.13);
+  --shadow-toast: 0 6px 20px rgba(31,27,22,.22);
+  --shadow-marker: 0 1px 2px rgba(31,27,22,.35);
+
+  /* Mise en page et composants de la carte */
+  --bubble-main: 56px;        /* bulle de menu principale */
+  --bubble-secondary: 46px;   /* bulles Filtres, Lieux visibles, Circuit */
+  --bubble-radius: 78px;      /* rayon de l'arc des bulles secondaires */
+  --panel-filtres-w: 280px;
+  --panel-lieux-w: 360px;
+  --panel-circuit-w: 360px;
+  --detail-w: 380px;          /* fiche du lieu */
+  --layer-switch: 72px;       /* vignette plan / satellite */
+  --marker-size: 32px;
+  --marker-size-active: 40px;
+  --touch-min: 44px;
+  --icon-size: 20px;
+  --z-map-controls: 800;
+  --z-panel: 940;
+  --z-overlay: 1000;
+  --z-toast: 1100;
+
+  /* Mouvement */
+  --duration-panel: 240ms;
+  --ease-panel: cubic-bezier(.2, .7, .2, 1);
+  --ease-pop: cubic-bezier(.3, 1.4, .5, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --duration-panel: 0ms; }
+}
+
+/* Couleur du type posée par data-type="MUSEE"… */
+[data-type="MUSEE"]           { --t: var(--color-type-musee); }
+[data-type="MONUMENT"]        { --t: var(--color-type-monument); }
+[data-type="LIEU_EXPOSITION"] { --t: var(--color-type-exposition); }
+[data-type="THEATRE"]         { --t: var(--color-type-theatre); }
+[data-type="CINEMA"]          { --t: var(--color-type-cinema); }
+[data-type="BIBLIOTHEQUE"]    { --t: var(--color-type-bibliotheque); }
+[data-type="AUTRE"]           { --t: var(--color-type-autre); }

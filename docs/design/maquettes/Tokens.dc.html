@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Artlas · Tokens CSS</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/artlas/tokens.css">
+<link rel="stylesheet" href="ds/artlas/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&amp;family=Source+Sans+3:ital,wght@0,400..700;1,400..700&amp;display=swap" rel="stylesheet">
+<style>body{margin:0;background:#f7f3ea}</style>
+</helmet>
+<div class="atl" style="width: 1200px; height: 1560px; box-sizing: border-box; padding: 48px; display: flex; flex-direction: column; gap: 20px">
+  <div style="display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; border-bottom: 1px solid var(--ink); padding-bottom: 14px">
+    <h1 class="h2" style="margin: 0">Tokens CSS</h1>
+    <span class="small" style="color: var(--ink-muted)">artlas-tokens.css · à importer une fois dans main.jsx, avant les styles des composants</span>
+  </div>
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; flex: 1; min-height: 0">
+<pre style="margin: 0; padding: 20px 22px; background: var(--ink); color: #efe8d9; border-radius: 8px; font: 400 13px/19px ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; overflow: hidden; white-space: pre">:root {
+  /* Papier et encre */
+  --color-paper-50:  #fffdf8;  /* surfaces, panneaux */
+  --color-paper-100: #f7f3ea;  /* fond de page */
+  --color-paper-200: #efe8d9;  /* survol, retraits */
+  --color-paper-300: #e4dac6;  /* désactivé */
+  --color-line:        #d9cfbc;
+  --color-line-strong: #8c8170;
+  --color-ink:         #1f1b16;
+  --color-ink-muted:   #5b5247;
+  --color-ink-subtle:  #6f6455;
+  --color-ink-inverse: #fffdf8;
+
+  /* Action : une seule couleur */
+  --color-accent:       #a8401f;  /* garance */
+  --color-accent-hover: #86321a;
+  --color-accent-tint:  #f6e5dc;
+  --color-focus:        #1a56b0;
+
+  /* Types de lieu (code API) */
+  --color-type-musee:        #8a2846;
+  --color-type-monument:     #7a5a12;
+  --color-type-exposition:   #1d6b66;
+  --color-type-theatre:      #5f3f8f;
+  --color-type-cinema:       #1f4f8c;
+  --color-type-bibliotheque: #356428;
+  --color-type-autre:        #4a4e57;
+
+  /* États */
+  --color-success: #2e6b3c;  --color-success-tint: #e3f0e5;
+  --color-warning: #8a5300;  --color-warning-tint: #fbefd6;
+  --color-error:   #b0261b;  --color-error-tint:   #fbe5e2;
+  --color-info:    #1f5a96;  --color-info-tint:    #e3edf8;
+
+  /* Carte */
+  --color-map-ground: #f2f1ee;
+  --color-map-water:  #d4dadc;
+  --color-scrim: rgba(31, 27, 22, .45);
+}
+
+/* Couleur du type posée par data-type="MUSEE"… */
+[data-type="MUSEE"]           { --t: var(--color-type-musee); }
+[data-type="MONUMENT"]        { --t: var(--color-type-monument); }
+[data-type="LIEU_EXPOSITION"] { --t: var(--color-type-exposition); }
+[data-type="THEATRE"]         { --t: var(--color-type-theatre); }
+[data-type="CINEMA"]          { --t: var(--color-type-cinema); }
+[data-type="BIBLIOTHEQUE"]    { --t: var(--color-type-bibliotheque); }
+[data-type="AUTRE"]           { --t: var(--color-type-autre); }</pre>
+<pre style="margin: 0; padding: 20px 22px; background: var(--ink); color: #efe8d9; border-radius: 8px; font: 400 13px/19px ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; overflow: hidden; white-space: pre">:root {
+  /* Typographie */
+  --font-serif: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --font-sans: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --font-size-display: 56px;
+  --font-size-h1: 40px;
+  --font-size-h2: 30px;
+  --font-size-h3: 23px;
+  --font-size-place: 20px;     /* nom dans la fiche */
+  --font-size-place-sm: 16px;  /* nom en liste, étape */
+  --font-size-body-lg: 17px;
+  --font-size-body: 15px;
+  --font-size-small: 13px;
+  --font-size-caption: 12px;
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --letter-spacing-label: .08em;
+
+  /* Espacements : grille de 4 px */
+  --space-1: 4px;   --space-2: 8px;
+  --space-3: 12px;  --space-4: 16px;
+  --space-5: 24px;  --space-6: 32px;
+  --space-7: 48px;  --space-8: 64px;
+
+  /* Rayons */
+  --radius-xs: 2px;     /* badges */
+  --radius-sm: 4px;     /* champs, admin */
+  --radius-md: 8px;     /* alertes, popups */
+  --radius-row: 10px;   /* ligne de liste */
+  --radius-lg: 16px;    /* panneaux flottants */
+  --radius-full: 999px; /* recherche, puces, boutons
+                           sur la carte, marqueurs */
+
+  /* Ombres : seulement au-dessus de la carte */
+  --shadow-float: 0 1px 2px rgba(31,27,22,.08),
+                  0 3px 10px rgba(31,27,22,.10);
+  --shadow-panel: 0 1px 2px rgba(31,27,22,.06),
+                  0 10px 32px rgba(31,27,22,.13);
+  --shadow-marker: 0 1px 2px rgba(31,27,22,.35);
+
+  /* Mise en page */
+  --panel-w: 400px;    /* liste des lieux visibles */
+  --detail-w: 380px;   /* fiche et circuit */
+  --marker-size: 32px;
+  --marker-size-active: 40px;
+  --touch-min: 44px;
+  --icon-size: 20px;
+  --z-map-controls: 800;
+  --z-panel: 900;
+  --z-overlay: 1000;
+  --z-toast: 1100;
+
+  /* Mouvement */
+  --duration-panel: 240ms;
+  --ease-panel: cubic-bezier(.2, .7, .2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --duration-panel: 0ms; }
+}</pre>
+  </div>
+  <p class="caption" style="margin: 0; color: var(--ink-muted)">Les noms reprennent ceux du design system Artlas avec le préfixe demandé (--color-…, --font-…, --space-…, --radius-…). Ajouts issus des retours sur la carte : --radius-row, --shadow-float, --shadow-panel, --font-size-place(-sm) et la durée d’apparition des panneaux.</p>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1200,"height":1560}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

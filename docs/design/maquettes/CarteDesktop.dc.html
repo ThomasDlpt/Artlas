@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Artlas · Carte</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/artlas/tokens.css">
+<link rel="stylesheet" href="ds/artlas/components/bundle.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Source+Sans+3:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f2f1ee}
+a{color:#a8401f}a:hover{color:#86321a}
+@keyframes atlInL{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+@keyframes atlInR{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+@keyframes atlDrop{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+@keyframes atlPop{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:none}}
+@keyframes atlGrow{from{opacity:0;transform:scaleX(.6);transform-origin:left}to{opacity:1;transform:none}}
+.atl-slide-l{animation:atlInL .24s cubic-bezier(.2,.7,.2,1)}
+.atl-slide-r{animation:atlInR .24s cubic-bezier(.2,.7,.2,1)}
+.atl-drop{animation:atlDrop .22s cubic-bezier(.2,.7,.2,1);transform-origin:top left}
+.atl-pop{animation:atlPop .26s cubic-bezier(.3,1.4,.5,1) both}
+.atl-grow{animation:atlGrow .2s ease-out}
+@media (prefers-reduced-motion: reduce){.atl-slide-l,.atl-slide-r,.atl-drop,.atl-pop,.atl-grow{animation:none}}
+</style>
+</helmet>
+<div class="atl" style="position: relative; height: 900px; overflow: hidden; background: var(--map-ground)">
+
+  <!-- CarteLeaflet (illustration ; en prod : tuiles Positron) -->
+  <div class="atl-map" role="region" aria-label="Carte des lieux" style="position: absolute; inset: 0">
+    <svg class="atl-map__tiles" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <rect width="1440" height="900" fill="#f2f1ee"/>
+      <g fill="#e8e6e1"><rect x="160" y="120" width="220" height="190" rx="2"/><rect x="820" y="560" width="230" height="200" rx="2"/><rect x="1010" y="90" width="190" height="160" rx="2"/><rect x="420" y="620" width="160" height="150" rx="2"/></g>
+      <g fill="#e3ebdf"><path d="M40 640 q140 -70 280 0 t140 170 v120 h-420z"/><circle cx="1180" cy="400" r="70"/><rect x="700" y="160" width="120" height="90" rx="40"/></g>
+      <path d="M-20 470 C300 400 480 520 760 470 C1040 420 1200 380 1460 420" fill="none" stroke="#d4dadc" stroke-width="16"/>
+      <g fill="none" stroke="#ffffff" stroke-linecap="round"><path d="M0 270 L1440 200" stroke-width="10"/><path d="M430 0 L600 900" stroke-width="10"/><path d="M890 0 C840 360 1000 540 950 900" stroke-width="8"/><path d="M0 760 L1440 690" stroke-width="7"/><path d="M170 0 L280 900" stroke-width="5"/><path d="M1240 0 L1290 900" stroke-width="5"/><path d="M0 560 L1440 520" stroke-width="4"/></g>
+      <g fill="none" stroke="#dcd9d3" stroke-width="1"><path d="M0 60 L1440 30"/><path d="M0 180 L1440 150"/><path d="M0 340 L1440 310"/><path d="M0 420 L1440 390"/><path d="M0 640 L1440 610"/><path d="M0 840 L1440 810"/><path d="M60 0 L80 900"/><path d="M340 0 L360 900"/><path d="M520 0 L540 900"/><path d="M700 0 L720 900"/><path d="M780 0 L800 900"/><path d="M1080 0 L1100 900"/><path d="M1360 0 L1380 900"/></g>
+      <g font-family="Source Sans 3, sans-serif" fill="#8a8780" font-size="13" letter-spacing=".14em"><text x="640" y="452">LA VILAINE</text><text x="712" y="150">THABOR</text><text x="980" y="800">SUD-GARE</text><text x="120" y="110">VILLEJEAN</text></g>
+    </svg>
+
+    <!-- Vue satellite (illustration ; en prod : orthophotos IGN ou équivalent) -->
+    <sc-if value="{{satOn}}" hint-placeholder-val="{{ false }}">
+      <svg class="atl-map__tiles" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <pattern id="satRoofs" width="36" height="28" patternUnits="userSpaceOnUse"><rect width="36" height="28" fill="#5f5b51"/><rect x="2" y="2" width="14" height="10" fill="#7a746a"/><rect x="18" y="2" width="16" height="11" fill="#6b655b"/><rect x="2" y="14" width="10" height="12" fill="#56524a"/><rect x="14" y="15" width="20" height="11" fill="#847e73"/></pattern>
+          <pattern id="satTrees" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="#3a4730"/><circle cx="5" cy="6" r="5" fill="#46573a"/><circle cx="13" cy="12" r="6" fill="#33402a"/></pattern>
+          <filter id="satNoise" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="3" seed="7"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 .32"/></feComponentTransfer></filter>
+        </defs>
+        <rect width="1440" height="900" fill="url(#satRoofs)"/>
+        <g fill="#8b867b"><rect x="160" y="120" width="220" height="190" rx="2"/><rect x="820" y="560" width="230" height="200" rx="2"/><rect x="1010" y="90" width="190" height="160" rx="2"/><rect x="420" y="620" width="160" height="150" rx="2"/></g>
+        <g fill="url(#satTrees)"><path d="M40 640 q140 -70 280 0 t140 170 v120 h-420z"/><circle cx="1180" cy="400" r="70"/><rect x="700" y="160" width="120" height="90" rx="40"/></g>
+        <path d="M-20 470 C300 400 480 520 760 470 C1040 420 1200 380 1460 420" fill="none" stroke="#2c3d44" stroke-width="18"/>
+        <g fill="none" stroke-linecap="round"><path d="M0 270 L1440 200" stroke="#a6a196" stroke-width="9"/><path d="M430 0 L600 900" stroke="#a6a196" stroke-width="9"/><path d="M890 0 C840 360 1000 540 950 900" stroke="#a6a196" stroke-width="8"/><path d="M0 760 L1440 690" stroke="#95918a" stroke-width="6"/><path d="M170 0 L280 900" stroke="#8d8981" stroke-width="4"/><path d="M1240 0 L1290 900" stroke="#8d8981" stroke-width="4"/><path d="M0 560 L1440 520" stroke="#8d8981" stroke-width="4"/></g>
+        <rect width="1440" height="900" filter="url(#satNoise)"/>
+        <g font-family="Source Sans 3, sans-serif" font-weight="600" fill="#fffdf8" font-size="13" letter-spacing=".14em" stroke="rgba(20,18,15,.6)" stroke-width="3" paint-order="stroke"><text x="640" y="452">LA VILAINE</text><text x="712" y="150">THABOR</text><text x="980" y="800">SUD-GARE</text><text x="120" y="110">VILLEJEAN</text></g>
+      </svg>
+    </sc-if>
+
+    <sc-if value="{{hasTrace}}" hint-placeholder-val="{{ false }}">
+      <svg class="atl-map__tiles" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polyline points="{{tracePoints}}" fill="none" stroke="#a8401f" stroke-width="3" stroke-dasharray="1 8" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>
+    </sc-if>
+
+    <sc-for list="{{clusters}}" as="c" hint-placeholder-count="3">
+      <div class="atl-pin" style="{{c.pinStyle}}"><button class="atl-cluster" aria-label="{{c.aria}}">{{c.total}}</button></div>
+    </sc-for>
+
+    <sc-for list="{{markers}}" as="m" hint-placeholder-count="10">
+      <div class="atl-pin" style="{{m.pinStyle}}" data-type="{{m.type}}">
+        <button class="{{m.cls}}" data-type="{{m.type}}" aria-label="{{m.aria}}" style="{{m.btnStyle}}" onClick="{{m.open}}" onMouseEnter="{{m.enter}}" onMouseLeave="{{leave}}"><dc-import name="IconeType" code="{{m.type}}" size="{{m.iconSize}}" hint-size="18px,18px"></dc-import><sc-if value="{{m.hasStep}}" hint-placeholder-val="{{ false }}"><span class="atl-marker__step">{{m.step}}</span></sc-if></button>
+        <sc-if value="{{m.hovered}}" hint-placeholder-val="{{ false }}"><span style="position: absolute; left: 50%; bottom: calc(100% + 10px); transform: translateX(-50%); background: var(--ink); color: var(--ink-inverse); padding: 3px 10px; border-radius: 999px; font: 600 13px/18px var(--font-sans); white-space: nowrap; box-shadow: var(--shadow-1); pointer-events: none">{{m.nom}}</span></sc-if>
+      </div>
+    </sc-for>
+  </div>
+
+  <!-- ===== Haut gauche : nom + logo + loupe ===== -->
+  <div style="position: absolute; left: 16px; top: 16px; z-index: 960; display: flex; align-items: center; gap: 8px">
+    <a href="#" aria-label="Artlas, accueil" style="display: inline-flex; align-items: center; gap: 8px; height: 48px; padding: 0 18px 0 12px; border-radius: 999px; background: var(--paper-50); box-shadow: 0 1px 2px rgba(31,27,22,.08), 0 4px 14px rgba(31,27,22,.12); text-decoration: none">
+      <svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 7 58 53H6z" fill="none" stroke="#1f1b16" stroke-width="5" stroke-linejoin="round"/><path d="M19 41h26" stroke="#1f1b16" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="33" r="6" fill="#a8401f"/></svg>
+      <span class="atl-logo" style="font-size: 21px">Art<i>las</i></span>
+    </a>
+    <sc-if value="{{searchClosed}}" hint-placeholder-val="{{ true }}">
+      <button aria-label="Rechercher un lieu ou une commune" aria-expanded="false" onClick="{{openSearch}}" style="width: 48px; height: 48px; border: 0; border-radius: 50%; background: var(--paper-50); color: var(--ink); box-shadow: 0 1px 2px rgba(31,27,22,.08), 0 4px 14px rgba(31,27,22,.12); display: grid; place-items: center; cursor: pointer"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg></button>
+    </sc-if>
+    <sc-if value="{{searchOpen}}" hint-placeholder-val="{{ false }}">
+      <div class="atl-grow" role="search" style="display: flex; align-items: center; gap: 4px; width: 360px; height: 48px; padding: 0 4px 0 16px; box-sizing: border-box; border-radius: 999px; background: var(--paper-50); box-shadow: 0 1px 2px rgba(31,27,22,.08), 0 4px 14px rgba(31,27,22,.12)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ink-muted)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>
+        <label for="q" class="sr-only">Rechercher un lieu ou une commune</label>
+        <input id="q" autofocus placeholder="Un lieu, une commune…" style="flex: 1; min-width: 0; border: 0; background: none; outline-offset: 4px; padding-left: 6px; font: 400 16px/22px var(--font-sans); color: var(--ink)">
+        <button aria-label="Fermer la recherche" onClick="{{closeSearch}}" style="width: 40px; height: 40px; border: 0; border-radius: 50%; background: transparent; color: var(--ink-muted); display: grid; place-items: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+      </div>
+    </sc-if>
+  </div>
+
+  <!-- ===== Bulles : principale + secondaires ===== -->
+  <nav aria-label="Menu de la carte" style="position: absolute; left: 16px; top: 80px; width: 200px; height: 140px; z-index: 950">
+    <!-- Circuit (à droite) -->
+    <sc-if value="{{menuOpen}}" hint-placeholder-val="{{ false }}">
+      <div class="atl-pop" style="position: absolute; left: 83px; top: 5px; animation-delay: 0ms">
+        <button aria-label="Votre circuit" aria-expanded="{{bCircuit.expanded}}" onClick="{{bCircuit.toggle}}" style="{{bCircuit.style}}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="6" r="2.2"/><path d="M8.2 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.8"/></svg></button>
+        <sc-if value="{{bCircuit.hasBadge}}" hint-placeholder-val="{{ true }}"><span class="tnum" aria-hidden="true" style="position: absolute; top: -3px; right: -3px; min-width: 18px; height: 18px; padding: 0 5px; box-sizing: border-box; border-radius: 999px; background: var(--ink); color: var(--ink-inverse); font: 700 11px/18px var(--font-sans); text-align: center">{{bCircuit.badge}}</span></sc-if>
+        <sc-if value="{{showLabels}}" hint-placeholder-val="{{ true }}"><span aria-hidden="true" style="position: absolute; left: 54px; top: 12px; padding: 2px 9px; border-radius: 999px; background: var(--paper-50); box-shadow: var(--shadow-1); font: 600 12px/18px var(--font-sans); color: var(--ink); white-space: nowrap">Circuit</span></sc-if>
+      </div>
+      <!-- Lieux visibles (diagonale) -->
+      <div class="atl-pop" style="position: absolute; left: 60px; top: 60px; animation-delay: 40ms">
+        <button aria-label="Lieux visibles à l’écran" aria-expanded="{{bLieux.expanded}}" onClick="{{bLieux.toggle}}" style="{{bLieux.style}}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6.5h11M9 12h11M9 17.5h11"/><circle cx="4.5" cy="6.5" r=".9"/><circle cx="4.5" cy="12" r=".9"/><circle cx="4.5" cy="17.5" r=".9"/></svg></button>
+        <span class="tnum" aria-hidden="true" style="position: absolute; top: -3px; right: -3px; min-width: 18px; height: 18px; padding: 0 5px; box-sizing: border-box; border-radius: 999px; background: var(--ink); color: var(--ink-inverse); font: 700 11px/18px var(--font-sans); text-align: center">{{count}}</span>
+        <sc-if value="{{showLabels}}" hint-placeholder-val="{{ true }}"><span aria-hidden="true" style="position: absolute; left: 54px; top: 12px; padding: 2px 9px; border-radius: 999px; background: var(--paper-50); box-shadow: var(--shadow-1); font: 600 12px/18px var(--font-sans); color: var(--ink); white-space: nowrap">Lieux visibles</span></sc-if>
+      </div>
+      <!-- Filtres (en bas) -->
+      <div class="atl-pop" style="position: absolute; left: 5px; top: 83px; animation-delay: 80ms">
+        <button aria-label="Filtrer par type de lieu" aria-expanded="{{bFiltres.expanded}}" onClick="{{bFiltres.toggle}}" style="{{bFiltres.style}}"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg></button>
+        <sc-if value="{{bFiltres.hasBadge}}" hint-placeholder-val="{{ false }}"><span class="tnum" aria-hidden="true" style="position: absolute; top: -3px; right: -3px; min-width: 18px; height: 18px; padding: 0 5px; box-sizing: border-box; border-radius: 999px; background: var(--ink); color: var(--ink-inverse); font: 700 11px/18px var(--font-sans); text-align: center">{{bFiltres.badge}}</span></sc-if>
+        <sc-if value="{{showLabels}}" hint-placeholder-val="{{ true }}"><span aria-hidden="true" style="position: absolute; left: 50%; top: 52px; transform: translateX(-50%); padding: 2px 9px; border-radius: 999px; background: var(--paper-50); box-shadow: var(--shadow-1); font: 600 12px/18px var(--font-sans); color: var(--ink); white-space: nowrap">Filtres</span></sc-if>
+      </div>
+    </sc-if>
+    <!-- Bulle principale -->
+    <button aria-label="{{mainLabel}}" aria-expanded="{{menuOpenStr}}" onClick="{{toggleMenu}}" style="{{mainStyle}}"><sc-if value="{{menuClosed}}" hint-placeholder-val="{{ true }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></sc-if><sc-if value="{{menuOpen}}" hint-placeholder-val="{{ false }}"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></sc-if></button>
+  </nav>
+
+  <!-- Panneau Filtres : déroule vers le bas -->
+  <sc-if value="{{subFiltres}}" hint-placeholder-val="{{ false }}">
+    <section class="atl-drop" aria-label="Filtres" style="position: absolute; left: 16px; top: 236px; width: 280px; max-height: calc(100% - 252px); overflow-y: auto; background: var(--paper-50); border-radius: 16px; box-shadow: 0 1px 2px rgba(31,27,22,.06), 0 10px 32px rgba(31,27,22,.13); z-index: 940; padding: 8px">
+      <p style="margin: 6px 10px 6px; font: 600 13px/18px var(--font-sans); color: var(--ink-muted)">Que voulez-vous voir ?</p>
+      <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px">
+        <sc-for list="{{typeRows}}" as="t" hint-placeholder-count="7">
+          <li><button aria-pressed="{{t.pressed}}" onClick="{{t.toggle}}" style="{{t.style}}"><span data-type="{{t.code}}" style="width: 30px; height: 30px; flex: none; border-radius: 50%; background: var(--t); color: var(--ink-inverse); display: grid; place-items: center"><dc-import name="IconeType" code="{{t.code}}" size="16" hint-size="16px,16px"></dc-import></span><span style="flex: 1; text-align: left; font: 600 15px/20px var(--font-sans); color: var(--ink)">{{t.label}}</span><sc-if value="{{t.on}}" hint-placeholder-val="{{ false }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 12.5 4 4 8-9"/></svg></sc-if></button></li>
+        </sc-for>
+      </ul>
+      <button onClick="{{toggleMore}}" aria-expanded="{{moreStr}}" style="margin: 8px 4px 0; display: flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 10px; border: 0; border-radius: 999px; background: transparent; font: 600 14px/20px var(--font-sans); color: var(--accent); cursor: pointer">Département et label<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="{{moreChevron}}"><path d="m6 9 6 6 6-6"/></svg></button>
+      <sc-if value="{{more}}" hint-placeholder-val="{{ false }}">
+        <div style="margin: 4px 6px 0; display: flex; flex-direction: column; gap: 8px">
+          <label for="f-dep" class="sr-only">Département</label>
+          <select id="f-dep" style="width: 100%; min-height: 44px; padding: 0 12px; background: var(--paper-100); border: 0; border-radius: 10px; font: 400 16px/22px var(--font-sans); color: var(--ink)"><option>35 – Ille-et-Vilaine</option><option>22 – Côtes-d’Armor</option><option>29 – Finistère</option><option>56 – Morbihan</option></select>
+          <label for="f-label" class="sr-only">Label</label>
+          <select id="f-label" style="width: 100%; min-height: 44px; padding: 0 12px; background: var(--paper-100); border: 0; border-radius: 10px; font: 400 16px/22px var(--font-sans); color: var(--ink)"><option>Tous les labels</option><option>Musée de France</option><option>Monument historique</option></select>
+        </div>
+      </sc-if>
+      <div style="display: flex; gap: 6px; margin: 10px 4px 4px">
+        <button class="atl-btn atl-btn--primary atl-btn--sm" onClick="{{showList}}" style="flex: 1; border-radius: 999px">Voir les <span class="tnum">{{count}}</span> {{countWord}}</button>
+        <button class="atl-btn atl-btn--ghost atl-btn--sm" onClick="{{resetTypes}}" style="border-radius: 999px">Effacer</button>
+      </div>
+    </section>
+  </sc-if>
+
+  <!-- Panneau Lieux visibles : déroule vers le bas -->
+  <sc-if value="{{subLieux}}" hint-placeholder-val="{{ false }}">
+    <section class="atl-drop" aria-label="Lieux visibles à l’écran" style="position: absolute; left: 16px; top: 236px; bottom: 16px; width: 360px; display: flex; flex-direction: column; background: var(--paper-50); border-radius: 16px; box-shadow: 0 1px 2px rgba(31,27,22,.06), 0 10px 32px rgba(31,27,22,.13); z-index: 940; overflow: hidden">
+      <div style="padding: 14px 18px 10px">
+        <h2 role="status" style="margin: 0; font: 600 15px/22px var(--font-sans); color: var(--ink)"><span class="tnum">{{count}}</span> {{countWord}} à l’écran</h2>
+        <p style="margin: 0; font: 400 13px/18px var(--font-sans); color: var(--ink-muted)">{{typesSummary}} · la liste suit la carte</p>
+      </div>
+      <ul aria-label="Lieux" style="list-style: none; margin: 0; padding: 4px 0 8px; overflow-y: auto; flex: 1; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 2px">
+        <sc-for list="{{cards}}" as="p" hint-placeholder-count="6">
+          <li><a href="#" aria-current="{{p.current}}" onClick="{{p.open}}" onMouseEnter="{{p.enter}}" onMouseLeave="{{leave}}" style="{{p.style}}"><span data-type="{{p.type}}" style="width: 32px; height: 32px; flex: none; border-radius: 50%; background: var(--t); color: var(--ink-inverse); display: grid; place-items: center"><dc-import name="IconeType" code="{{p.type}}" size="16" hint-size="16px,16px"></dc-import></span><span style="flex: 1; min-width: 0"><span style="display: block; font: 600 16px/21px var(--font-serif); font-variation-settings: 'opsz' 18; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{p.nom}}</span><span style="display: block; font: 400 13px/18px var(--font-sans); color: var(--ink-muted)">{{p.meta}}</span></span><sc-if value="{{p.hasStep}}" hint-placeholder-val="{{ false }}"><span title="Étape du circuit" class="tnum" style="min-width: 22px; height: 22px; padding: 0 6px; box-sizing: border-box; border-radius: 999px; background: var(--accent); color: var(--ink-inverse); font: 700 12px/22px var(--font-sans); text-align: center">{{p.step}}</span></sc-if></a></li>
+        </sc-for>
+        <sc-if value="{{isEmpty}}" hint-placeholder-val="{{ false }}">
+          <li style="padding: 28px 24px; display: flex; flex-direction: column; gap: 6px"><p style="margin: 0; font: 600 16px/22px var(--font-serif)">Aucun lieu ne correspond à votre recherche</p><p class="small" style="margin: 0; color: var(--ink-muted)">Dézoomez ou retirez un filtre.</p></li>
+        </sc-if>
+      </ul>
+    </section>
+  </sc-if>
+
+  <!-- Panneau Circuit : s'ouvre vers la droite, en colonne -->
+  <sc-if value="{{subCircuit}}" hint-placeholder-val="{{ false }}">
+    <aside class="atl-slide-l" aria-label="Votre circuit" style="position: absolute; left: 168px; top: 80px; bottom: 16px; width: 360px; background: var(--paper-50); border-radius: 16px; box-shadow: 0 1px 2px rgba(31,27,22,.06), 0 10px 32px rgba(31,27,22,.13); overflow-y: auto; z-index: 940; display: flex; flex-direction: column">
+      <div style="padding: 14px 20px 12px; display: flex; flex-direction: column; gap: 10px">
+        <div style="display: flex; align-items: center; justify-content: space-between">
+          <p style="margin: 0; font: 600 13px/18px var(--font-sans); color: var(--accent)">Votre circuit · <span class="tnum">{{circuitCount}}</span> {{stepWord}}</p>
+          <button class="atl-btn atl-btn--ghost atl-btn--icon atl-btn--sm" aria-label="Fermer le circuit" onClick="{{closeSub}}" style="width: 36px; border-radius: 999px; color: var(--ink-muted); margin-right: -8px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+        </div>
+        <div><label for="c-nom" class="sr-only">Nom du circuit</label><input id="c-nom" defaultValue="Rennes, cœur historique" style="width: 100%; box-sizing: border-box; border: 0; border-bottom: 1px dashed var(--line); background: none; padding: 0 0 4px; font: 600 20px/26px var(--font-serif); color: var(--ink)"></div>
+        <div><label for="c-desc" class="sr-only">Description</label><textarea id="c-desc" rows="2" placeholder="Une description, facultative" defaultValue="Du Parlement aux quais de la Vilaine, une demi-journée à pied." style="width: 100%; box-sizing: border-box; resize: none; border: 0; border-radius: 8px; background: var(--paper-100); padding: 8px 10px; font: 400 16px/22px var(--font-sans); color: var(--ink)"></textarea></div>
+      </div>
+      <ol class="atl-steps" aria-label="Étapes" style="border-top: 1px solid var(--line); padding: 6px 0">
+        <sc-for list="{{steps}}" as="st" hint-placeholder-count="2">
+          <li class="atl-step" style="grid-template-columns: 20px 26px minmax(0, 1fr) auto auto; gap: 10px; padding: 6px 8px 6px 10px"><span class="atl-step__handle" aria-label="Déplacer l’étape"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="7" r=".9"/><circle cx="15" cy="7" r=".9"/><circle cx="9" cy="12" r=".9"/><circle cx="15" cy="12" r=".9"/><circle cx="9" cy="17" r=".9"/><circle cx="15" cy="17" r=".9"/></svg></span><span class="atl-step__n" style="width: 26px; height: 26px; font-size: 12px">{{st.n}}</span><span style="min-width: 0"><span style="display: block; font: 600 15px/20px var(--font-serif); color: var(--ink)">{{st.nom}}</span><span class="caption" style="color: var(--ink-muted)">{{st.typeLib}} · Rennes</span></span><span style="display: inline-flex; align-items: center; border-radius: 999px; background: var(--paper-100); height: 32px"><input aria-label="Durée de visite en minutes" value="{{st.duree}}" onChange="{{st.setDuree}}" class="tnum" style="width: 32px; border: 0; background: none; text-align: right; font: 600 14px/20px var(--font-sans); color: var(--ink)"><span class="caption" style="color: var(--ink-muted); padding: 0 10px 0 3px">min</span></span><button class="atl-btn atl-btn--ghost atl-btn--icon" aria-label="Retirer cette étape" onClick="{{st.remove}}" style="color: var(--ink-muted); width: 40px; border-radius: 999px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+            <sc-if value="{{st.hasLeg}}" hint-placeholder-val="{{ false }}"><span class="atl-step__leg" style="grid-column: 2 / span 4; padding: 4px 0 4px 14px; border-left: 2px dotted var(--accent); margin-left: 12px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13" cy="4.5" r="1.6"/><path d="m10 21 2-6 2.5 2.5V21"/><path d="m8 11 3-3.5h2.5l2 3.5 2.5 1"/></svg>{{st.leg}}</span></sc-if>
+          </li>
+        </sc-for>
+        <sc-if value="{{circuitEmpty}}" hint-placeholder-val="{{ false }}"><li class="small" style="margin: 8px 20px; padding: 12px; border-radius: 12px; background: var(--paper-100); color: var(--ink-muted)">Votre circuit commence ici. Ouvrez la fiche d’un lieu et touchez « Ajouter au circuit ».</li></sc-if>
+      </ol>
+      <div style="flex: 1"></div>
+      <div role="group" aria-label="Récapitulatif" style="margin: 4px 16px 0; padding: 12px 4px; border-radius: 12px; background: var(--paper-100); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+        <div style="padding: 0 12px"><span class="caption" style="display: block; color: var(--ink-muted); font-weight: 600">Distance</span><span class="tnum" style="font: 600 20px/26px var(--font-sans)">{{totals.km}}</span></div>
+        <div style="padding: 0 12px; border-left: 1px solid var(--line)"><span class="caption" style="display: block; color: var(--ink-muted); font-weight: 600">Durée</span><span class="tnum" style="font: 600 20px/26px var(--font-sans)">{{totals.duree}}</span></div>
+        <div style="padding: 0 12px; border-left: 1px solid var(--line)"><span class="caption" style="display: block; color: var(--ink-muted); font-weight: 600">Départ</span><span style="font: 600 16px/26px var(--font-sans)">{{totals.depart}}</span></div>
+      </div>
+      <p class="caption" style="margin: 8px 20px 0; color: var(--ink-muted)">{{totals.note}}</p>
+      <sc-if value="{{saved}}" hint-placeholder-val="{{ false }}">
+        <div role="status" style="margin: 14px 16px 16px; padding: 12px 14px; border-radius: 12px; background: var(--success-tint); display: flex; align-items: center; gap: 12px">
+          <div style="flex: 1; min-width: 0"><p class="caption" style="color: var(--success); margin: 0; font-weight: 700">Sauvegardé · code de partage</p><p class="tnum" style="margin: 2px 0 0; font: 600 20px/26px var(--font-sans); letter-spacing: .12em">K7PQ2MXA</p></div>
+          <button class="atl-btn atl-btn--primary atl-btn--sm" style="border-radius: 999px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="11" height="11" rx="1.5"/><path d="M15.5 8.5V6a1.5 1.5 0 0 0-1.5-1.5H6A1.5 1.5 0 0 0 4.5 6v8A1.5 1.5 0 0 0 6 15.5h2.5"/></svg>Copier le lien</button>
+        </div>
+      </sc-if>
+      <sc-if value="{{notSaved}}" hint-placeholder-val="{{ true }}">
+        <div style="padding: 14px 16px 18px">
+          <sc-if value="{{canSave}}" hint-placeholder-val="{{ true }}"><button class="atl-btn atl-btn--primary" onClick="{{save}}" style="width: 100%; border-radius: 999px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3.5"/><path d="m7.5 8 4.5-4.5L16.5 8"/><path d="M5 12.5V19a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 19v-6.5"/></svg>Sauvegarder et partager</button></sc-if>
+          <sc-if value="{{cannotSave}}" hint-placeholder-val="{{ false }}"><button class="atl-btn atl-btn--primary" disabled aria-describedby="why-save" style="width: 100%; border-radius: 999px">Sauvegarder</button><p id="why-save" class="caption" style="margin: 6px 4px 0; text-align: center; color: var(--ink-muted)">Encore un lieu et vous pourrez le sauvegarder</p></sc-if>
+        </div>
+      </sc-if>
+    </aside>
+  </sc-if>
+
+  <!-- Haut droite : Mon compte (V2) -->
+  <div style="{{topRightStyle}}">
+    <button class="atl-btn atl-btn--map atl-btn--icon" aria-disabled="true" aria-label="Mon compte, bientôt disponible" title="Mon compte · V2" style="border-color: transparent; border-radius: 999px; box-shadow: 0 1px 2px rgba(31,27,22,.08), 0 3px 10px rgba(31,27,22,.10); color: var(--ink-subtle)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c.8-3.5 3.6-5.5 7-5.5s6.2 2 7 5.5"/></svg></button>
+  </div>
+
+  <!-- Bas droite : contrôles carte + V2 -->
+  <div style="{{bottomRightStyle}}">
+    <button onClick="{{toggleSat}}" aria-label="{{layerAria}}" title="{{layerAria}}" style="position: relative; width: 72px; height: 72px; padding: 0; border: 2px solid var(--paper-50); border-radius: 14px; overflow: hidden; cursor: pointer; background: var(--paper-200); box-shadow: 0 1px 2px rgba(31,27,22,.10), 0 4px 14px rgba(31,27,22,.16)">
+      <sc-if value="{{planOn}}" hint-placeholder-val="{{ true }}"><svg width="68" height="68" viewBox="0 0 68 68" aria-hidden="true" style="display: block"><rect width="68" height="68" fill="#5f5b51"/><rect x="4" y="6" width="18" height="14" fill="#7a746a"/><rect x="40" y="4" width="22" height="16" fill="#847e73"/><rect x="8" y="40" width="16" height="10" fill="#6b655b"/><circle cx="52" cy="44" r="11" fill="#3d4a31"/><path d="M-2 34 C18 26 34 40 70 30" fill="none" stroke="#2c3d44" stroke-width="5"/><path d="M28 0 L36 68" stroke="#a6a196" stroke-width="3"/></svg></sc-if>
+      <sc-if value="{{satOn}}" hint-placeholder-val="{{ false }}"><svg width="68" height="68" viewBox="0 0 68 68" aria-hidden="true" style="display: block"><rect width="68" height="68" fill="#f2f1ee"/><rect x="4" y="6" width="18" height="14" fill="#e8e6e1"/><circle cx="52" cy="44" r="11" fill="#e3ebdf"/><path d="M-2 34 C18 26 34 40 70 30" fill="none" stroke="#d4dadc" stroke-width="5"/><path d="M28 0 L36 68" stroke="#ffffff" stroke-width="4"/><path d="M0 14 L68 10" stroke="#ffffff" stroke-width="3"/></svg></sc-if>
+      <span style="{{layerLabelStyle}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 4 9 5-9 5-9-5z"/><path d="m3 14 9 5 9-5"/></svg>{{layerLabel}}</span>
+    </button>
+    <button class="atl-btn atl-btn--map atl-btn--icon" aria-label="Autour de moi" style="border-color: transparent; border-radius: 999px; box-shadow: 0 1px 2px rgba(31,27,22,.08), 0 3px 10px rgba(31,27,22,.10)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.2"/><path d="M12 2.5V5M12 19v2.5M2.5 12H5M19 12h2.5"/></svg></button>
+    <div class="atl-map__zoom" style="position: static; border: 0; border-radius: 12px; box-shadow: 0 1px 2px rgba(31,27,22,.08), 0 3px 10px rgba(31,27,22,.10)"><button aria-label="Zoomer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><button aria-label="Dézoomer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button></div>
+    <button class="atl-btn atl-btn--map" aria-disabled="true" title="Assistant · V2" style="border-style: dashed; border-radius: 999px; color: var(--ink-muted); box-shadow: 0 3px 10px rgba(31,27,22,.08)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 5.5h15a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H10l-4.5 3.5v-3.5h-1a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1z"/><path d="M8 10h8M8 13h5"/></svg>Assistant · bientôt</button>
+  </div>
+  <div class="atl-map__attrib" style="{{attribStyle}}">{{attribText}}</div>
+
+  <!-- FicheLieu (à droite) -->
+  <sc-if value="{{ficheOpen}}" hint-placeholder-val="{{ false }}">
+    <aside class="atl-slide-r" data-type="{{f.type}}" aria-label="Fiche du lieu" style="position: absolute; right: 16px; top: 16px; bottom: 16px; width: 380px; max-width: calc(100% - 32px); background: var(--paper-50); border-radius: 16px; box-shadow: 0 1px 2px rgba(31,27,22,.06), 0 10px 32px rgba(31,27,22,.13); overflow-y: auto; z-index: 930">
+      <div style="position: relative; height: 128px; background: var(--paper-200); display: grid; place-items: center; overflow: hidden">
+        <svg width="100%" height="100%" style="position: absolute; inset: 0" aria-hidden="true"><defs><pattern id="hatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V10" stroke="#e9e1cf" stroke-width="2"/></pattern></defs><rect width="100%" height="100%" fill="url(#hatch)"/></svg>
+        <div style="position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--t)">
+          <span style="width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: var(--paper-50); box-shadow: 0 1px 3px rgba(31,27,22,.10)"><dc-import name="IconeType" code="{{f.type}}" size="24" hint-size="24px,24px"></dc-import></span>
+          <span class="caption" style="color: var(--ink-muted)">Pas de photo fournie par la source</span>
+        </div>
+        <button class="atl-btn atl-btn--map atl-btn--icon" aria-label="Fermer la fiche" onClick="{{closeFiche}}" style="position: absolute; top: 10px; right: 10px; width: 36px; min-height: 36px; border: 0; border-radius: 999px; box-shadow: 0 1px 3px rgba(31,27,22,.12)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+      </div>
+      <div style="padding: 16px 20px 0">
+        <h2 style="margin: 0; font: 600 20px/26px var(--font-serif); font-variation-settings: 'opsz' 28; letter-spacing: -.005em; color: var(--ink)">{{f.nom}}</h2>
+        <p style="margin: 4px 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; font: 400 14px/20px var(--font-sans); color: var(--ink-muted)"><span style="display: inline-flex; align-items: center; gap: 4px; color: var(--t); font-weight: 600"><dc-import name="IconeType" code="{{f.type}}" size="15" hint-size="15px,15px"></dc-import>{{f.typeLib}}</span><span aria-hidden="true">·</span><span>{{f.commune}}, Ille-et-Vilaine</span></p>
+        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px">
+          <sc-for list="{{f.labels}}" as="l" hint-placeholder-count="1"><span style="display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; background: var(--paper-200); font: 600 12px/16px var(--font-sans); color: var(--ink)"><span style="width: 5px; height: 5px; background: var(--accent); transform: rotate(45deg)"></span>{{l}}</span></sc-for>
+        </div>
+      </div>
+      <div style="display: flex; gap: 8px; padding: 14px 20px 16px">
+        <sc-if value="{{f.inCircuit}}" hint-placeholder-val="{{ false }}">
+          <button class="atl-btn atl-btn--primary" disabled style="flex: 1; border-radius: 999px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="m8.3 12.3 2.4 2.4 5-5.2"/></svg>Déjà dans le circuit</button>
+        </sc-if>
+        <sc-if value="{{f.notInCircuit}}" hint-placeholder-val="{{ true }}">
+          <button class="atl-btn atl-btn--primary" onClick="{{f.add}}" style="flex: 1; border-radius: 999px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Ajouter au circuit</button>
+        </sc-if>
+        <sc-if value="{{f.hasSite}}" hint-placeholder-val="{{ true }}">
+          <a class="atl-btn atl-btn--secondary atl-btn--icon" href="#" aria-label="Site web (nouvel onglet)" style="border-radius: 999px; border-color: var(--line)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4.5h5.5V10"/><path d="m19.5 4.5-8 8"/><path d="M17 14v4.5a1 1 0 0 1-1 1H5.5a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1H10"/></svg></a>
+        </sc-if>
+        <button class="atl-btn atl-btn--secondary atl-btn--icon" aria-label="Partager ce lieu" style="border-radius: 999px; border-color: var(--line)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3.5"/><path d="m7.5 8 4.5-4.5L16.5 8"/><path d="M5 12.5V19a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 19v-6.5"/></svg></button>
+      </div>
+      <div style="margin: 0 20px; border-top: 1px solid var(--line)"></div>
+      <p style="margin: 0; padding: 14px 20px; font: 400 15px/23px var(--font-sans); color: var(--ink)">{{f.desc}}</p>
+      <div style="margin: 0 20px; border-top: 1px solid var(--line)"></div>
+      <ul style="list-style: none; margin: 0; padding: 6px 20px; display: flex; flex-direction: column">
+        <li style="display: flex; gap: 14px; align-items: flex-start; padding: 8px 0; font: 400 14px/20px var(--font-sans)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ink-muted)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M3.5 6.5 9 4l6 2.5L20.5 4v13.5L15 20l-6-2.5-5.5 2.5z"/><path d="M9 4v13.5M15 6.5V20"/></svg><span><span class="sr-only">Adresse : </span>{{f.rue}}, <span class="tnum">{{f.cp}}</span> {{f.commune}}</span></li>
+        <sc-if value="{{f.hasSite}}" hint-placeholder-val="{{ true }}"><li style="display: flex; gap: 14px; align-items: center; padding: 8px 0; font: 400 14px/20px var(--font-sans)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--ink-muted)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M14 4.5h5.5V10"/><path d="m19.5 4.5-8 8"/><path d="M17 14v4.5a1 1 0 0 1-1 1H5.5a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1H10"/></svg><a href="#" style="font-weight: 600">{{f.site}}</a></li></sc-if>
+        <li style="display: flex; gap: 14px; align-items: center; padding: 8px 0; font: 400 14px/20px var(--font-sans); color: var(--ink-muted)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg><span>Mis à jour le <span class="tnum">{{f.maj}}</span></span></li>
+      </ul>
+      <div style="padding: 10px 20px 16px; display: flex; flex-direction: column; gap: 2px; background: var(--paper-100)">
+        <sc-for list="{{f.sources}}" as="s" hint-placeholder-count="1"><p class="caption" style="margin: 0; color: var(--ink-subtle)">Source : <b style="color: var(--ink-muted)">{{s.nom}}</b>{{s.detail}} · importé le {{s.date}}</p></sc-for>
+      </div>
+    </aside>
+  </sc-if>
+
+  <!-- ZoneNotifications : une pilule en bas, au centre -->
+  <sc-if value="{{toastOn}}" hint-placeholder-val="{{ false }}">
+    <div aria-live="polite" style="position: absolute; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 1100">
+      <div class="atl-drop" role="status" style="display: inline-flex; align-items: center; gap: 14px; min-height: 44px; padding: 0 6px 0 18px; border-radius: 999px; background: var(--ink); color: var(--ink-inverse); box-shadow: 0 6px 20px rgba(31,27,22,.22); font: 400 15px/20px var(--font-sans); white-space: nowrap">{{toast}}<button aria-label="Fermer" onClick="{{closeToast}}" style="width: 32px; height: 32px; border: 0; border-radius: 50%; background: transparent; color: var(--ink-inverse); display: grid; place-items: center; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"etat":{"editor":"enum","options":["accueil","recherche","filtre","liste","fiche","circuit","satellite"],"default":"accueil"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  defaults() {
+    const e = this.props.etat ?? 'accueil';
+    const base = { sat: false, types: [], menu: false, sub: null, search: false, sel: null, hover: null, circuit: ['parlement'], saved: false, toast: null, more: false, durees: {} };
+    if (e === 'recherche') return Object.assign(base, { search: true });
+    if (e === 'satellite') return Object.assign(base, { sat: true, sel: 'parlement' });
+    if (e === 'filtre') return Object.assign(base, { menu: true, sub: 'filtres', types: ['MUSEE'] });
+    if (e === 'liste') return Object.assign(base, { menu: true, sub: 'lieux', hover: 'arvor' });
+    if (e === 'fiche') return Object.assign(base, { menu: true, sub: 'lieux', sel: 'mba' });
+    if (e === 'circuit') return Object.assign(base, { menu: true, sub: 'circuit', circuit: ['parlement', 'mba'], saved: true, toast: 'Circuit sauvegardé · code K7PQ2MXA' });
+    return base;
+  }
+  renderVals() {
+    const s = Object.assign({}, this.defaults(), this.state || {});
+    const set = (o) => this.setState(o);
+    const TYPES = [
+      { code: 'MUSEE', label: 'Musées', lib: 'Musée' },
+      { code: 'MONUMENT', label: 'Monuments', lib: 'Monument' },
+      { code: 'LIEU_EXPOSITION', label: 'Expositions', lib: 'Lieu d’exposition' },
+      { code: 'THEATRE', label: 'Théâtres', lib: 'Théâtre' },
+      { code: 'CINEMA', label: 'Cinémas', lib: 'Cinéma' },
+      { code: 'BIBLIOTHEQUE', label: 'Bibliothèques', lib: 'Bibliothèque' },
+      { code: 'AUTRE', label: 'Autres lieux', lib: 'Autre lieu' }
+    ];
+    const lib = (c) => (TYPES.find((t) => t.code === c) || TYPES[6]).lib;
+    const BASILIC = { nom: 'Basilic', detail: ' — ministère de la Culture', date: '2 oct. 2026' };
+    const DT = { nom: 'DataTourisme', detail: '', date: '3 oct. 2026' };
+    const P = [
+      { id: 'parlement', nom: 'Parlement de Bretagne', type: 'MONUMENT', labels: ['Monument historique'], x: 44, y: 30, rue: 'Place du Parlement de Bretagne', site: '', maj: '28 septembre 2026', desc: 'Ancien siège du parlement de Bretagne, achevé au XVIIᵉ siècle ; il abrite aujourd’hui la cour d’appel de Rennes.', sources: [BASILIC] },
+      { id: 'mba', nom: 'Musée des Beaux-Arts de Rennes', type: 'MUSEE', labels: ['Musée de France'], x: 58, y: 50, rue: '20 quai Émile Zola', site: 'mba.rennes.fr', maj: '3 octobre 2026', desc: 'Collections de l’Antiquité à l’art contemporain : peintures, sculptures, dessins et objets d’art, au bord de la Vilaine.', sources: [BASILIC, DT] },
+      { id: 'opera', nom: 'Opéra de Rennes', type: 'THEATRE', labels: [], x: 50, y: 36, rue: 'Place de la Mairie', site: 'opera-rennes.fr', maj: '12 septembre 2026', desc: 'Salle à l’italienne du XIXᵉ siècle face à l’hôtel de ville : opéra, concerts et danse.', sources: [DT] },
+      { id: 'cathedrale', nom: 'Cathédrale Saint-Pierre de Rennes', type: 'MONUMENT', labels: ['Monument historique'], x: 36, y: 38, rue: 'Rue de la Monnaie', site: '', maj: '28 septembre 2026', desc: 'Cathédrale reconstruite au XIXᵉ siècle derrière une façade classique, intérieur aux plafonds dorés.', sources: [BASILIC] },
+      { id: 'mordelaises', nom: 'Portes Mordelaises', type: 'MONUMENT', labels: ['Monument historique'], x: 31, y: 47, rue: 'Rue des Portes Mordelaises', site: '', maj: '28 septembre 2026', desc: 'Vestige des remparts du XVᵉ siècle, ancienne entrée principale de la ville.', sources: [BASILIC] },
+      { id: 'arvor', nom: 'Cinéma l’Arvor', type: 'CINEMA', labels: ['Art et Essai'], x: 54, y: 66, rue: '11 rue de Châtillon', site: 'cinema-arvor.fr', maj: '30 septembre 2026', desc: 'Cinéma associatif Art et Essai, films en version originale.', sources: [DT] },
+      { id: 'champslibres', nom: 'Les Champs Libres', type: 'MUSEE', labels: ['Musée de France'], x: 45, y: 76, rue: '10 cours des Alliés', site: 'leschampslibres.fr', maj: '1er octobre 2026', desc: 'Équipement culturel réunissant le musée de Bretagne, l’Espace des sciences et une bibliothèque.', sources: [BASILIC, DT] },
+      { id: 'biblio', nom: 'Bibliothèque des Champs Libres', type: 'BIBLIOTHEQUE', labels: [], x: 49.5, y: 80, rue: '10 cours des Alliés', site: 'leschampslibres.fr', maj: '1er octobre 2026', desc: 'Bibliothèque sur six niveaux, avec un belvédère sur la ville.', sources: [DT] },
+      { id: 'frac', nom: 'Frac Bretagne', type: 'LIEU_EXPOSITION', labels: [], x: 24, y: 60, rue: '19 avenue André Mussat', site: 'fracbretagne.fr', maj: '25 septembre 2026', desc: 'Fonds régional d’art contemporain : expositions et collection d’art contemporain.', sources: [DT] },
+      { id: 'ateliers', nom: 'Les Ateliers du Vent', type: 'AUTRE', labels: [], x: 66, y: 60, rue: '59 rue Alexandre Duval', site: '', maj: '20 septembre 2026', desc: 'Lieu de création et de diffusion artistique installé dans une ancienne usine.', sources: [DT] }
+    ];
+    const CL = [
+      { x: 87, y: 17, c: { MUSEE: 3, MONUMENT: 5, LIEU_EXPOSITION: 1, THEATRE: 1, CINEMA: 1, BIBLIOTHEQUE: 1 } },
+      { x: 16, y: 82, c: { MONUMENT: 3, AUTRE: 2 } },
+      { x: 86, y: 84, c: { MUSEE: 14, MONUMENT: 61, LIEU_EXPOSITION: 9, THEATRE: 6, CINEMA: 8, BIBLIOTHEQUE: 19, AUTRE: 17 } }
+    ];
+    const DUREE = { parlement: 45, mba: 60 };
+    const active = (c) => s.types.length === 0 || s.types.indexOf(c) >= 0;
+    const visible = P.filter((p) => active(p.type));
+    const stepOf = (id) => { const i = s.circuit.indexOf(id); return i >= 0 ? i + 1 : null; };
+    const ficheOpen = !!s.sel;
+
+    const markers = visible.map((p) => {
+      const selected = s.sel === p.id;
+      const hovered = s.hover === p.id && !selected;
+      const step = stepOf(p.id);
+      return {
+        id: p.id, nom: p.nom, type: p.type, step: step, hasStep: !!step, hovered: hovered,
+        pinStyle: 'left: ' + p.x + '%; top: ' + p.y + '%; z-index: ' + (selected || hovered ? 3 : 1),
+        cls: 'atl-marker' + (selected ? ' is-selected' : ''),
+        btnStyle: hovered ? 'transform: scale(1.15); box-shadow: 0 0 0 3px var(--paper-50), 0 0 0 5px var(--ink), var(--shadow-marker)' : '',
+        iconSize: selected ? 20 : 18,
+        aria: lib(p.type) + ', ' + p.nom + (step ? ', étape ' + step : ''),
+        open: () => set({ sel: p.id }), enter: () => set({ hover: p.id })
+      };
+    });
+    const ROW = 'display: flex; align-items: center; gap: 12px; padding: 9px 12px; margin: 0 8px; border-radius: 10px; text-decoration: none; color: inherit; transition: background-color .15s ease; ';
+    const cards = visible.map((p) => {
+      const selected = s.sel === p.id;
+      const step = stepOf(p.id);
+      return {
+        id: p.id, nom: p.nom, type: p.type, step: step, hasStep: !!step,
+        meta: lib(p.type) + ' · Rennes' + (p.labels.length ? ' · ' + p.labels[0] : ''),
+        current: selected ? 'true' : 'false',
+        style: ROW + (selected ? 'background: var(--accent-tint)' : (s.hover === p.id ? 'background: var(--paper-200)' : '')),
+        open: (e) => { if (e && e.preventDefault) e.preventDefault(); set({ sel: p.id }); },
+        enter: () => set({ hover: p.id })
+      };
+    });
+    const clusters = CL.map((c) => {
+      let t = 0; Object.keys(c.c).forEach((k) => { if (active(k)) t += c.c[k]; });
+      return { total: t, pinStyle: 'left: ' + c.x + '%; top: ' + c.y + '%', aria: t + ' lieux, zoomer pour les voir' };
+    }).filter((c) => c.total > 0);
+    const typeRows = TYPES.map((t) => {
+      const on = s.types.indexOf(t.code) >= 0;
+      return {
+        code: t.code, label: t.label, on: on, pressed: on ? 'true' : 'false',
+        style: 'width: 100%; display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 6px 10px; border: 0; border-radius: 10px; cursor: pointer; transition: background-color .15s ease; background: ' + (on ? 'var(--accent-tint)' : 'transparent'),
+        toggle: () => set({ types: on ? s.types.filter((x) => x !== t.code) : s.types.concat([t.code]) })
+      };
+    });
+
+    const fp = P.find((p) => p.id === s.sel) || P[1];
+    const inC = s.circuit.indexOf(fp.id) >= 0;
+    const f = Object.assign({}, fp, {
+      typeLib: lib(fp.type), commune: 'Rennes', cp: '35000', hasSite: !!fp.site,
+      inCircuit: inC, notInCircuit: !inC,
+      add: () => set({ circuit: s.circuit.concat([fp.id]), saved: false, toast: fp.nom + ' ajouté à votre circuit' })
+    });
+
+    const dur = (id) => (s.durees[id] != null ? s.durees[id] : (DUREE[id] || 30));
+    const key = s.circuit.join(',');
+    const steps = s.circuit.map((id, i) => {
+      const p = P.find((x) => x.id === id);
+      return {
+        n: i + 1, nom: p.nom, typeLib: lib(p.type), duree: dur(id),
+        hasLeg: i < s.circuit.length - 1,
+        leg: key === 'parlement,mba' ? '0,9 km · 11 min à pied' : 'Tronçon calculé par l’API',
+        remove: () => set({ circuit: s.circuit.filter((x) => x !== id), saved: false }),
+        setDuree: (e) => { const d = Object.assign({}, s.durees); d[id] = e.target.value; set({ durees: d, saved: false }); }
+      };
+    });
+    let totals = { km: '—', duree: '—', depart: '—', note: 'Distance et durée sont renvoyées par l’API.' };
+    if (s.circuit.length === 1) totals = { km: '0 km', duree: dur(s.circuit[0]) + ' min', depart: 'Rennes', note: 'Une seule étape : pas encore de trajet à pied.' };
+    if (key === 'parlement,mba') totals = { km: '0,9 km', duree: '1 h 56', depart: 'Rennes', note: '105 min de visite et 11 min de marche' };
+
+    const pts = s.circuit.map((id) => { const p = P.find((x) => x.id === id); return p.x + ',' + p.y; }).join(' ');
+    const typesSummary = s.types.length === 0 ? 'Tous les types' : TYPES.filter((t) => s.types.indexOf(t.code) >= 0).map((t) => t.label).join(', ');
+    const n = visible.length;
+    const rightEdge = ficheOpen ? 412 : 16;
+    const SHADOW = '0 1px 2px rgba(31,27,22,.08), 0 4px 14px rgba(31,27,22,.12)';
+    const bubble = (key, badge) => {
+      const on = s.sub === key;
+      return {
+        expanded: on ? 'true' : 'false', badge: badge, hasBadge: !!badge,
+        style: 'width: 46px; height: 46px; border: 0; border-radius: 50%; display: grid; place-items: center; cursor: pointer; transition: background-color .15s, color .15s, transform .15s; box-shadow: ' + SHADOW + '; ' + (on ? 'background: var(--accent); color: var(--ink-inverse)' : 'background: var(--paper-50); color: var(--accent)'),
+        toggle: () => set({ sub: on ? null : key })
+      };
+    };
+
+    return {
+      clusters: clusters, markers: markers, cards: cards, typeRows: typeRows, f: f, steps: steps, totals: totals,
+      count: n, countWord: n > 1 ? 'lieux' : 'lieu', isEmpty: n === 0, typesSummary: typesSummary,
+      searchOpen: s.search, searchClosed: !s.search,
+      openSearch: () => set({ search: true }), closeSearch: () => set({ search: false }),
+      menuOpen: s.menu, menuClosed: !s.menu, menuOpenStr: s.menu ? 'true' : 'false',
+      mainLabel: s.menu ? 'Fermer le menu' : 'Ouvrir le menu : filtres, lieux visibles, circuit',
+      mainStyle: 'position: absolute; left: 0; top: 0; width: 56px; height: 56px; border: 0; border-radius: 50%; display: grid; place-items: center; cursor: pointer; background: var(--accent); color: var(--ink-inverse); box-shadow: 0 2px 4px rgba(168,64,31,.25), 0 6px 18px rgba(31,27,22,.18); transition: transform .2s',
+      toggleMenu: () => set({ menu: !s.menu, sub: null }),
+      showLabels: s.menu && !s.sub,
+      bCircuit: bubble('circuit', s.circuit.length || null),
+      bLieux: bubble('lieux', n),
+      bFiltres: bubble('filtres', s.types.length || null),
+      subFiltres: s.menu && s.sub === 'filtres', subLieux: s.menu && s.sub === 'lieux', subCircuit: s.menu && s.sub === 'circuit',
+      closeSub: () => set({ sub: null }),
+      showList: () => set({ sub: 'lieux' }),
+      more: s.more, moreStr: s.more ? 'true' : 'false', moreChevron: s.more ? 'transform: rotate(180deg); transition: transform .2s' : 'transition: transform .2s',
+      toggleMore: () => set({ more: !s.more }),
+      resetTypes: () => set({ types: [] }),
+      leave: () => set({ hover: null }),
+      ficheOpen: ficheOpen, closeFiche: () => set({ sel: null }),
+      circuitCount: s.circuit.length, stepWord: s.circuit.length > 1 ? 'étapes' : 'étape', circuitEmpty: s.circuit.length === 0, needMore: s.circuit.length === 1,
+      circuitStyle: 'position: absolute; z-index: 940; top: 16px; left: ' + (s.search ? 536 : 224) + 'px; right: ' + (rightEdge + 60) + 'px; min-height: 116px; box-sizing: border-box; padding: 14px 44px 14px 18px; display: flex; align-items: center; gap: 16px; background: var(--paper-50); border-radius: 16px; box-shadow: 0 1px 2px rgba(31,27,22,.06), 0 10px 32px rgba(31,27,22,.13)',
+      hasTrace: s.circuit.length >= 2, tracePoints: pts,
+      saved: s.saved, notSaved: !s.saved, canSave: s.circuit.length >= 2, cannotSave: s.circuit.length < 2,
+      save: () => set({ saved: true, toast: 'Circuit sauvegardé · code K7PQ2MXA' }),
+      toastOn: !!s.toast, toast: s.toast, closeToast: () => set({ toast: null }),
+      topRightStyle: 'position: absolute; z-index: 800; top: 16px; right: ' + rightEdge + 'px; display: flex; gap: 8px',
+      bottomRightStyle: 'position: absolute; z-index: 800; bottom: 28px; right: ' + rightEdge + 'px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px',
+      attribStyle: ficheOpen ? 'right: 412px' : '',
+      satOn: s.sat, planOn: !s.sat,
+      toggleSat: () => set({ sat: !s.sat }),
+      layerLabel: s.sat ? 'Plan' : 'Satellite',
+      layerAria: s.sat ? 'Passer en vue plan' : 'Passer en vue satellite',
+      layerLabelStyle: 'position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; gap: 3px; padding: 14px 0 4px; font: 600 11px/14px var(--font-sans); ' + (s.sat ? 'color: var(--ink); background: linear-gradient(rgba(255,253,248,0), rgba(255,253,248,.92) 55%)' : 'color: #fffdf8; background: linear-gradient(rgba(20,18,15,0), rgba(20,18,15,.6) 55%)'),
+      attribText: s.sat ? 'Orthophotos © IGN · © OpenStreetMap contributors' : '© OpenStreetMap contributors © CARTO'
+    };
+  }
+}
+</script>
+</body>
+</html>
