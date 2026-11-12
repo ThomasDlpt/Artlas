@@ -8,21 +8,49 @@ hide empty members
 ' ======================= Circuits =======================
 package "Circuits" {
   class Circuit {
+    + {static} VITESSE_MARCHE_KMH : double = 5.0
+    + {static} NB_ETAPES_MIN : int = 2
+    - {static} ALPHABET_CODE : String = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+    - {static} LONGUEUR_CODE : int = 8
+    - {static} RANDOM : SecureRandom = new SecureRandom()
     - id : String
     - nom : String
     - description : String
     - codePartage : String
-    - /distanceKm : double
-    - /dureeMinutes : int
+    - distanceKm : double
+    - dureeMinutes : int
+    - etapes : List<EtapeCircuit>
+    - communeDepart : Commune
+    + getId() : String
+    + getNom() : String
+    + setNom(String nom) : void
+    + getDescription() : String
+    + setDescription(String description) : void
+    + getCodePartage() : String
+    + getDistanceKm() : double
+    + getDureeMinutes() : int
+    + getEtapes() : List<EtapeCircuit>
+    + getNbEtapes() : int
+    + getCommuneDepart() : Commune
     + ajouterEtape(lieu : Lieu, dureeVisiteMin : int) : void
     + retirerEtape(position : int) : void
     + reordonner(position : int, nouvellePosition : int) : void
     + recalculer() : void
+    + estValide() : boolean
+    + contientLieu(lieu : Lieu) : boolean
+    - verifierPosition(position : int) : void
+    - renumeroter() : void
+    - genererCodePartage() : String
   }
 
   class EtapeCircuit {
     - numOrdre : int
     - dureeVisiteMin : int
+    - lieu : Lieu
+    + getNumOrdre() : int
+    + getDureeVisiteMin() : int
+    + getLieu() : Lieu
+    + setNumOrdre(numOrdre : int) : void
   }
 }
 
@@ -45,16 +73,31 @@ package "Lieux" {
     - siteWeb : String [0..1]
     - photo : String [0..1]
     - labels : List<String>
+    - adresse : Adresse
     - dateMiseAJour : LocalDate
+    + getId() : String
+    + getNom() : String
+    + getDescription() : String
+    + getType() : TypeLieu
+    + getSiteWeb() : String
+    + getPhoto() : String
+    + getLabels() : List<String>
+    + getAdresse() : Adresse
+    + getDateMiseAJour() : LocalDate
     + distanceVers(autre : Lieu) : double
-    + ajouterSource(source : SourceLieu) : void
     + mettreAJour(donnees : Lieu) : void
+    + {static} estRenseigne(valeur : String) : boolean
+    + {static}normaliser((valeur : String) : String
   }
 
-  class SourceLieu {
-    - source : Source
-    - idExterne : String
-    - dateImport : LocalDateTime
+  class LieuBasilic {
+    + LieuBasilic()
+    + LieuBasilic(id : String, nom : String, description : String, type : TypeLieu, siteWeb : String, photo : String, labels : List<String>, dateMiseAJour : LocalDate, adresse : Adresse)
+  }
+
+  class LieuDataTourisme {
+    + LieuDataTourisme()
+    + LieuDataTourisme(id : String, nom : String, description : String, type : TypeLieu, siteWeb : String, photo : String, labels : List<String>, dateMiseAJour : LocalDate, adresse : Adresse)
   }
 
   enum TypeLieu {
@@ -76,37 +119,68 @@ package "Lieux" {
 ' ======================= Géographie =======================
 package "Géographie" {
   class Adresse {
+    - {static} RAYON_TERRE_KM : double = 6371.0
     - rue : String
     - codePostal : String
     - latitude : double
     - longitude : double
+    - commune : Commune
+    + getRue() : String
+    + getCodePostal() : String
+    + getLatitude() : double
+    + getLongitude() : double
+    + getCommune() : Commune
+    + distanceKm(autre : Adresse) : double
+    + toString() : String
   }
 
   class Commune {
     - codeInsee : String
     - nom : String
+    - departement : Departement
+    + getCodeInsee() : String
+    + getNom() : String
+    + getDepartement() : Departement
+    + setDepartement(departement : Departement) : void
+    + equals(o : Object) : boolean
+    + hashcode() : int
+    + toString() : String
   }
 
   class Departement {
     - code : String
     - nom : String
+    - region : Region
+     + getCode() : String
+     + getNom() : String
+     + getRegion() : Region
+     + equals(o : Object) : boolean
+     + hashcode() : int
+     + toString() : String
   }
 
   class Region {
     - code : String
     - nom : String
+    + getCode() : String
+    + getNom() : String
+    + equals(o : Object) : boolean
+    + hashcode() : int
+    + toString() : String
   }
 }
 
 ' ======================= Synchronisation =======================
 package "Synchronisation" {
   class SynchronisationService {
-    - seuilDoublonMetres : double
+    - importeurDataTourism : Importeur
+    - importeurBasilic : Importeur
+    - repo : JournalSynchroRepository
+    - lieuRepo : LieuRepository
     + synchroniser() : List<JournalSynchro>
     + synchroniserSource(importeur : Importeur) : JournalSynchro
-    - valider(lieu : Lieu) : boolean
-    - trouverDoublon(lieu : Lieu) : Lieu
     - fusionner(existant : Lieu, nouveau : Lieu) : void
+    - trouverExistant(repoSource : LieuRepository, l : Lieu) : Lieu
   }
 
   interface Importeur {
@@ -115,35 +189,52 @@ package "Synchronisation" {
   }
 
   class ImporteurDataTourisme {
-    - urlFlux : String
+    - REQUETE : String
+    - client : RestClient
+    - repo : CommuneRepository
     + getSource() : Source
     + importer() : ResultatImport
-    - convertirCategories(categories : String) : TypeLieu
+    - convertirCategories(categories : List<String>) : TypeLieu
   }
 
   class ImporteurBasilic {
-    - urlFichier : String
+    - REQUETE : String
+    - client : RestClient
+    - repo : CommuneRepository
     + getSource() : Source
     + importer() : ResultatImport
-    - convertirType(typeEquipement : String) : TypeLieu
+    - convertirType(types : String) : TypeLieu
   }
 
   class ResultatImport {
     - source : Source
     - nbLignesLues : int
     - erreurs : List<String>
+    - lieux : List<Lieu>
+    + getSource() : Source
+    + getNbLignesLues() : int
+    + getErrors() : List<String>
+    + getLieux() : List<Lieu>
   }
 
   class JournalSynchro {
     - id : String
     - source : Source
-    - dateDebut : LocalDateTime
-    - dateFin : LocalDateTime
+    - dateSynchro : LocalDateTime
     - nbAjouts : int
-    - nbMisesAJour : int
+    - nbLignesLues : int
     - nbRejets : int
     - statut : StatutSynchro
     - erreurs : List<String>
+    + getId() : String
+    + getSource() : Source
+    + getDateSynchro() : LocalDateTime
+    + getNbAjouts() : int
+    + getNbRejets() : int
+    + getNbLignesLues() : int
+    + getStatut() : StatutSynchro
+    + getErreurs() : List<String>
+
   }
 
   enum StatutSynchro {
@@ -155,30 +246,34 @@ package "Synchronisation" {
 
 ' ======================= Accès aux données =======================
 package "Accès aux données" {
-  class CommuneRepository {
-    + trouverParCodeInsee(code : String) : Commune
+  interface CommuneRepository {
+    + trouverParCodeInsee(codeInsee : String) : Commune
     + trouverParCodePostalEtNom(codePostal : String, nom : String) : Commune
+    + renvoieOuCreeCommune(codeInsee : String, nom : String) : Commune
+    + tailleRepo() : int
   }
 
-  class LieuRepository {
+  interface LieuRepository {
     + enregistrer(lieu : Lieu) : void
     + trouverParId(id : String) : Lieu
-    + trouverParSource(source : Source, idExterne : String) : Lieu
     + trouverParDepartement(code : String) : List<Lieu>
     + trouverParType(type : TypeLieu) : List<Lieu>
     + trouverDansZone(zone : BBox, filtre : FiltreRecherche) : List<Lieu>
-    + trouverProches(lat : double, lon : double, rayonKm : double, filtre : FiltreRecherche) : List<Lieu>
+    + trouverParFiltre(filtre : FiltreRecherche) : List<Lieu>
+    + filtreOk(lieu : Lieu, filtre : FiltreRecherche ) : boolean
+    - codeDepartement(lieu : Lieu) : String
+    + trouverProche(latitude : double, longitude : double, rayon : double, filtre : FiltreRecherche) : List<Lieu>
+    + calculDistance (lat1 : double, lon1 : double, lat2 : double, lon2 : double) : double
   }
 
-  class CircuitRepository {
+  interface CircuitRepository {
     + enregistrer(circuit : Circuit) : void
     + supprimer(circuit : Circuit) : void
     + trouverParCodePartage(code : String) : Circuit
-    + trouverParRegion(code : String) : List<Circuit>
     + trouverParDepartement(code : String) : List<Circuit>
   }
 
-  class JournalSynchroRepository {
+  interface JournalSynchroRepository {
     + enregistrer(journal : JournalSynchro) : void
     + trouverDernier(source : Source) : JournalSynchro
   }
@@ -191,6 +286,10 @@ package "Recherche" {
     - codeDepartement : String
     - label : String
     - texte : String
+    + getTypes() : List<TypeLieu>
+    + getCodeDepartement() : String
+    + getLabel() : String
+    + getTexte() : String
   }
 
   class BBox {
@@ -199,6 +298,10 @@ package "Recherche" {
     - lonMin : double
     - lonMax : double
     + contient(lat : double, lon : double) : boolean
+    + getLatMin() : double
+    + getLatMax() : double
+    + getLonMin() : double
+    + getLonMax() : double
   }
 }
 
@@ -210,8 +313,9 @@ EtapeCircuit "*" --> "1" Lieu
 Circuit "*" --> "1" Commune : +communeDepart
 
 ' Lieux
-Lieu "1" *-- "1..*" SourceLieu
 Lieu "1" *-- "1" Adresse
+Lieu <|-- LieuBasilic
+Lieu <|-- LieuDataTourisme
 
 ' Géographie
 Adresse "*" --> "1" Commune
