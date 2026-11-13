@@ -11,7 +11,7 @@ import backend.geographie.Commune;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TestLieu {
+class LieuTest {
 
     // Lieu est abstraite : on teste via LieuBasilic
     private Lieu creerLieu(String id, String nom, double latitude, double longitude){
@@ -174,5 +174,69 @@ class TestLieu {
 
         assertThrows(IllegalArgumentException.class, () -> rennes.distanceVers(sansAdresse));
         assertThrows(IllegalArgumentException.class, () -> sansAdresse.distanceVers(rennes));
+    }
+
+    @Test
+    void constructeurComplet_labelNull_ignore(){
+        List<String> labels = new ArrayList<>();
+        labels.add(null);
+        labels.add("Label");
+        Lieu lieu = new LieuBasilic("id1","Nom",null,TypeLieu.AUTRE,null,null,labels,null,null);
+        assertEquals(List.of("Label"),lieu.getLabels());
+    }
+
+    @Test
+    void getLabels_estEnLectureSeule(){
+        Lieu lieu = new LieuBasilic("id1","Nom",null,TypeLieu.AUTRE,null,null,
+                new ArrayList<>(List.of("Label")),null,null);
+        assertThrows(UnsupportedOperationException.class, () -> lieu.getLabels().add("Autre"));
+    }
+
+    //----------------------LieuDataTourisme-----------------------------
+    @Test
+    void lieuDataTourisme_constructeurVide(){
+        Lieu lieu = new LieuDataTourisme();
+        assertNull(lieu.getId());
+        assertTrue(lieu.getLabels().isEmpty());
+    }
+
+    @Test
+    void lieuDataTourisme_constructeurComplet(){
+        LocalDate date = LocalDate.of(2026,5,1);
+        Adresse adresse = creerAdresse(48.1,-1.6);
+        Lieu lieu = new LieuDataTourisme("dt1","Théâtre","desc",TypeLieu.THEATRE,
+                "https://exemple.fr","photo.jpg",new ArrayList<>(List.of("Label")),date,adresse);
+        assertEquals("dt1",lieu.getId());
+        assertEquals("Théâtre",lieu.getNom());
+        assertEquals(TypeLieu.THEATRE,lieu.getType());
+        assertEquals(List.of("Label"),lieu.getLabels());
+        assertEquals(date,lieu.getDateMiseAJour());
+        assertSame(adresse,lieu.getAdresse());
+    }
+
+    @Test
+    void mettreAJour_entreSourcesDifferentes(){
+        Lieu basilic = new LieuBasilic("id1","Nom",null,TypeLieu.MUSEE,null,null,null,null,null);
+        Lieu dataTourisme = new LieuDataTourisme("dt1",null,"desc DT",null,null,null,
+                new ArrayList<>(List.of("Label DT")),null,null);
+
+        basilic.mettreAJour(dataTourisme);
+
+        assertEquals("Nom",basilic.getNom());
+        assertEquals("desc DT",basilic.getDescription());
+        assertEquals(List.of("Label DT"),basilic.getLabels());
+    }
+
+    //----------------------Enums-----------------------------
+    @Test
+    void typeLieu_valeurs(){
+        assertEquals(7,TypeLieu.values().length);
+        assertEquals(TypeLieu.MUSEE,TypeLieu.valueOf("MUSEE"));
+    }
+
+    @Test
+    void source_valeurs(){
+        assertArrayEquals(new Source[]{Source.BASILIC,Source.DATATOURISME},Source.values());
+        assertEquals(Source.DATATOURISME,Source.valueOf("DATATOURISME"));
     }
 }
