@@ -1,15 +1,20 @@
 package backend.circuits;
 
 import backend.lieu.Lieu;
+import jakarta.persistence.*;
 
-/**
- * Étape d'un circuit : un lieu, sa position dans le circuit (numOrdre, à partir de 1)
- * et la durée de visite estimée en minutes.
- */
+@Entity
 public class EtapeCircuit {
-    private final Lieu lieu;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)   // auto-increment
+    private Long id;
+
+    @ManyToOne(optional = false)
+    private Lieu lieu;
     private int numOrdre;
-    private final int dureeVisiteMin;
+    private int dureeVisiteMin;
+
+    protected EtapeCircuit() {}                            // required by JPA
 
     public EtapeCircuit(Lieu lieu, int numOrdre, int dureeVisiteMin) {
         if (lieu == null) {
@@ -26,20 +31,10 @@ public class EtapeCircuit {
         this.dureeVisiteMin = dureeVisiteMin;
     }
 
-    public Lieu getLieu() {
-        return lieu;
-    }
-
-    public int getNumOrdre() {
-        return numOrdre;
-    }
-
-    public int getDureeVisiteMin() {
-        return dureeVisiteMin;
-    }
+    public Lieu getLieu() { return lieu; }
+    public int getNumOrdre() { return numOrdre; }
+    public int getDureeVisiteMin() { return dureeVisiteMin; }
 
     /** Réservé à Circuit, qui gère la numérotation des étapes. */
-    void setNumOrdre(int numOrdre) {
-        this.numOrdre = numOrdre;
-    }
+    void setNumOrdre(int numOrdre) { this.numOrdre = numOrdre; }
 }

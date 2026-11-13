@@ -1,0 +1,19 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${DB_NAME:-artlas}
+      POSTGRES_USER: ${DB_USER:-artlas}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD must be set}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  adminer:
+    image: adminer
+    depends_on:
+      - db
+    ports:
+      - "127.0.0.1:8081:8080"
+volumes:
+  pgdata:

@@ -13,13 +13,16 @@ public abstract class Lieu {
     @Id
     private String id;
     private String nom;
-    @Column(length = 2000)
+    @Column(columnDefinition = "TEXT")
     private String description;
     @Enumerated(EnumType.STRING)// [0..1]
     private TypeLieu type;
+    @Column(columnDefinition = "TEXT")
     private String siteWeb; // [0..1]
+    @Column(columnDefinition = "TEXT")
     private String photo;
     @ElementCollection(fetch = FetchType.EAGER)// [0..1]
+    @Column(length = 1000)
     private List<String> labels;
     private LocalDate dateMiseAJour;
     @Embedded

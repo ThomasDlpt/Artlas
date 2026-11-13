@@ -9,6 +9,7 @@ import jakarta.persistence.*;
 public class Adresse {
     private static final double RAYON_TERRE_KM = 6371.0;
 
+    @Column(length = 1000)
     private String rue;          // peut être null (certains lieux n'ont pas de rue précise)
     private String codePostal;
     @ManyToOne 

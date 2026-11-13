@@ -103,6 +103,7 @@ public class ImporteurDataTourisme implements Importeur{
                     Lieu l = new LieuDataTourisme(id_uri, nom, descriptionCourte, typeLieu, siteWeb, null, types, LocalDate.now(), new Adresse(adresseRue, codePostal, c, latitude, longitude));
                     lieux.add(l);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     erreurs.add(e.toString() + poi.path("uuid").asText("?"));
                 }
             }

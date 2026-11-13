@@ -9,6 +9,7 @@ import java.util.UUID;
 import backend.geographie.Adresse;
 import backend.geographie.Commune;
 import backend.lieu.Lieu;
+import jakarta.persistence.Entity;
 
 /**
  * Itinéraire culturel composé d'étapes ordonnées (numOrdre de 1 à n).
@@ -19,8 +20,10 @@ import backend.lieu.Lieu;
  * distanceKm, dureeMinutes et communeDepart sont des attributs dérivés,
  * recalculés automatiquement après chaque modification des étapes.
  */
+import jakarta.persistence.*;   // replaces: import jakarta.persistence.Entity;
+
+@Entity
 public class Circuit {
-    /** Vitesse de marche utilisée pour estimer le temps de trajet entre deux étapes. */
     public static final double VITESSE_MARCHE_KMH = 5.0;
     public static final int NB_ETAPES_MIN = 2;
 
@@ -28,21 +31,31 @@ public class Circuit {
     private static final int LONGUEUR_CODE = 8;
     private static final SecureRandom RANDOM = new SecureRandom();
 
-    private final String id;
+    @Id                                   // like primary_key=True
+    private String id;
     private String nom;
+    @Column(length = 2000)
     private String description;
-    private final String codePartage;
+    @Column(unique = true, nullable = false)
+    private String codePartage;
     private double distanceKm;
     private int dureeMinutes;
-    private final List<EtapeCircuit> etapes;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "circuit_id")      // FK column in etape_circuit, no join table
+    @OrderBy("numOrdre ASC")
+    private List<EtapeCircuit> etapes = new ArrayList<>();
+
+    @ManyToOne
     private Commune communeDepart;
+
+    protected Circuit() {}                // required by JPA
 
     public Circuit(String nom, String description) {
         setNom(nom);
         this.description = description;
         this.id = UUID.randomUUID().toString();
         this.codePartage = genererCodePartage();
-        this.etapes = new ArrayList<>();
     }
 
     // ---------- Getters / setters ----------

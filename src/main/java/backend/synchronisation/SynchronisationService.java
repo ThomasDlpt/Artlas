@@ -47,7 +47,7 @@ public class SynchronisationService {
                 res.add(jBasilic);
             }
         }catch (Exception e){
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
         return res;
     }
@@ -67,21 +67,25 @@ public class SynchronisationService {
         int nbAjouts = 0;
         int nbMisesAJour = 0;
         ResultatImport resImport = importeur.importer();
+        List<String> erreurs = new ArrayList<>(resImport.getErrors());
         for(Lieu l : resImport.getLieux()){
-            Lieu existant = trouverExistant(lieuRepo, l);
-            if (existant != null) {
-                fusionner(existant, l);
-                nbMisesAJour++;
-            }
-            else{
-                if(lieuRepo.enregistrerLieu(l)){
-                    nbAjouts++;
+            try {
+                Lieu existant = trouverExistant(lieuRepo, l);
+                if (existant != null) {
+                    fusionner(existant, l);
+                    nbMisesAJour++;
                 }
-               
+                else if(lieuRepo.enregistrerLieu(l)){
+                        nbAjouts++;
+                }
+            }    
+            catch (Exception e) {
+                String msg = e.getMessage();
+                if (msg != null && msg.length() > 200) msg = msg.substring(0, 200);
+                erreurs.add(l.getId() + " : " + msg);
             }
         }
         int nbLignesLues = resImport.getNbLignesLues();
-        List<String> erreurs = resImport.getErrors();
         int nbRejets = erreurs.size();
 
 

@@ -50,7 +50,7 @@ public class ImporteurBasilic implements Importeur{
 
         while (pageSuivante) {
             try {
-                JsonNode res = client.get().uri(REQUETE + "&page=" + page).retrieve().body(JsonNode.class);
+                JsonNode res = lirePage(page);
                 for (JsonNode obj : res.path("data")) {
                     pageLues++;
                     try {
@@ -92,7 +92,10 @@ public class ImporteurBasilic implements Importeur{
                 System.out.println(" Pages : " + page);
                 pageSuivante = res.path("links").path("next").isTextual();
                 page++;
+                Thread.sleep(150);                       
+
             }catch (Exception e){
+                erreurs.add("Page " + page + " : " + e.getMessage());
                 System.out.println(e.getMessage());
                 pageSuivante = false; 
             }
@@ -112,6 +115,19 @@ public class ImporteurBasilic implements Importeur{
         };
     }
     
+    private JsonNode lirePage(int page) throws Exception {
+        Exception derniere = null;
+        for (int essai = 1; essai <= 5; essai++) {
+            try {
+                return client.get().uri(REQUETE + "&page=" + page)
+                        .retrieve().body(JsonNode.class);
+            } catch (Exception e) {
+                derniere = e;
+                Thread.sleep(3000L * essai);
+            }
+        }
+        throw derniere;
+    }
     public static void main(String[] args) {
         /*CommuneRepository communeRepo = new CommuneRepository();
         ImporteurBasilic test = new ImporteurBasilic("https://tabular-api.data.gouv.fr/api/resources", communeRepo);
