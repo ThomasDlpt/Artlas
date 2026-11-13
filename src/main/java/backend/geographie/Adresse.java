@@ -35,6 +35,7 @@ public class Adresse {
         this.latitude = latitude;
         this.longitude = longitude;
     }
+    
 
     public String getRue() {
         return rue;
