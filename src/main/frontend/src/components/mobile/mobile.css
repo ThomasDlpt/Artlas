@@ -1,0 +1,133 @@
+/* Disposition mobile de PageCarte (≤ 640 px). Spécification : docs/design/README.md § 2.10.
+   Les règles qui modifient la disposition de bureau sont préfixées par .page-carte--mobile. */
+
+@keyframes atl-monter {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---------- Barre d'onglets Carte / Liste / Circuit (64 px) ---------- */
+.atl-onglets {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 64px; z-index: 970;
+  display: flex; background: var(--color-paper-50); border-top: 1px solid var(--color-paper-200);
+}
+.atl-onglet {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  border: 0; background: none; color: var(--color-ink-muted); font: 600 12px/16px var(--font-sans);
+}
+.atl-onglet--actif { color: var(--color-accent); }
+.atl-onglet__icone {
+  position: relative; display: grid; place-items: center; padding: 2px 16px; border-radius: var(--radius-full);
+}
+.atl-onglet--actif .atl-onglet__icone { background: var(--color-accent-tint); }
+.atl-onglet__compteur {
+  position: absolute; top: -4px; right: 6px; min-width: 18px; height: 18px; padding: 0 5px;
+  border-radius: var(--radius-full); background: var(--color-accent); color: var(--color-ink-inverse);
+  font: 700 11px/18px var(--font-sans); text-align: center;
+}
+
+/* ---------- Recherche en pilule + puces de types ---------- */
+.atl-mobile-haut {
+  position: absolute; left: 12px; right: 12px; top: 12px; z-index: 960;
+  display: flex; flex-direction: column; gap: 10px; pointer-events: none;
+}
+.atl-mobile-haut > * { pointer-events: auto; }
+
+.atl-mobile-recherche {
+  display: flex; align-items: center; gap: 4px; min-height: 48px; padding: 0 4px 0 14px;
+  border-radius: 24px; background: var(--color-paper-50); box-shadow: var(--shadow-float);
+}
+.atl-mobile-recherche input {
+  flex: 1; min-width: 0; border: 0; background: none; outline-offset: 4px; padding-left: 6px;
+  font: 400 16px/22px var(--font-sans); color: var(--color-ink); -webkit-appearance: none; appearance: none;
+}
+.atl-mobile-recherche input::-webkit-search-cancel-button { display: none; }
+.atl-mobile-filtres {
+  flex: none; width: 44px; height: 44px; border: 0; border-radius: 50%; display: grid; place-items: center;
+  background: transparent; color: var(--color-ink-muted);
+}
+.atl-mobile-filtres--actif { background: var(--color-accent-tint); color: var(--color-accent); }
+
+.atl-puces {
+  display: flex; gap: 8px; overflow-x: auto; margin: 0 -12px; padding: 0 12px 6px; scrollbar-width: none;
+}
+.atl-puces::-webkit-scrollbar { display: none; }
+.atl-puce {
+  flex: none; display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 14px 0 6px;
+  border: 0; border-radius: var(--radius-full); background: var(--color-paper-50); color: var(--color-ink);
+  box-shadow: 0 1px 2px rgba(31, 27, 22, .08), 0 3px 10px rgba(31, 27, 22, .08);
+  font: 600 14px/20px var(--font-sans);
+}
+/* Actif : fond teinté et anneau à la couleur du type (la forme change, pas seulement la couleur) */
+.atl-puce--actif { background: var(--color-accent-tint); box-shadow: inset 0 0 0 2px var(--t), 0 1px 2px rgba(31, 27, 22, .08); }
+.atl-puce__rond {
+  width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--t); color: #fff;
+}
+
+/* ---------- Volet du bas (fiche du lieu) ---------- */
+.atl-volet {
+  position: absolute; left: 0; right: 0; bottom: 64px; z-index: 935;
+  height: 208px; display: flex; flex-direction: column; overflow: hidden;
+  background: var(--color-paper-50); border-radius: 20px 20px 0 0;
+  box-shadow: 0 -2px 6px rgba(31, 27, 22, .05), 0 -12px 32px rgba(31, 27, 22, .12);
+  transition: height var(--duration-panel) var(--ease-panel);
+  animation: atl-monter var(--duration-panel) var(--ease-panel);
+}
+.atl-volet[data-cran="mi"] { height: min(452px, 60%); }
+.atl-volet[data-cran="plein"] { height: calc(100% - 72px); }
+.atl-volet--glisse { transition: none; }
+
+.atl-volet__poignee {
+  flex: none; width: 100%; height: 28px; border: 0; background: none; display: grid; place-items: center;
+  touch-action: none; cursor: grab;
+}
+.atl-volet__poignee span { width: 36px; height: 4px; border-radius: 2px; background: var(--color-line-strong); }
+.atl-volet--glisse .atl-volet__poignee { cursor: grabbing; }
+.atl-volet__contenu { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+
+/* La fiche perd sa position « panneau flottant » : elle remplit le volet */
+.atl-volet .atl-fiche {
+  position: relative; inset: auto; width: auto; max-width: none; flex: 1; min-height: 0;
+  border-radius: 0; box-shadow: none; animation: none;
+}
+/* Cran aperçu : nom, type et actions seulement (la croix reste accessible au-dessus de l'en-tête) */
+.atl-volet[data-cran="apercu"] .atl-fiche { overflow: hidden; }
+.atl-volet[data-cran="apercu"] .atl-fiche__photo { height: 0; overflow: visible; }
+.atl-volet[data-cran="apercu"] .atl-fiche__photo > :not(.atl-fiche__fermer) { display: none; }
+.atl-volet[data-cran="apercu"] .atl-fiche__entete { padding-right: 56px; }
+
+/* ---------- Ce que change la disposition mobile ---------- */
+.page-carte--mobile .atl-carte { bottom: 64px; }
+
+/* Panneaux : pleine largeur, entre la recherche et la barre d'onglets */
+.page-carte--mobile .atl-panneau--lieux,
+.page-carte--mobile .atl-circuit {
+  left: 0; right: 0; top: 64px; bottom: 64px; width: auto; max-width: none;
+  border-radius: 20px 20px 0 0; animation: atl-monter var(--duration-panel) var(--ease-panel);
+}
+/* Filtres : volet qui monte depuis la barre d'onglets, sous les puces */
+.page-carte--mobile .atl-panneau--filtres {
+  left: 0; right: 0; top: auto; bottom: 64px; width: auto; max-height: calc(100% - 64px - 124px);
+  border-radius: 20px 20px 0 0; padding: 12px 12px 8px; animation: atl-monter var(--duration-panel) var(--ease-panel);
+}
+
+/* Conseil « Zoomez… » sous les puces */
+.page-carte--mobile .page-carte__conseil { top: 124px; max-width: calc(100% - 24px); white-space: normal; text-align: center; }
+
+/* Contrôles de la carte : au-dessus de la barre d'onglets ; cachés quand le volet est ouvert (pincer pour zoomer) */
+.page-carte--mobile .atl-controles { bottom: 80px; right: 12px; }
+.page-carte--mobile.page-carte--fiche .atl-controles { right: 12px; display: none; }
+.page-carte--mobile.page-carte--fiche .leaflet-bottom.leaflet-right { right: 0; }
+.page-carte--mobile .atl-assistant { display: none; }
+
+/* Notifications : au-dessus de la barre d'onglets */
+@media (max-width: 640px) {
+  body:has(.page-carte--mobile) .atl-notifs {
+    left: 12px; right: 12px; bottom: 80px; transform: none; display: flex; justify-content: center;
+  }
+  body:has(.page-carte--mobile) .atl-notif { white-space: normal; border-radius: 22px; padding-top: 6px; padding-bottom: 6px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .atl-volet, .page-carte--mobile .atl-panneau--lieux, .page-carte--mobile .atl-circuit, .page-carte--mobile .atl-panneau--filtres { animation: none; transition: none; }
+}

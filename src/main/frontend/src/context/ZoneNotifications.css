@@ -1,0 +1,22 @@
+.atl-notifs {
+  position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: var(--z-toast);
+}
+.atl-notif {
+  display: inline-flex; align-items: center; gap: 14px; min-height: 44px; padding: 0 6px 0 18px;
+  border-radius: var(--radius-full); background: var(--color-toast); color: var(--color-ink-inverse);
+  box-shadow: var(--shadow-toast); font: 400 15px/20px var(--font-sans); white-space: nowrap;
+  animation: atl-derouler-notif var(--duration-panel) var(--ease-panel);
+}
+.atl-notif__action {
+  border: 0; background: transparent; color: var(--color-ink-inverse);
+  font-weight: var(--font-weight-semibold); text-decoration: underline; padding: 6px 4px;
+}
+.atl-notif__fermer {
+  width: 32px; height: 32px; border: 0; border-radius: 50%; background: transparent;
+  color: var(--color-ink-inverse); display: grid; place-items: center;
+}
+@keyframes atl-derouler-notif {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) { .atl-notif { animation: none; } }

@@ -1,0 +1,170 @@
+/* Artlas — tokens CSS
+   À importer une fois (ex. dans main.jsx) avant les styles des composants.
+   Source : maquette Artlas, novembre 2026. */
+
+:root {
+  /* Papier et encre */
+  --color-paper-50:  #fffdf8;  /* surfaces, panneaux */
+  --color-paper-100: #f7f3ea;  /* fond de page, champs */
+  --color-paper-200: #efe8d9;  /* survol, retraits */
+  --color-paper-300: #e4dac6;  /* désactivé */
+  --color-line:        #d9cfbc;
+  --color-line-strong: #8c8170;
+  --color-ink:         #1f1b16;
+  --color-ink-muted:   #5b5247;
+  --color-ink-subtle:  #6f6455;
+  --color-ink-inverse: #fffdf8;
+
+  /* Action : une seule couleur */
+  --color-accent:       #a8401f;  /* garance */
+  --color-accent-hover: #86321a;
+  --color-accent-tint:  #f6e5dc;
+  --color-focus:        #1a56b0;
+
+  /* Types de lieu (code API) */
+  --color-type-musee:        #8a2846;
+  --color-type-monument:     #7a5a12;
+  --color-type-exposition:   #1d6b66;
+  --color-type-theatre:      #5f3f8f;
+  --color-type-cinema:       #1f4f8c;
+  --color-type-bibliotheque: #356428;
+  --color-type-autre:        #4a4e57;
+
+  /* États */
+  --color-success: #2e6b3c;  --color-success-tint: #e3f0e5;
+  --color-warning: #8a5300;  --color-warning-tint: #fbefd6;
+  --color-error:   #b0261b;  --color-error-tint:   #fbe5e2;
+  --color-info:    #1f5a96;  --color-info-tint:    #e3edf8;
+
+  /* Carte */
+  --color-map-ground: #f2f1ee;
+  --color-map-water:  #d4dadc;
+  --color-scrim: rgba(31, 27, 22, .45);
+  --color-toast: #1f1b16;      /* pilule de notification */
+
+  /* Typographie */
+  --font-serif: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --font-sans: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --font-size-display: 56px;
+  --font-size-h1: 40px;
+  --font-size-h2: 30px;
+  --font-size-h3: 23px;
+  --font-size-title: 24px;     /* titre de page (admin, partage) */
+  --font-size-place: 20px;     /* nom dans la fiche, nom du circuit */
+  --font-size-place-sm: 16px;  /* nom en liste */
+  --font-size-step: 15px;      /* nom d'étape */
+  --font-size-body-lg: 17px;
+  --font-size-body: 15px;
+  --font-size-small: 13px;
+  --font-size-caption: 12px;
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --letter-spacing-label: .08em;
+
+  /* Espacements : grille de 4 px */
+  --space-1: 4px;   --space-2: 8px;
+  --space-3: 12px;  --space-4: 16px;
+  --space-5: 24px;  --space-6: 32px;
+  --space-7: 48px;  --space-8: 64px;
+
+  /* Rayons */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-field: 10px;  /* champs de formulaire */
+  --radius-row: 10px;    /* ligne de liste */
+  --radius-card: 12px;   /* encadrés internes */
+  --radius-lg: 16px;     /* panneaux flottants */
+  --radius-xl: 20px;     /* cartes centrées, volet mobile */
+  --radius-full: 999px;  /* recherche, puces, boutons, bulles, marqueurs */
+
+  /* Ombres : seulement ce qui flotte au-dessus de la carte */
+  --shadow-float: 0 1px 2px rgba(31,27,22,.08), 0 4px 14px rgba(31,27,22,.12);
+  --shadow-panel: 0 1px 2px rgba(31,27,22,.06), 0 10px 32px rgba(31,27,22,.13);
+  --shadow-toast: 0 6px 20px rgba(31,27,22,.22);
+  --shadow-marker: 0 1px 2px rgba(31,27,22,.35);
+
+  /* Mise en page et composants de la carte */
+  --bubble-main: 48px;        /* bulle de menu principale */
+  --bubble-secondary: 40cpx;   /* bulles Filtres, Lieux visibles, Circuit */
+  --bubble-radius: 64px;      /* rayon de l'arc des bulles secondaires */
+  --panel-filtres-w: 280px;
+  --panel-lieux-w: 360px;
+  --panel-circuit-w: 360px;
+  --detail-w: 380px;          /* fiche du lieu */
+  --layer-switch: 72px;       /* vignette plan / satellite */
+  --marker-size: 32px;
+  --marker-size-active: 40px;
+  --touch-min: 44px;
+  --icon-size: 20px;
+  --z-map-controls: 800;
+  --z-panel: 940;
+  --z-overlay: 1000;
+  --z-toast: 1100;
+
+  /* Mouvement */
+  --duration-panel: 240ms;
+  --ease-panel: cubic-bezier(.2, .7, .2, 1);
+  --ease-pop: cubic-bezier(.3, 1.4, .5, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --duration-panel: 0ms; }
+}
+
+/* Couleur du type posée par data-type="MUSEE"… */
+[data-type="MUSEE"]           { --t: var(--color-type-musee); }
+[data-type="MONUMENT"]        { --t: var(--color-type-monument); }
+[data-type="LIEU_EXPOSITION"] { --t: var(--color-type-exposition); }
+[data-type="THEATRE"]         { --t: var(--color-type-theatre); }
+[data-type="CINEMA"]          { --t: var(--color-type-cinema); }
+[data-type="BIBLIOTHEQUE"]    { --t: var(--color-type-bibliotheque); }
+[data-type="AUTRE"]           { --t: var(--color-type-autre); }
+
+/* Hachures du bandeau « pas de photo » */
+:root { --color-hatch: #e9e1cf; }
+
+/* ===== Thème sombre : suit le réglage du navigateur / du système =====
+   Ajout au front (la maquette ne définit que le thème clair « papier »).
+   Même logique : fond chaud, encre claire, une seule couleur d'action. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-paper-50:  #26211c;  /* surfaces, panneaux */
+    --color-paper-100: #1d1915;  /* fond de page, champs */
+    --color-paper-200: #332c25;  /* survol, retraits */
+    --color-paper-300: #3d362e;  /* désactivé */
+    --color-line:        #423a31;
+    --color-line-strong: #7d7264;
+    --color-ink:         #f2ece1;
+    --color-ink-muted:   #c2b7a6;
+    --color-ink-subtle:  #a39785;
+    --color-ink-inverse: #1d1915;  /* texte posé sur l'accent ou sur l'encre */
+
+    --color-accent:       #e0875f;
+    --color-accent-hover: #ec9d79;
+    --color-accent-tint:  #4a2e22;
+    --color-focus:        #8ab4f8;
+
+    --color-type-musee:        #c25a7c;
+    --color-type-monument:     #a8822a;
+    --color-type-exposition:   #2f9890;
+    --color-type-theatre:      #9175c4;
+    --color-type-cinema:       #4f86cf;
+    --color-type-bibliotheque: #5c9a4a;
+    --color-type-autre:        #808693;
+
+    --color-success: #7cc28b;  --color-success-tint: #1f3324;
+    --color-warning: #e0a948;  --color-warning-tint: #3a2c14;
+    --color-error:   #f08a7f;  --color-error-tint:   #3d1d19;
+    --color-info:    #7fb0e6;  --color-info-tint:    #1a2a3d;
+
+    --color-map-ground: #1b1814;
+    --color-toast: #f2ece1;     /* pilule claire sur fond sombre */
+    --color-hatch: #3a332b;
+
+    --shadow-float: 0 1px 2px rgba(0,0,0,.35), 0 4px 14px rgba(0,0,0,.35);
+    --shadow-panel: 0 1px 2px rgba(0,0,0,.35), 0 10px 32px rgba(0,0,0,.45);
+    --shadow-toast: 0 6px 20px rgba(0,0,0,.5);
+  }
+}

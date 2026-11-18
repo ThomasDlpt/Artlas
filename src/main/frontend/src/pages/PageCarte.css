@@ -1,0 +1,18 @@
+.page-carte { position: relative; width: 100%; height: 100%; overflow: hidden; }
+
+/* Conseil discret en haut au centre quand la zone est trop large */
+.page-carte__conseil {
+  position: absolute; top: 20px; left: 50%; transform: translateX(-50%); z-index: var(--z-map-controls);
+  margin: 0; padding: 8px 16px; border-radius: var(--radius-full);
+  background: var(--color-paper-50); color: var(--color-ink); box-shadow: var(--shadow-float);
+  font: 600 14px/20px var(--font-sans); white-space: nowrap;
+}
+
+/* Haut droite : Mon compte (V2, désactivé) — se décale à gauche de la fiche */
+.page-carte__compte {
+  position: absolute; top: 16px; right: 16px; z-index: var(--z-map-controls);
+  width: var(--touch-min); height: var(--touch-min); border: 0; border-radius: 50%;
+  display: grid; place-items: center; background: var(--color-paper-50); color: var(--color-ink-subtle);
+  box-shadow: var(--shadow-float); cursor: not-allowed;
+}
+.page-carte--fiche .page-carte__compte { right: calc(var(--detail-w) + 32px); }

@@ -1,0 +1,73 @@
+.atl-fiche {
+  position: absolute; right: 16px; top: 16px; bottom: 16px; z-index: 930;
+  width: var(--detail-w); max-width: calc(100% - 32px); overflow-y: auto;
+  background: var(--color-paper-50); border-radius: var(--radius-lg); box-shadow: var(--shadow-panel);
+  animation: atl-glisser-droite var(--duration-panel) var(--ease-panel);
+}
+@keyframes atl-glisser-droite {
+  from { opacity: 0; transform: translateX(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Bandeau photo (ou hachures + pictogramme du type) */
+.atl-fiche__photo {
+  position: relative; height: 128px; background: var(--color-paper-200); overflow: hidden;
+  display: grid; place-items: center;
+}
+.atl-fiche__photo img { width: 100%; height: 100%; object-fit: cover; }
+.atl-fiche__photo--fantome { animation: atl-pulse 1.4s ease-in-out infinite; }
+.atl-fiche__sans-photo {
+  position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  background: repeating-linear-gradient(45deg, transparent 0 6px, var(--color-hatch) 6px 8px);
+  font-size: var(--font-size-caption); color: var(--color-ink-muted);
+}
+.atl-fiche__picto {
+  width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--color-paper-50); color: var(--t); box-shadow: 0 1px 3px rgba(31, 27, 22, .10);
+}
+.atl-fiche__fermer {
+  position: absolute; top: 10px; right: 10px; width: 36px; height: 36px; border: 0; border-radius: 50%;
+  display: grid; place-items: center; background: var(--color-paper-50); color: var(--color-ink);
+  box-shadow: 0 1px 3px rgba(31, 27, 22, .12);
+}
+.atl-fiche__fermer:hover { background: var(--color-paper-200); }
+
+/* En-tête */
+.atl-fiche__entete { padding: 16px 20px 0; }
+.atl-fiche__nom { font: 600 var(--font-size-place)/26px var(--font-serif); letter-spacing: -.005em; color: var(--color-ink); }
+.atl-fiche__meta {
+  margin: 4px 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px;
+  font-size: 14px; line-height: 20px; color: var(--color-ink-muted);
+}
+.atl-fiche__type { display: inline-flex; align-items: center; gap: 4px; color: var(--t); font-weight: var(--font-weight-semibold); }
+.atl-fiche__labels { list-style: none; margin: 10px 0 0; padding: 0; display: flex; gap: 6px; flex-wrap: wrap; }
+.atl-label {
+  display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: var(--radius-full);
+  background: var(--color-paper-200); font: 600 12px/16px var(--font-sans); color: var(--color-ink);
+}
+.atl-label::before { content: ''; width: 5px; height: 5px; background: var(--color-accent); transform: rotate(45deg); }
+
+/* Actions */
+.atl-fiche__actions { display: flex; gap: 8px; padding: 14px 20px 16px; }
+
+/* Corps */
+.atl-fiche__filet { margin: 0 20px; border-top: 1px solid var(--color-line); }
+.atl-fiche__description { margin: 0; padding: 14px 20px; font-size: var(--font-size-body); line-height: 23px; color: var(--color-ink); }
+.atl-fiche__infos { list-style: none; margin: 0; padding: 6px 20px; display: flex; flex-direction: column; }
+.atl-fiche__infos li {
+  display: flex; gap: 14px; align-items: flex-start; padding: 8px 0; font-size: 14px; line-height: 20px; color: var(--color-ink);
+}
+.atl-fiche__infos li > svg { flex: none; color: var(--color-ink-muted); }
+.atl-fiche__infos a { color: var(--color-accent); font-weight: var(--font-weight-semibold); }
+.atl-fiche__info--discrete, .atl-fiche__infos .atl-fiche__info--discrete { color: var(--color-ink-muted); }
+
+.atl-fiche__sources { padding: 10px 20px 16px; display: flex; flex-direction: column; gap: 2px; background: var(--color-paper-100); }
+.atl-fiche__sources p { margin: 0; font-size: var(--font-size-caption); line-height: 16px; color: var(--color-ink-subtle); }
+.atl-fiche__sources b { color: var(--color-ink-muted); }
+
+/* Erreur */
+.atl-fiche__message { padding: 24px 20px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; color: var(--color-ink-muted); }
+.atl-fiche__message p { margin: 0; }
+.atl-fiche__message-titre { font: 600 16px/22px var(--font-serif); color: var(--color-ink); }
+
+@media (prefers-reduced-motion: reduce) { .atl-fiche, .atl-fiche__photo--fantome { animation: none; } }
