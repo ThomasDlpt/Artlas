@@ -9,7 +9,7 @@ import java.util.UUID;
 import backend.geographie.Adresse;
 import backend.geographie.Commune;
 import backend.lieu.Lieu;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 
 /**
  * Itinéraire culturel composé d'étapes ordonnées (numOrdre de 1 à n).
@@ -20,8 +20,6 @@ import jakarta.persistence.Entity;
  * distanceKm, dureeMinutes et communeDepart sont des attributs dérivés,
  * recalculés automatiquement après chaque modification des étapes.
  */
-import jakarta.persistence.*;   // replaces: import jakarta.persistence.Entity;
-
 @Entity
 public class Circuit {
     public static final double VITESSE_MARCHE_KMH = 5.0;
@@ -41,7 +39,7 @@ public class Circuit {
     private double distanceKm;
     private int dureeMinutes;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)  // étapes toujours chargées avec le circuit
     @JoinColumn(name = "circuit_id")      // FK column in etape_circuit, no join table
     @OrderBy("numOrdre ASC")
     private List<EtapeCircuit> etapes = new ArrayList<>();

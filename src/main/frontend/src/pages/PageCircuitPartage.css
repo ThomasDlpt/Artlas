@@ -1,0 +1,96 @@
+.page-partage { position: relative; width: 100%; height: 100%; overflow: hidden; }
+
+/* Panneau en lecture seule, à gauche */
+.atl-partage {
+  position: absolute; left: 16px; top: 16px; bottom: 16px; z-index: var(--z-panel);
+  width: 400px; max-width: calc(100% - 32px); overflow-y: auto; display: flex; flex-direction: column;
+  background: var(--color-paper-50); border-radius: var(--radius-lg); box-shadow: var(--shadow-panel);
+}
+.atl-partage__haut { display: flex; align-items: center; gap: 10px; padding: 14px 20px 6px; }
+.atl-partage__haut .atl-logo-texte { font-size: 20px; }
+.atl-partage__badge {
+  margin-left: auto; display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px;
+  border-radius: var(--radius-full); background: var(--color-paper-100);
+  font: 600 12px/16px var(--font-sans); color: var(--color-ink-muted);
+}
+
+.atl-partage__entete { padding: 12px 20px 16px; display: flex; flex-direction: column; gap: 6px; }
+.atl-partage__entete h1 { font: 600 var(--font-size-title)/30px var(--font-serif); letter-spacing: -.005em; color: var(--color-ink); }
+.atl-partage__desc { margin: 0; font: italic 400 16px/24px var(--font-serif); color: var(--color-ink-muted); }
+.atl-partage__code { margin: 4px 0 0; font-size: var(--font-size-small); line-height: 18px; color: var(--color-ink-subtle); }
+.atl-partage__code span { font-weight: 600; letter-spacing: .08em; color: var(--color-ink-muted); }
+
+.atl-partage__recap { margin: 0 16px; }
+
+.atl-partage__etapes { list-style: none; margin: 0; padding: 14px 0 6px; }
+.atl-partage__etape { display: flex; gap: 12px; align-items: center; padding: 8px 20px; }
+.atl-partage__etape .atl-etape__numero { width: 28px; height: 28px; flex: none; }
+.atl-partage__etape-texte { flex: 1; min-width: 0; }
+.atl-partage__etape-nom { display: block; font: 600 16px/21px var(--font-serif); color: var(--color-ink); }
+.atl-partage__etape-meta { font-size: var(--font-size-small); line-height: 18px; color: var(--color-ink-muted); }
+.atl-partage__etape-duree { font: 600 13px/18px var(--font-sans); color: var(--color-ink-muted); white-space: nowrap; }
+.atl-partage__troncon {
+  display: flex; gap: 6px; align-items: center; margin: 0 0 0 33px; padding: 4px 0 4px 21px;
+  border-left: 2px dotted var(--color-accent); font: 600 12px/16px var(--font-sans); color: var(--color-ink-muted);
+}
+.atl-partage__note { margin: 0 20px; font-size: var(--font-size-caption); line-height: 16px; color: var(--color-ink-subtle); }
+.atl-partage__espace { flex: 1; min-height: 12px; }
+
+.atl-partage__actions { padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+.atl-partage__actions p { margin: 2px 0 0; text-align: center; font-size: var(--font-size-caption); line-height: 16px; color: var(--color-ink-muted); }
+
+.atl-partage__message { padding: 20px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; color: var(--color-ink-muted); }
+.atl-partage__message p { margin: 0; }
+.atl-partage__message-titre { font: 600 16px/22px var(--font-serif); color: var(--color-ink); }
+
+/* Haut droite : retour à la carte */
+.page-partage__explorer {
+  position: absolute; top: 16px; right: 16px; z-index: var(--z-map-controls);
+  display: inline-flex; align-items: center; gap: 8px; min-height: var(--touch-min); padding: 0 16px;
+  border-radius: var(--radius-full); background: var(--color-paper-50); color: var(--color-ink);
+  box-shadow: var(--shadow-float); font: 600 15px/22px var(--font-sans); text-decoration: none;
+}
+.page-partage__explorer:hover { background: var(--color-paper-200); }
+
+/* ---------- Code introuvable ---------- */
+.page-introuvable {
+  position: relative; min-height: 100%; display: grid; place-items: center; padding: 24px;
+  background: var(--color-map-ground); overflow: hidden;
+}
+/* Carte estompée en fond (motif de rues stylisé) */
+.page-introuvable__fond {
+  position: absolute; inset: 0; opacity: .6;
+  background:
+    linear-gradient(8deg, transparent 49.5%, var(--color-paper-50) 49.5% 50.5%, transparent 50.5%) 0 0 / 520px 360px,
+    linear-gradient(98deg, transparent 49.6%, var(--color-paper-50) 49.6% 50.4%, transparent 50.4%) 0 0 / 420px 520px,
+    radial-gradient(circle at 78% 44%, var(--color-paper-200) 0 70px, transparent 71px),
+    var(--color-map-ground);
+}
+.page-introuvable__logo { position: absolute; top: 16px; left: 16px; }
+.page-introuvable__carte {
+  position: relative; width: 100%; max-width: 440px; padding: 32px 32px 28px;
+  display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;
+  background: var(--color-paper-50); border-radius: var(--radius-xl);
+  box-shadow: 0 1px 2px rgba(31, 27, 22, .06), 0 16px 40px rgba(31, 27, 22, .14);
+}
+.page-introuvable__carte h1 { margin-top: 8px; font: 600 22px/28px var(--font-serif); color: var(--color-ink); }
+.page-introuvable__carte > p { margin: 0; font-size: 15px; line-height: 22px; color: var(--color-ink-muted); }
+.page-introuvable__code { font-weight: 600; letter-spacing: .08em; color: var(--color-ink); }
+.page-introuvable__carte form { width: 100%; margin-top: 10px; display: flex; flex-direction: column; gap: 6px; text-align: left; }
+.page-introuvable__carte label { padding-left: 4px; font: 600 12px/16px var(--font-sans); color: var(--color-ink-muted); }
+.page-introuvable__champ {
+  display: flex; align-items: center; gap: 6px; padding: 4px 4px 4px 16px;
+  border-radius: var(--radius-full); background: var(--color-paper-100); border: 1px solid transparent;
+}
+.page-introuvable__champ--invalide { border-color: var(--color-error); }
+.page-introuvable__champ input {
+  flex: 1; min-width: 0; min-height: 40px; border: 0; background: none; outline-offset: 4px;
+  font: 600 17px/22px var(--font-sans); letter-spacing: .14em; text-transform: uppercase; color: var(--color-ink);
+}
+.page-introuvable__carte form p { margin: 0; padding-left: 4px; font-size: var(--font-size-caption); line-height: 16px; color: var(--color-ink-subtle); }
+.page-introuvable__carte form p.page-introuvable__aide--erreur { color: var(--color-error); font-weight: 600; }
+.page-introuvable__carte > .atl-btn { margin-top: 6px; }
+
+@media (max-width: 600px) {
+  .atl-partage { top: auto; height: 60%; left: 8px; right: 8px; bottom: 8px; width: auto; }
+}

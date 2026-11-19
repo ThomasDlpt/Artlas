@@ -1,0 +1,44 @@
+.atl-menu { position: absolute; left: 16px; top: 80px; width: 180px; height: 128px; z-index: 950; pointer-events: none; }
+.atl-menu > * { pointer-events: auto; }
+
+.atl-bulle-principale {
+  position: absolute; left: 0; top: 0; width: var(--bubble-main); height: var(--bubble-main);
+  border: 0; border-radius: 50%; display: grid; place-items: center;
+  background: var(--color-accent); color: var(--color-ink-inverse);
+  box-shadow: 0 2px 4px rgba(168, 64, 31, .25), 0 6px 18px rgba(31, 27, 22, .18);
+  transition: transform .2s;
+}
+.atl-bulle-principale:hover { background: var(--color-accent-hover); }
+
+.atl-menu__pop { position: absolute; animation: atl-pop 220ms var(--ease-pop) both; }
+
+.atl-bulle {
+  width: var(--bubble-secondary); height: var(--bubble-secondary);
+  border: 0; border-radius: 50%; display: grid; place-items: center;
+  background: var(--color-paper-50); color: var(--color-accent); box-shadow: var(--shadow-float);
+  transition: background-color .15s, color .15s, transform .15s;
+}
+.atl-bulle--active { background: var(--color-accent); color: var(--color-ink-inverse); }
+
+.atl-menu__compteur {
+  position: absolute; top: -3px; right: -3px; min-width: 18px; height: 18px; padding: 0 5px;
+  border-radius: var(--radius-full); background: var(--color-ink); color: var(--color-ink-inverse);
+  font: 700 11px/18px var(--font-sans); text-align: center;
+}
+
+.atl-menu__nom {
+  position: absolute; padding: 2px 9px; border-radius: var(--radius-full);
+  background: var(--color-paper-50); box-shadow: var(--shadow-float);
+  font: 600 12px/18px var(--font-sans); color: var(--color-ink); white-space: nowrap; pointer-events: none;
+}
+.atl-menu__nom--circuit, .atl-menu__nom--lieux { left: 46px; top: 9px; }
+.atl-menu__nom--filtres { left: 50%; top: 45px; transform: translateX(-50%); }
+
+@keyframes atl-pop {
+  from { opacity: 0; transform: scale(.4); }
+  to   { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .atl-menu__pop, .atl-recherche { animation: none; }
+  .atl-bulle, .atl-bulle-principale { transition: none; }
+}

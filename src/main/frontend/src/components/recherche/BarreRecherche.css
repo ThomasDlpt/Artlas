@@ -1,0 +1,43 @@
+.atl-haut-gauche {
+  position: absolute; left: 16px; top: 16px; z-index: 960;
+  display: flex; align-items: center; gap: 8px;
+}
+
+.atl-logo-pastille {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 48px; padding: 0 18px 0 12px; border-radius: var(--radius-full);
+  background: var(--color-paper-50); box-shadow: var(--shadow-float);
+  text-decoration: none; color: var(--color-ink);
+}
+.atl-logo { font-family: var(--font-serif); font-size: 21px; font-weight: var(--font-weight-semibold); }
+.atl-logo i { color: var(--color-accent); }
+
+.atl-rond {
+  display: grid; place-items: center; border: 0; border-radius: 50%;
+  background: var(--color-paper-50); color: var(--color-ink); box-shadow: var(--shadow-float);
+}
+.atl-rond--48 { width: 48px; height: 48px; }
+
+.atl-recherche {
+  display: flex; align-items: center; gap: 4px; width: 360px; height: 48px;
+  padding: 0 4px 0 16px; border-radius: var(--radius-full);
+  background: var(--color-paper-50); box-shadow: var(--shadow-float);
+  animation: atl-deplier var(--duration-panel) var(--ease-panel);
+}
+.atl-recherche input {
+  flex: 1; min-width: 0; border: 0; background: none; outline-offset: 4px;
+  padding-left: 6px; color: var(--color-ink);
+}
+.atl-recherche__fermer {
+  width: 40px; height: 40px; border: 0; border-radius: 50%;
+  background: transparent; color: var(--color-ink-muted); display: grid; place-items: center;
+}
+
+@keyframes atl-deplier {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+
+
+@media (max-width: 480px) { .atl-recherche { width: calc(100vw - 100px); } }

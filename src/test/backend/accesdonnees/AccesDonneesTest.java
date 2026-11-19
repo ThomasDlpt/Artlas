@@ -177,7 +177,7 @@ public class AccesDonneesTest {
         assertEquals(c, circuitRepo.trouverParCodePartage(c.getCodePartage()));
         assertNull(circuitRepo.trouverParCodePartage("INCONNU"));
         assertThrows(IllegalArgumentException.class, () -> circuitRepo.trouverParCodePartage(""));
-        assertEquals(1, circuitRepo.trouverParDepartement("35000").size());
+        assertEquals(1, circuitRepo.trouverParDepartement("35").size()); // code du département, pas le code postal
         assertThrows(IllegalArgumentException.class, () -> circuitRepo.trouverParDepartement(null));
         assertTrue(circuitRepo.supprimer(c));
         assertFalse(circuitRepo.supprimer(null));

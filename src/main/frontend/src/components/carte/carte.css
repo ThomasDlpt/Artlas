@@ -1,0 +1,124 @@
+.atl-carte { position: absolute; inset: 0; background: var(--color-map-ground); }
+
+/* Ton « papier » sur les tuiles du plan uniquement (jamais sur les marqueurs ni sur le satellite) */
+.atl-carte--plan .leaflet-tile-pane { filter: sepia(.12) saturate(.75); }
+
+.atl-marqueur-conteneur { background: none; border: 0; }
+
+.atl-marqueur {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--marker-size);
+  height: var(--marker-size);
+  border-radius: var(--radius-full);
+  background: var(--t, var(--color-type-autre));
+  color: #fff;
+  border: 2px solid #fff;
+  box-shadow: var(--shadow-marker);
+  transition: transform 120ms var(--ease-panel);
+}
+.atl-marqueur--actif {
+  width: var(--marker-size-active);
+  height: var(--marker-size-active);
+  outline: 3px solid var(--color-ink);
+}
+
+/* Pas de position: relative ici : Leaflet place les marqueurs en position absolue */
+.atl-marqueur-conteneur { display: grid; place-items: center; }
+.atl-marqueur__infobulle {
+  position: absolute; left: 50%; bottom: calc(100% + 8px); transform: translateX(-50%);
+  padding: 3px 10px; border-radius: var(--radius-full); background: var(--color-ink); color: var(--color-ink-inverse);
+  font: 600 13px/18px var(--font-sans); white-space: nowrap; box-shadow: var(--shadow-float); pointer-events: none;
+}
+
+.atl-marqueur__etape {
+  position: absolute; top: -6px; right: -6px; min-width: 18px; height: 18px; padding: 0 4px;
+  border-radius: var(--radius-full); background: var(--color-accent); color: var(--color-ink-inverse);
+  border: 2px solid var(--color-paper-50); font: 700 10px/14px var(--font-sans); text-align: center;
+}
+
+/* Quand la fiche est ouverte, les contrôles de la carte se décalent à sa gauche */
+.page-carte--fiche .leaflet-bottom.leaflet-right { right: calc(var(--detail-w) + 16px); }
+
+/* Thème sombre : on inverse les tuiles OSM (les marqueurs ne sont pas touchés) */
+@media (prefers-color-scheme: dark) {
+  .atl-carte--plan .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(.85) contrast(.9) sepia(.15); }
+  .atl-carte .leaflet-control-attribution { background: rgba(38, 33, 28, .85); color: var(--color-ink-muted); }
+  .atl-carte .leaflet-control-attribution a { color: var(--color-accent); }
+}
+
+/* Tracé du circuit : pointillés garance */
+.atl-trace { stroke: var(--color-accent); }
+
+/* Regroupement des marqueurs */
+.atl-groupe {
+  min-width: 40px; height: 40px; padding: 0 10px; border-radius: var(--radius-full);
+  background: var(--color-ink); color: var(--color-ink-inverse); border: 2px solid var(--color-ink-inverse);
+  box-shadow: 0 0 0 4px rgba(31, 27, 22, .18), var(--shadow-marker);
+  font: 700 14px/1 var(--font-sans); font-variant-numeric: tabular-nums;
+  display: inline-grid; place-items: center; cursor: pointer;
+}
+.atl-groupe--grand { min-width: 48px; height: 48px; font-size: 15px; }
+
+/* Position de la personne (« Autour de moi ») */
+.atl-precision { stroke: var(--color-focus); fill: var(--color-focus); fill-opacity: .1; }
+.atl-position { background: none; border: 0; }
+.atl-position span {
+  display: block; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--color-focus); border: 3px solid #fff;
+  box-shadow: 0 0 0 6px rgba(26, 86, 176, .2), var(--shadow-marker);
+}
+
+/* ---------- Contrôles bas droite ---------- */
+.atl-controles {
+  position: absolute; z-index: var(--z-map-controls); bottom: 28px; right: 16px;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 8px;
+  transition: right var(--duration-panel) var(--ease-panel);
+}
+.page-carte--fiche .atl-controles { right: calc(var(--detail-w) + 32px); }
+
+.atl-fond {
+  position: relative; width: var(--layer-switch); height: var(--layer-switch); padding: 0;
+  border: 2px solid var(--color-paper-50); border-radius: 14px; overflow: hidden;
+  background: var(--color-paper-200); box-shadow: var(--shadow-float);
+}
+.atl-fond svg { display: block; }
+.atl-fond__nom {
+  position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; gap: 3px;
+  padding: 14px 0 4px; font: 600 11px/14px var(--font-sans);
+}
+.atl-fond--satellite .atl-fond__nom { color: #fffdf8; background: linear-gradient(rgba(20, 18, 15, 0), rgba(20, 18, 15, .6) 55%); }
+.atl-fond--plan .atl-fond__nom { color: #1f1b16; background: linear-gradient(rgba(255, 253, 248, 0), rgba(255, 253, 248, .92) 55%); }
+
+.atl-controle-rond {
+  width: var(--touch-min); height: var(--touch-min); border: 0; border-radius: 50%;
+  display: grid; place-items: center; background: var(--color-paper-50); color: var(--color-ink); box-shadow: var(--shadow-float);
+}
+.atl-controle-rond:hover { background: var(--color-paper-200); }
+.atl-controle-rond[aria-busy="true"] { color: var(--color-accent); animation: atl-pulse 1.2s ease-in-out infinite; }
+
+.atl-zoom {
+  display: flex; flex-direction: column; overflow: hidden; border-radius: 12px;
+  background: var(--color-paper-50); box-shadow: var(--shadow-float);
+}
+.atl-zoom button {
+  width: var(--touch-min); height: 40px; border: 0; background: none; color: var(--color-ink); display: grid; place-items: center;
+}
+.atl-zoom button:hover { background: var(--color-paper-200); }
+.atl-zoom button + button { border-top: 1px solid var(--color-line); }
+
+.atl-assistant {
+  display: inline-flex; align-items: center; gap: 8px; min-height: var(--touch-min); padding: 0 16px;
+  border: 1px dashed var(--color-line-strong); border-radius: var(--radius-full);
+  background: var(--color-paper-50); color: var(--color-ink-muted); font: 600 14px/20px var(--font-sans);
+  box-shadow: 0 3px 10px rgba(31, 27, 22, .08); cursor: not-allowed;
+}
+
+/* Attribution Leaflet : sous les contrôles */
+.atl-carte .leaflet-control-attribution { font-size: 11px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .atl-controles { transition: none; }
+  .atl-controle-rond[aria-busy="true"] { animation: none; }
+}
