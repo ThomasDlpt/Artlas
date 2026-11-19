@@ -9,6 +9,7 @@ import java.util.UUID;
 import backend.geographie.Adresse;
 import backend.geographie.Commune;
 import backend.lieu.Lieu;
+import jakarta.persistence.*;
 
 /**
  * Itinéraire culturel composé d'étapes ordonnées (numOrdre de 1 à n).
@@ -18,7 +19,12 @@ import backend.lieu.Lieu;
  *
  * distanceKm, dureeMinutes et communeDepart sont des attributs dérivés,
  * recalculés automatiquement après chaque modification des étapes.
+ *
+ * Persistance : entité JPA. Les étapes sont stockées dans la table etape_circuit (collection d'éléments,
+ * triée par numOrdre). Les attributs id, codePartage et etapes ne sont plus « final » : Hibernate les
+ * renseigne lui-même au chargement ; seul le constructeur public les initialise.
  */
+@Entity
 public class Circuit {
     /** Vitesse de marche utilisée pour estimer le temps de trajet entre deux étapes. */
     public static final double VITESSE_MARCHE_KMH = 5.0;
@@ -28,14 +34,26 @@ public class Circuit {
     private static final int LONGUEUR_CODE = 8;
     private static final SecureRandom RANDOM = new SecureRandom();
 
-    private final String id;
+    @Id
+    private String id;
     private String nom;
+    @Column(length = 2000)
     private String description;
-    private final String codePartage;
+    @Column(unique = true)
+    private String codePartage;
     private double distanceKm;
     private int dureeMinutes;
-    private final List<EtapeCircuit> etapes;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "etape_circuit", joinColumns = @JoinColumn(name = "circuit_id"))
+    @OrderBy("numOrdre ASC")
+    private List<EtapeCircuit> etapes;
+    @ManyToOne
     private Commune communeDepart;
+
+    /** Réservé à JPA. */
+    protected Circuit() {
+        this.etapes = new ArrayList<>();
+    }
 
     public Circuit(String nom, String description) {
         setNom(nom);

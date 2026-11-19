@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import backend.circuits.Circuit;
+import backend.geographie.Adresse;
+import backend.lieu.Lieu;
 
 @Repository 
 public interface CircuitRepository extends JpaRepository<Circuit, String>{
@@ -27,9 +29,9 @@ public interface CircuitRepository extends JpaRepository<Circuit, String>{
         if (circuit == null || circuit.getId() == null || trouverParCodePartage(circuit.getCodePartage()) == null) {
             return false;
         }
-        return findAll().removeIf(
-            c -> c.getCodePartage().equals(circuit.getCodePartage())
-        );
+        // findAll() renvoie une copie : la retirer ne supprimait rien en base. On supprime l'entité elle-même.
+        delete(trouverParCodePartage(circuit.getCodePartage()));
+        return true;
     }
 
     default Circuit trouverParCodePartage(String code){
@@ -52,11 +54,17 @@ public interface CircuitRepository extends JpaRepository<Circuit, String>{
             throw new IllegalArgumentException("code null ou invalide");
         } 
         return findAll().stream()
-            .filter(c -> c.getEtapes().stream()
-                    .anyMatch(e -> code.equals(
-                            e.getLieu().getAdresse().getCodePostal()
-                    )))
+            .filter(c -> c.getEtapes().stream().anyMatch(e -> lieuDansDepartement(e.getLieu(), code)))
             .toList();
+    }
+
+    // vrai si le departement de la commune du lieu a ce code (faux si l'adresse est incomplete)
+    private boolean lieuDansDepartement(Lieu lieu, String code){
+        Adresse adresse = lieu.getAdresse();
+        if (adresse == null || adresse.getCommune() == null || adresse.getCommune().getDepartement() == null) {
+            return false;
+        }
+        return code.equals(adresse.getCommune().getDepartement().getCode());
     }
 
 

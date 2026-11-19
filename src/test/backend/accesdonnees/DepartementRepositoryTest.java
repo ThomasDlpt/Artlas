@@ -6,36 +6,17 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringBootConfiguration;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import backend.geographie.Departement;
 import backend.geographie.Region;
 
 /**
- * Test sur une vraie base H2 en mémoire : il vérifie notamment que la requête dérivée
+ * Test sur une vraie base H2 en mémoire (configuration de ArtlasApplication) : il vérifie notamment que la requête dérivée
  * findAllByOrderByCodeAsc() est bien comprise par Spring Data (sinon le contexte ne démarre pas).
  */
 @DataJpaTest
 class DepartementRepositoryTest {
-
-    /**
-     * Le projet n'a pas encore de classe @SpringBootApplication : ce test se donne sa propre configuration,
-     * limitée à DepartementRepository et aux entités géographiques (les autres repositories ne sont pas concernés).
-     */
-    @SpringBootConfiguration
-    @EnableAutoConfiguration
-    @EntityScan(basePackageClasses = Departement.class)
-    @EnableJpaRepositories(
-        basePackageClasses = DepartementRepository.class,
-        includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = DepartementRepository.class))
-    static class Configuration {
-    }
 
     @Autowired
     private DepartementRepository repo;

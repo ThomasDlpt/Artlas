@@ -1,15 +1,25 @@
 package backend.circuits;
 
 import backend.lieu.Lieu;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.ManyToOne;
 
 /**
  * Étape d'un circuit : un lieu, sa position dans le circuit (numOrdre, à partir de 1)
  * et la durée de visite estimée en minutes.
+ *
+ * Persistance : objet intégré à Circuit (table etape_circuit), sans identifiant propre.
  */
+@Embeddable
 public class EtapeCircuit {
-    private final Lieu lieu;
+    @ManyToOne
+    private Lieu lieu;
     private int numOrdre;
-    private final int dureeVisiteMin;
+    private int dureeVisiteMin;
+
+    /** Réservé à JPA. */
+    protected EtapeCircuit() {
+    }
 
     public EtapeCircuit(Lieu lieu, int numOrdre, int dureeVisiteMin) {
         if (lieu == null) {
