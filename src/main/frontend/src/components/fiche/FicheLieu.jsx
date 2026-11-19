@@ -12,8 +12,13 @@ const NOMS_SOURCES = {
 }
 
 // Le site web vient des données importées : seules les adresses http(s) deviennent des liens
-// (une valeur « javascript:… » s'exécuterait au clic).
-const lienSur = (url) => (typeof url === 'string' && /^https?:\/\//i.test(url.trim()) ? url.trim() : null)
+// (une valeur « javascript:… » s'exécuterait au clic). « www.site.fr », sans protocole, est complété en https.
+function lienSur(url) {
+  const u = typeof url === 'string' ? url.trim() : ''
+  if (/^https?:\/\/\S+$/i.test(u)) return u
+  if (/^[\w-]+(\.[\w-]+)+(\/\S*)?$/.test(u)) return `https://${u}`
+  return null
+}
 
 // « https://www.mba.rennes.fr/ » -> « mba.rennes.fr »
 const siteCourt = (url) => url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')
@@ -46,7 +51,7 @@ export default function FicheLieu({ lieu, chargement, erreur, introuvable, surFe
         <div className="atl-fiche__photo">{boutonFermer}</div>
         <div className="atl-fiche__message" role="alert">
           <p className="atl-fiche__message-titre">Ce lieu n’est plus disponible</p>
-          <p>Il a peut-être été retiré de la carte. Le lien que vous avez suivi ne mène plus nulle part.</p>
+          <p>Il a peut-être été retiré de la carte depuis votre recherche.</p>
         </div>
       </aside>
     )

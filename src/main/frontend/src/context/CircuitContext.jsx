@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import * as CircuitApi from '../services/CircuitApi.js'
 import useNotification from './NotificationContext.jsx'
 
@@ -18,15 +18,16 @@ export function CircuitProvider({ children }) {
   const [sauvegarde, setSauvegarde] = useState({ statut: 'aucune', codePartage: null }) // aucune | enCours | ok | erreur
   const derniere = useRef(0)
   const derniereSauvegarde = useRef(0) // seule la dernière sauvegarde lancée met à jour l'état
-  const version = useRef(0) // incrémentée à chaque modification du circuit
 
   const circuit = useMemo(
     () => ({ nom, description, etapes: etapes.map((e, i) => ({ ...e, numOrdre: i + 1 })) }),
     [nom, description, etapes],
   )
 
-  useEffect(() => {
-    version.current++
+  // Circuit affiché en ce moment (nouvel objet à chaque modification), relu après une sauvegarde
+  const circuitCourant = useRef(circuit)
+  useLayoutEffect(() => {
+    circuitCourant.current = circuit
   }, [circuit])
 
   // Recalcul par l'API dès que les étapes changent (ordre, ajout, retrait, durée)
@@ -82,12 +83,11 @@ export function CircuitProvider({ children }) {
 
   const sauvegarder = useCallback(async () => {
     const numero = ++derniereSauvegarde.current
-    const versionSauvegardee = version.current
     setSauvegarde({ statut: 'enCours', codePartage: null })
     try {
       const enregistre = await CircuitApi.sauvegarder(circuit)
       if (numero !== derniereSauvegarde.current) return // une sauvegarde plus récente est en cours
-      if (versionSauvegardee !== version.current) {
+      if (circuitCourant.current !== circuit) {
         // Modifié pendant la sauvegarde : ce code partagerait une version qui n'est plus celle affichée
         setSauvegarde({ statut: 'aucune', codePartage: null })
         notifier('Le circuit a changé pendant la sauvegarde : sauvegardez-le à nouveau pour le partager')
@@ -97,7 +97,7 @@ export function CircuitProvider({ children }) {
       notifier(`Circuit sauvegardé · code ${enregistre.codePartage}`)
     } catch {
       if (numero !== derniereSauvegarde.current) return
-      setSauvegarde({ statut: versionSauvegardee === version.current ? 'erreur' : 'aucune', codePartage: null })
+      setSauvegarde({ statut: circuitCourant.current === circuit ? 'erreur' : 'aucune', codePartage: null })
     }
   }, [circuit, notifier])
 
@@ -114,10 +114,12 @@ export function CircuitProvider({ children }) {
     })
   }, [nom, description, etapes, notifier])
 
-  const numeroEtape = useCallback((idLieu) => {
-    const i = etapes.findIndex((e) => e.lieu.id === idLieu)
-    return i >= 0 ? i + 1 : null
-  }, [etapes])
+  // Ne dépend que de l'ordre des lieux : changer une durée de visite ne doit pas reconstruire les marqueurs de la carte
+  const ordreLieux = etapes.map((e) => e.lieu.id).join('\n')
+  const numeroEtape = useMemo(() => {
+    const index = new Map(ordreLieux ? ordreLieux.split('\n').map((id, i) => [id, i + 1]) : [])
+    return (idLieu) => index.get(idLieu) ?? null
+  }, [ordreLieux])
 
   const valeur = useMemo(
     () => ({

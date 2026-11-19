@@ -2,7 +2,7 @@ import { useCallback, useRef, useState } from 'react'
 import * as LieuApi from '../services/LieuApi.js'
 
 // Lieu affiché dans la fiche de droite : son id (sélection) et ses détails chargés depuis l'API.
-// introuvable : le lieu n'existe pas ou est masqué (null en simulation, 404 côté API), à distinguer d'une panne.
+// introuvable : le lieu n'existe pas ou est masqué (LieuApi.selectionner renvoie null), à distinguer d'une panne.
 export default function useFicheLieu() {
   const [idLieu, setIdLieu] = useState(null)
   const [lieu, setLieu] = useState(null)
@@ -22,11 +22,7 @@ export default function useFicheLieu() {
         if (l) setLieu(l)
         else setIntrouvable(true)
       })
-      .catch((e) => {
-        if (numero !== derniere.current) return
-        if (e?.statut === 404) setIntrouvable(true)
-        else setErreur(e)
-      })
+      .catch((e) => numero === derniere.current && setErreur(e))
       .finally(() => numero === derniere.current && setChargement(false))
   }, [])
 

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import L from './leafletGlobal.js'
 import 'leaflet.markercluster'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
@@ -90,9 +90,12 @@ export default function CarteLeaflet({
   const [localisation, setLocalisation] = useState(false)
   const marqueurs = useRef(new Map()) // id du lieu -> { marqueur, lieu, etape }
   const misEnAvant = useRef({ selectionne: null, survole: null }) // état déjà appliqué aux icônes
-  // Valeurs du dernier rendu, lues par les marqueurs : un survol ne doit pas reconstruire toute la carte
+  // Valeurs du dernier rendu validé, lues par les marqueurs : un survol ne doit pas reconstruire toute la carte.
+  // Mises à jour en effet de mise en page : avant les effets ci-dessous, jamais pendant le rendu.
   const courant = useRef({})
-  courant.current = { idSelectionne, idSurvole, surClicLieu, surSurvolLieu }
+  useLayoutEffect(() => {
+    courant.current = { idSelectionne, idSurvole, surClicLieu, surSurvolLieu }
+  })
 
   // Création unique de la carte
   useEffect(() => {
@@ -154,12 +157,15 @@ export default function CarteLeaflet({
       if (!point) return // adresse inconnue : le lieu reste dans la liste, mais pas sur la carte
       const etape = numeroEtape(lieu.id)
       const actif = lieu.id === selectionne || lieu.id === survole
+      const libelle = `${libelleType(lieu.type)}, ${lieu.nom}${etape ? `, étape ${etape}` : ''}`
       const marqueur = L.marker(point, {
         icon: creerIcone(lieu, actif, lieu.id === survole, etape),
-        alt: `${libelleType(lieu.type)}, ${lieu.nom}${etape ? `, étape ${etape}` : ''}`,
-        keyboard: true,
+        keyboard: true, // focusable, role=button
         zIndexOffset: actif ? 1000 : 0,
       })
+        // L'option alt de Leaflet ne vaut que pour les icônes <img> : nos icônes sont des <div>.
+        // L'élément est recréé chaque fois que le regroupement réaffiche le marqueur, d'où l'événement add.
+        .on('add', (e) => e.target.getElement()?.setAttribute('aria-label', libelle))
         .on('click', () => courant.current.surClicLieu?.(lieu.id))
         .on('mouseover', () => courant.current.surSurvolLieu?.(lieu.id))
         .on('mouseout', () => courant.current.surSurvolLieu?.(null))
@@ -201,13 +207,16 @@ export default function CarteLeaflet({
   useEffect(() => {
     const c = carte.current
     if (!c || !cadrage?.length) return
-    // Les marges restent plus petites que la carte : sinon Leaflet calcule un zoom NaN et cadre hors de l'écran
+    // Les marges, toutes ensemble, laissent toujours au moins 15 % de la carte visible dans chaque sens :
+    // sinon Leaflet calcule un zoom infini (ou NaN) et cadre le circuit hors de l'écran (téléphone à l'horizontale).
     const taille = c.getSize()
-    const gauche = Math.min(margeGauche + 48, taille.x * 0.6)
-    const bas = Math.min(64 + taille.y * partieBasCachee, taille.y * 0.8)
+    const haut = Math.min(64, taille.y * 0.1)
+    const droite = Math.min(64, taille.x * 0.1)
+    const bas = Math.min(64 + taille.y * partieBasCachee, taille.y * 0.85 - haut)
+    const gauche = Math.min(margeGauche + 48, taille.x * 0.85 - droite)
     c.fitBounds(L.latLngBounds(cadrage), {
-      paddingTopLeft: [gauche, 64],
-      paddingBottomRight: [64, bas],
+      paddingTopLeft: [gauche, haut],
+      paddingBottomRight: [droite, bas],
       maxZoom: 17,
     })
   }, [cadrage, margeGauche, partieBasCachee])
