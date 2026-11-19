@@ -17,11 +17,17 @@ export function CircuitProvider({ children }) {
   const [recalcul, setRecalcul] = useState(false)
   const [sauvegarde, setSauvegarde] = useState({ statut: 'aucune', codePartage: null }) // aucune | enCours | ok | erreur
   const derniere = useRef(0)
+  const derniereSauvegarde = useRef(0) // seule la dernière sauvegarde lancée met à jour l'état
+  const version = useRef(0) // incrémentée à chaque modification du circuit
 
   const circuit = useMemo(
     () => ({ nom, description, etapes: etapes.map((e, i) => ({ ...e, numOrdre: i + 1 })) }),
     [nom, description, etapes],
   )
+
+  useEffect(() => {
+    version.current++
+  }, [circuit])
 
   // Recalcul par l'API dès que les étapes changent (ordre, ajout, retrait, durée)
   useEffect(() => {
@@ -75,13 +81,23 @@ export function CircuitProvider({ children }) {
   }, [])
 
   const sauvegarder = useCallback(async () => {
+    const numero = ++derniereSauvegarde.current
+    const versionSauvegardee = version.current
     setSauvegarde({ statut: 'enCours', codePartage: null })
     try {
       const enregistre = await CircuitApi.sauvegarder(circuit)
+      if (numero !== derniereSauvegarde.current) return // une sauvegarde plus récente est en cours
+      if (versionSauvegardee !== version.current) {
+        // Modifié pendant la sauvegarde : ce code partagerait une version qui n'est plus celle affichée
+        setSauvegarde({ statut: 'aucune', codePartage: null })
+        notifier('Le circuit a changé pendant la sauvegarde : sauvegardez-le à nouveau pour le partager')
+        return
+      }
       setSauvegarde({ statut: 'ok', codePartage: enregistre.codePartage })
       notifier(`Circuit sauvegardé · code ${enregistre.codePartage}`)
     } catch {
-      setSauvegarde({ statut: 'erreur', codePartage: null })
+      if (numero !== derniereSauvegarde.current) return
+      setSauvegarde({ statut: versionSauvegardee === version.current ? 'erreur' : 'aucune', codePartage: null })
     }
   }, [circuit, notifier])
 

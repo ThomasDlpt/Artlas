@@ -3,15 +3,6 @@
   display: flex; align-items: center; gap: 8px;
 }
 
-.atl-logo-pastille {
-  display: inline-flex; align-items: center; gap: 8px;
-  height: 48px; padding: 0 18px 0 12px; border-radius: var(--radius-full);
-  background: var(--color-paper-50); box-shadow: var(--shadow-float);
-  text-decoration: none; color: var(--color-ink);
-}
-.atl-logo { font-family: var(--font-serif); font-size: 21px; font-weight: var(--font-weight-semibold); }
-.atl-logo i { color: var(--color-accent); }
-
 .atl-rond {
   display: grid; place-items: center; border: 0; border-radius: 50%;
   background: var(--color-paper-50); color: var(--color-ink); box-shadow: var(--shadow-float);

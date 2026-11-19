@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import Icone, { nomIconeType } from '../Icone.jsx'
 import { TYPES } from '../../data/referentiels.js'
+import { formatDate } from '../../data/format.js'
 import useAdministration from '../../hooks/useAdministration.js'
 
 const NOMS_SOURCES = { BASILIC: 'Basilic', DATATOURISME: 'DataTourisme' }
-const formatDate = (iso) =>
-  iso ? new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(iso)) : null
 
 // Lieu (API) -> valeurs du formulaire
 const versChamps = (l) => ({
@@ -201,7 +200,7 @@ export default function FormulaireCorrectionLieu() {
               </span>
               <span>
                 {derniereSource && NOMS_SOURCES[derniereSource.source]}
-                {lieu.dateMiseAJour && <> · mis à jour le <span className="tabular">{formatDate(lieu.dateMiseAJour)}</span></>}
+                {lieu.dateMiseAJour && <> · mis à jour le <span className="tabular">{formatDate(lieu.dateMiseAJour, 'short')}</span></>}
               </span>
               {lieu.masque && <span className="admin-masque"><Icone nom="warning" taille={14} />Masqué au public</span>}
             </div>

@@ -4,6 +4,7 @@ import 'leaflet.markercluster'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
 import { svgIcone, nomIconeType } from '../Icone.jsx'
 import { libelleType } from '../../data/referentiels.js'
+import { coordonnees } from '../../data/coordonnees.js'
 import useNotification from '../../context/NotificationContext.jsx'
 import ControlesCarte from './ControlesCarte.jsx'
 import './carte.css'
@@ -74,6 +75,7 @@ export default function CarteLeaflet({
   controles = 'complets', // 'complets' (fond, autour de moi, zoom, assistant) ou 'zoom'
   cadrage = null, // [[lat, lon], …] : la carte s'ajuste pour montrer ces points
   margeGauche = 0, // largeur (px) cachée par un panneau à gauche, pour le cadrage
+  partieBasCachee = 0, // part de la hauteur (0 à 1) cachée par un volet en bas (mobile), pour le cadrage
 }) {
   const { notifier } = useNotification()
   const conteneur = useRef(null)
@@ -86,6 +88,11 @@ export default function CarteLeaflet({
   const precision = useRef(null)
   const [fond, setFond] = useState(lireFond)
   const [localisation, setLocalisation] = useState(false)
+  const marqueurs = useRef(new Map()) // id du lieu -> { marqueur, lieu, etape }
+  const misEnAvant = useRef({ selectionne: null, survole: null }) // état déjà appliqué aux icônes
+  // Valeurs du dernier rendu, lues par les marqueurs : un survol ne doit pas reconstruire toute la carte
+  const courant = useRef({})
+  courant.current = { idSelectionne, idSurvole, surClicLieu, surSurvolLieu }
 
   // Création unique de la carte
   useEffect(() => {
@@ -134,31 +141,51 @@ export default function CarteLeaflet({
     memoriserFond(fond)
   }, [fond])
 
-  // Marqueurs
+  // Marqueurs : reconstruits seulement quand les lieux ou les numéros d'étape changent
   useEffect(() => {
     if (!groupe.current) return
     groupe.current.clearLayers()
     groupeEtapes.current.clearLayers()
-    const marqueurs = []
+    marqueurs.current.clear()
+    const { idSelectionne: selectionne, idSurvole: survole } = courant.current
+    const aRegrouper = []
     lieux.forEach((lieu) => {
-      const { latitude, longitude } = lieu.adresse
-      const survole = lieu.id === idSurvole
+      const point = coordonnees(lieu)
+      if (!point) return // adresse inconnue : le lieu reste dans la liste, mais pas sur la carte
       const etape = numeroEtape(lieu.id)
-      const marqueur = L.marker([latitude, longitude], {
-        icon: creerIcone(lieu, lieu.id === idSelectionne || survole, survole, etape),
+      const actif = lieu.id === selectionne || lieu.id === survole
+      const marqueur = L.marker(point, {
+        icon: creerIcone(lieu, actif, lieu.id === survole, etape),
         alt: `${libelleType(lieu.type)}, ${lieu.nom}${etape ? `, étape ${etape}` : ''}`,
         keyboard: true,
-        zIndexOffset: survole || lieu.id === idSelectionne ? 1000 : 0,
+        zIndexOffset: actif ? 1000 : 0,
       })
-        .on('click', () => surClicLieu?.(lieu.id))
-        .on('mouseover', () => surSurvolLieu?.(lieu.id))
-        .on('mouseout', () => surSurvolLieu?.(null))
+        .on('click', () => courant.current.surClicLieu?.(lieu.id))
+        .on('mouseover', () => courant.current.surSurvolLieu?.(lieu.id))
+        .on('mouseout', () => courant.current.surSurvolLieu?.(null))
+      marqueurs.current.set(lieu.id, { marqueur, lieu, etape })
       if (etape && regrouper) groupeEtapes.current.addLayer(marqueur)
-      else marqueurs.push(marqueur)
+      else aRegrouper.push(marqueur)
     })
-    if (groupe.current.addLayers) groupe.current.addLayers(marqueurs)
-    else marqueurs.forEach((m) => groupe.current.addLayer(m))
-  }, [lieux, idSelectionne, idSurvole, numeroEtape, surClicLieu, surSurvolLieu])
+    if (groupe.current.addLayers) groupe.current.addLayers(aRegrouper)
+    else aRegrouper.forEach((m) => groupe.current.addLayer(m))
+    misEnAvant.current = { selectionne, survole }
+  }, [lieux, numeroEtape, regrouper])
+
+  // Survol et sélection : seuls les marqueurs concernés changent d'icône.
+  // setIcon réutilise l'élément HTML du marqueur : le focus clavier n'est pas perdu.
+  useEffect(() => {
+    const avant = misEnAvant.current
+    new Set([avant.selectionne, avant.survole, idSelectionne, idSurvole]).forEach((id) => {
+      const m = id != null && marqueurs.current.get(id)
+      if (!m) return
+      const survole = id === idSurvole
+      const actif = survole || id === idSelectionne
+      m.marqueur.setIcon(creerIcone(m.lieu, actif, survole, m.etape))
+      m.marqueur.setZIndexOffset(actif ? 1000 : 0)
+    })
+    misEnAvant.current = { selectionne: idSelectionne, survole: idSurvole }
+  }, [idSelectionne, idSurvole])
 
   // Tracé du circuit (coordonnées fournies par l'API)
   useEffect(() => {
@@ -172,13 +199,18 @@ export default function CarteLeaflet({
 
   // Cadrage sur un ensemble de points (ex. les étapes d'un circuit partagé)
   useEffect(() => {
-    if (!carte.current || !cadrage?.length) return
-    carte.current.fitBounds(L.latLngBounds(cadrage), {
-      paddingTopLeft: [margeGauche + 48, 64],
-      paddingBottomRight: [64, 64],
+    const c = carte.current
+    if (!c || !cadrage?.length) return
+    // Les marges restent plus petites que la carte : sinon Leaflet calcule un zoom NaN et cadre hors de l'écran
+    const taille = c.getSize()
+    const gauche = Math.min(margeGauche + 48, taille.x * 0.6)
+    const bas = Math.min(64 + taille.y * partieBasCachee, taille.y * 0.8)
+    c.fitBounds(L.latLngBounds(cadrage), {
+      paddingTopLeft: [gauche, 64],
+      paddingBottomRight: [64, bas],
       maxZoom: 17,
     })
-  }, [cadrage, margeGauche])
+  }, [cadrage, margeGauche, partieBasCachee])
 
   const autourDeMoi = () => {
     if (!navigator.geolocation) {

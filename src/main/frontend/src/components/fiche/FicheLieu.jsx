@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import Icone, { nomIconeType } from '../Icone.jsx'
 import { libelleType } from '../../data/referentiels.js'
+import { formatDate } from '../../data/format.js'
 import useCircuit from '../../context/CircuitContext.jsx'
 import useNotification from '../../context/NotificationContext.jsx'
 import './FicheLieu.css'
@@ -10,8 +11,9 @@ const NOMS_SOURCES = {
   DATATOURISME: { nom: 'DataTourisme', detail: '' },
 }
 
-const formatDate = (iso) =>
-  iso ? new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(iso)) : null
+// Le site web vient des données importées : seules les adresses http(s) deviennent des liens
+// (une valeur « javascript:… » s'exécuterait au clic).
+const lienSur = (url) => (typeof url === 'string' && /^https?:\/\//i.test(url.trim()) ? url.trim() : null)
 
 // « https://www.mba.rennes.fr/ » -> « mba.rennes.fr »
 const siteCourt = (url) => url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')
@@ -20,7 +22,7 @@ const siteCourt = (url) => url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/
  * Fiche d'un lieu, panneau flottant à droite.
  * Peut rester ouverte en même temps qu'un panneau de gauche.
  */
-export default function FicheLieu({ lieu, chargement, erreur, surFermer, surReessayer }) {
+export default function FicheLieu({ lieu, chargement, erreur, introuvable, surFermer, surReessayer }) {
   const { ajouterEtape, numeroEtape } = useCircuit()
   const { notifier } = useNotification()
 
@@ -36,6 +38,19 @@ export default function FicheLieu({ lieu, chargement, erreur, surFermer, surRees
       <Icone nom="close" taille={18} />
     </button>
   )
+
+  // Lieu inconnu ou masqué par l'administration (null en simulation, 404 côté API) : réessayer ne servirait à rien
+  if (introuvable) {
+    return (
+      <aside className="atl-fiche" aria-label="Fiche du lieu">
+        <div className="atl-fiche__photo">{boutonFermer}</div>
+        <div className="atl-fiche__message" role="alert">
+          <p className="atl-fiche__message-titre">Ce lieu n’est plus disponible</p>
+          <p>Il a peut-être été retiré de la carte. Le lien que vous avez suivi ne mène plus nulle part.</p>
+        </div>
+      </aside>
+    )
+  }
 
   if (erreur) {
     return (
@@ -70,6 +85,7 @@ export default function FicheLieu({ lieu, chargement, erreur, surFermer, surRees
   const { adresse } = lieu
   const commune = adresse?.commune
   const etape = numeroEtape(lieu.id)
+  const siteWeb = lienSur(lieu.siteWeb)
 
   const partager = async () => {
     const url = `${window.location.origin}/?lieu=${encodeURIComponent(lieu.id)}`
@@ -133,8 +149,8 @@ export default function FicheLieu({ lieu, chargement, erreur, surFermer, surRees
             Ajouter au circuit
           </button>
         )}
-        {lieu.siteWeb && (
-          <a className="atl-btn atl-btn--secondaire atl-btn--icone" href={lieu.siteWeb} target="_blank" rel="noreferrer" aria-label="Site web (nouvel onglet)">
+        {siteWeb && (
+          <a className="atl-btn atl-btn--secondaire atl-btn--icone" href={siteWeb} target="_blank" rel="noreferrer" aria-label="Site web (nouvel onglet)">
             <Icone nom="external" taille={18} />
           </a>
         )}
@@ -161,10 +177,10 @@ export default function FicheLieu({ lieu, chargement, erreur, surFermer, surRees
             </span>
           </li>
         )}
-        {lieu.siteWeb && (
+        {siteWeb && (
           <li>
             <Icone nom="external" taille={20} />
-            <a href={lieu.siteWeb} target="_blank" rel="noreferrer">{siteCourt(lieu.siteWeb)}</a>
+            <a href={siteWeb} target="_blank" rel="noreferrer">{siteCourt(siteWeb)}</a>
           </li>
         )}
         {lieu.dateMiseAJour && (

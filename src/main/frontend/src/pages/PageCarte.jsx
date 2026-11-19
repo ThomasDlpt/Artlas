@@ -124,6 +124,7 @@ export default function PageCarte() {
             lieu={fiche.lieu}
             chargement={fiche.chargement}
             erreur={fiche.erreur}
+            introuvable={fiche.introuvable}
             surFermer={fiche.fermer}
             surReessayer={fiche.reessayer}
           />
