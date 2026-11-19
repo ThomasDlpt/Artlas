@@ -26,9 +26,7 @@ export default function useLieux() {
   const filtreValide = estValide(filtre, departements)
 
   // Filtre réellement envoyé : le texte attend la fin de la frappe, mais un effacement s'applique tout de suite
-  // (dès ce rendu-ci : la valeur différée ne repasse à '' qu'au rendu suivant)
-  const texteDiffere = useValeurDifferee(filtre.texte, DELAI_FRAPPE_MS)
-  const texte = filtre.texte.trim() ? texteDiffere.trim() : ''
+  const texte = useValeurDifferee(filtre.texte.trim(), DELAI_FRAPPE_MS)
   const { types, codeDepartement, label } = filtre
   const filtreRequete = useMemo(() => ({ texte, types, codeDepartement, label }), [texte, types, codeDepartement, label])
 

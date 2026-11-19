@@ -94,6 +94,7 @@
 /* Même seuil que useMobile (LARGEUR_MOBILE) : le cadrage de la carte en dépend */
 @media (max-width: 640px) {
   .atl-partage { top: auto; height: 60%; left: 8px; right: 8px; bottom: 8px; width: auto; }
-  /* Boutons de zoom au-dessus du volet, sinon il les recouvre */
-  .page-partage .atl-controles { bottom: calc(60% + 16px); right: 12px; }
+  /* Au-dessus du volet, sinon il les recouvre : l'attribution OpenStreetMap (obligatoire), puis les boutons de zoom */
+  .page-partage .leaflet-bottom.leaflet-right { bottom: calc(60% + 8px); }
+  .page-partage .atl-controles { bottom: calc(60% + 40px); right: 12px; }
 }

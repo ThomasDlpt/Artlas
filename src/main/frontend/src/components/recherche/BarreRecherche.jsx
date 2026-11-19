@@ -63,7 +63,11 @@ export default function BarreRecherche({ texte, surChangement }) {
             ref={champ}
             value={texte}
             onChange={(e) => surChangement(e.target.value)}
-            onKeyDown={(e) => e.key === 'Escape' && fermer()}
+            onKeyDown={(e) => {
+              if (e.key !== 'Escape') return
+              e.stopPropagation() // Échap ferme la recherche seulement, pas la fiche ouverte à droite
+              fermer()
+            }}
             placeholder="Un lieu, une commune…"
           />
           <button type="button" className="atl-recherche__fermer" aria-label="Fermer la recherche" onClick={fermer}>

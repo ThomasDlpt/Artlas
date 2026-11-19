@@ -115,10 +115,12 @@ export function CircuitProvider({ children }) {
   }, [nom, description, etapes, notifier])
 
   // Ne dépend que de l'ordre des lieux : changer une durée de visite ne doit pas reconstruire les marqueurs de la carte
-  const ordreLieux = etapes.map((e) => e.lieu.id).join('\n')
+  // (la clé ordreLieux sert seulement à savoir quand recalculer ; l'index garde les id d'origine)
+  const ordreLieux = JSON.stringify(etapes.map((e) => e.lieu.id))
   const numeroEtape = useMemo(() => {
-    const index = new Map(ordreLieux ? ordreLieux.split('\n').map((id, i) => [id, i + 1]) : [])
+    const index = new Map(etapes.map((e, i) => [e.lieu.id, i + 1]))
     return (idLieu) => index.get(idLieu) ?? null
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ordreLieux])
 
   const valeur = useMemo(

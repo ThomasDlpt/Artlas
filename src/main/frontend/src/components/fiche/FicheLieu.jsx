@@ -12,11 +12,13 @@ const NOMS_SOURCES = {
 }
 
 // Le site web vient des données importées : seules les adresses http(s) deviennent des liens
-// (une valeur « javascript:… » s'exécuterait au clic). « www.site.fr », sans protocole, est complété en https.
+// (une valeur « javascript:… » s'exécuterait au clic). Un nom de domaine sans protocole (« www.château.fr »,
+// « musee.fr?lang=fr ») est complété en https ; il doit finir par une extension en lettres, donc pas un numéro de téléphone.
+const DOMAINE_NU = /^[\p{L}\p{N}-]+(\.[\p{L}\p{N}-]+)*\.\p{L}{2,}(:\d+)?([/?#]\S*)?$/u
 function lienSur(url) {
   const u = typeof url === 'string' ? url.trim() : ''
   if (/^https?:\/\/\S+$/i.test(u)) return u
-  if (/^[\w-]+(\.[\w-]+)+(\/\S*)?$/.test(u)) return `https://${u}`
+  if (DOMAINE_NU.test(u)) return `https://${u}`
   return null
 }
 
@@ -91,6 +93,7 @@ export default function FicheLieu({ lieu, chargement, erreur, introuvable, surFe
   const commune = adresse?.commune
   const etape = numeroEtape(lieu.id)
   const siteWeb = lienSur(lieu.siteWeb)
+  const miseAJour = formatDate(lieu.dateMiseAJour)
 
   const partager = async () => {
     const url = `${window.location.origin}/?lieu=${encodeURIComponent(lieu.id)}`
@@ -188,10 +191,10 @@ export default function FicheLieu({ lieu, chargement, erreur, introuvable, surFe
             <a href={siteWeb} target="_blank" rel="noreferrer">{siteCourt(siteWeb)}</a>
           </li>
         )}
-        {lieu.dateMiseAJour && (
+        {miseAJour && (
           <li className="atl-fiche__info--discrete">
             <Icone nom="clock" taille={20} />
-            <span>Mis à jour le <span className="tabular">{formatDate(lieu.dateMiseAJour)}</span></span>
+            <span>Mis à jour le <span className="tabular">{miseAJour}</span></span>
           </li>
         )}
       </ul>
@@ -200,9 +203,10 @@ export default function FicheLieu({ lieu, chargement, erreur, introuvable, surFe
         <div className="atl-fiche__sources">
           {lieu.source.map((s) => {
             const n = NOMS_SOURCES[s.source] ?? { nom: s.source, detail: '' }
+            const importe = formatDate(s.dateImport) // null si absente ou illisible : rien n'est affiché
             return (
               <p key={s.source + s.idExterne}>
-                Source : <b>{n.nom}</b>{n.detail}{s.dateImport ? ` · importé le ${formatDate(s.dateImport)}` : ''}
+                Source : <b>{n.nom}</b>{n.detail}{importe ? ` · importé le ${importe}` : ''}
               </p>
             )
           })}

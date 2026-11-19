@@ -4,12 +4,14 @@ import 'leaflet.markercluster'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
 import { svgIcone, nomIconeType } from '../Icone.jsx'
 import { libelleType } from '../../data/referentiels.js'
-import { coordonnees } from '../../data/coordonnees.js'
+import { coordonnees, pointValide } from '../../data/coordonnees.js'
 import useNotification from '../../context/NotificationContext.jsx'
 import ControlesCarte from './ControlesCarte.jsx'
 import './carte.css'
 
 const CENTRE_RENNES = [48.1113, -1.6800]
+// Valeur par défaut stable : une nouvelle fonction à chaque rendu reconstruirait tous les marqueurs
+const AUCUNE_ETAPE = () => null
 
 // CARTO exige désormais une clé d'API : on utilise les tuiles OpenStreetMap (usage léger, attribution obligatoire).
 // Pour la production, prévoir un fournisseur dédié (IGN Géoplateforme « Plan IGN », MapTiler, etc.).
@@ -69,7 +71,7 @@ function creerIconeGroupe(groupe) {
  * Elle signale la zone visible et le niveau de zoom via `surDeplacement(bbox, zoom)`.
  */
 export default function CarteLeaflet({
-  lieux, idSelectionne, idSurvole, numeroEtape = () => null, trace = null,
+  lieux, idSelectionne, idSurvole, numeroEtape = AUCUNE_ETAPE, trace = null,
   surDeplacement, surClicLieu, surSurvolLieu,
   regrouper = true, // regroupement des marqueurs proches
   controles = 'complets', // 'complets' (fond, autour de moi, zoom, assistant) ou 'zoom'
@@ -197,8 +199,10 @@ export default function CarteLeaflet({
   useEffect(() => {
     if (!coucheTrace.current) return
     coucheTrace.current.clearLayers()
-    if (trace?.length >= 2) {
-      L.polyline(trace, { className: 'atl-trace', weight: 3, dashArray: '1 8', lineCap: 'round', lineJoin: 'round', interactive: false })
+    // Comme pour les marqueurs, une étape sans position est sautée (pas de trait vers le golfe de Guinée)
+    const points = (trace ?? []).filter(([lat, lon]) => pointValide(lat, lon))
+    if (points.length >= 2) {
+      L.polyline(points, { className: 'atl-trace', weight: 3, dashArray: '1 8', lineCap: 'round', lineJoin: 'round', interactive: false })
         .addTo(coucheTrace.current)
     }
   }, [trace])
