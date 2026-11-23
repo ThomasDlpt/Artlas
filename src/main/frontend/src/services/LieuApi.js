@@ -65,5 +65,10 @@ export async function selectionner(idLieu) {
     await attendre(100)
     return LIEUX_FICTIFS.find((l) => l.id === idLieu && !l.masque) ?? null
   }
-  return get(`/lieux/${encodeURIComponent(idLieu)}`)
+  try {
+    return await get(`/lieux/${encodeURIComponent(idLieu)}`)
+  } catch (e) {
+    if (e?.statut === 404) return null // lieu inconnu ou masqué : même réponse qu'en simulation
+    throw e
+  }
 }

@@ -1,14 +1,17 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import L from './leafletGlobal.js'
 import 'leaflet.markercluster'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
 import { svgIcone, nomIconeType } from '../Icone.jsx'
 import { libelleType } from '../../data/referentiels.js'
+import { coordonnees, pointValide } from '../../data/coordonnees.js'
 import useNotification from '../../context/NotificationContext.jsx'
 import ControlesCarte from './ControlesCarte.jsx'
 import './carte.css'
 
 const CENTRE_RENNES = [48.1113, -1.6800]
+// Valeur par défaut stable : une nouvelle fonction à chaque rendu reconstruirait tous les marqueurs
+const AUCUNE_ETAPE = () => null
 
 // CARTO exige désormais une clé d'API : on utilise les tuiles OpenStreetMap (usage léger, attribution obligatoire).
 // Pour la production, prévoir un fournisseur dédié (IGN Géoplateforme « Plan IGN », MapTiler, etc.).
@@ -68,12 +71,13 @@ function creerIconeGroupe(groupe) {
  * Elle signale la zone visible et le niveau de zoom via `surDeplacement(bbox, zoom)`.
  */
 export default function CarteLeaflet({
-  lieux, idSelectionne, idSurvole, numeroEtape = () => null, trace = null,
+  lieux, idSelectionne, idSurvole, numeroEtape = AUCUNE_ETAPE, trace = null,
   surDeplacement, surClicLieu, surSurvolLieu,
   regrouper = true, // regroupement des marqueurs proches
   controles = 'complets', // 'complets' (fond, autour de moi, zoom, assistant) ou 'zoom'
   cadrage = null, // [[lat, lon], …] : la carte s'ajuste pour montrer ces points
   margeGauche = 0, // largeur (px) cachée par un panneau à gauche, pour le cadrage
+  partieBasCachee = 0, // part de la hauteur (0 à 1) cachée par un volet en bas (mobile), pour le cadrage
 }) {
   const { notifier } = useNotification()
   const conteneur = useRef(null)
@@ -86,6 +90,14 @@ export default function CarteLeaflet({
   const precision = useRef(null)
   const [fond, setFond] = useState(lireFond)
   const [localisation, setLocalisation] = useState(false)
+  const marqueurs = useRef(new Map()) // id du lieu -> { marqueur, lieu, etape }
+  const misEnAvant = useRef({ selectionne: null, survole: null }) // état déjà appliqué aux icônes
+  // Valeurs du dernier rendu validé, lues par les marqueurs : un survol ne doit pas reconstruire toute la carte.
+  // Mises à jour en effet de mise en page : avant les effets ci-dessous, jamais pendant le rendu.
+  const courant = useRef({})
+  useLayoutEffect(() => {
+    courant.current = { idSelectionne, idSurvole, surClicLieu, surSurvolLieu }
+  })
 
   // Création unique de la carte
   useEffect(() => {
@@ -134,51 +146,84 @@ export default function CarteLeaflet({
     memoriserFond(fond)
   }, [fond])
 
-  // Marqueurs
+  // Marqueurs : reconstruits seulement quand les lieux ou les numéros d'étape changent
   useEffect(() => {
     if (!groupe.current) return
     groupe.current.clearLayers()
     groupeEtapes.current.clearLayers()
-    const marqueurs = []
+    marqueurs.current.clear()
+    const { idSelectionne: selectionne, idSurvole: survole } = courant.current
+    const aRegrouper = []
     lieux.forEach((lieu) => {
-      const { latitude, longitude } = lieu.adresse
-      const survole = lieu.id === idSurvole
+      const point = coordonnees(lieu)
+      if (!point) return // adresse inconnue : le lieu reste dans la liste, mais pas sur la carte
       const etape = numeroEtape(lieu.id)
-      const marqueur = L.marker([latitude, longitude], {
-        icon: creerIcone(lieu, lieu.id === idSelectionne || survole, survole, etape),
-        alt: `${libelleType(lieu.type)}, ${lieu.nom}${etape ? `, étape ${etape}` : ''}`,
-        keyboard: true,
-        zIndexOffset: survole || lieu.id === idSelectionne ? 1000 : 0,
+      const actif = lieu.id === selectionne || lieu.id === survole
+      const libelle = `${libelleType(lieu.type)}, ${lieu.nom}${etape ? `, étape ${etape}` : ''}`
+      const marqueur = L.marker(point, {
+        icon: creerIcone(lieu, actif, lieu.id === survole, etape),
+        keyboard: true, // focusable, role=button
+        zIndexOffset: actif ? 1000 : 0,
       })
-        .on('click', () => surClicLieu?.(lieu.id))
-        .on('mouseover', () => surSurvolLieu?.(lieu.id))
-        .on('mouseout', () => surSurvolLieu?.(null))
+        // L'option alt de Leaflet ne vaut que pour les icônes <img> : nos icônes sont des <div>.
+        // L'élément est recréé chaque fois que le regroupement réaffiche le marqueur, d'où l'événement add.
+        .on('add', (e) => e.target.getElement()?.setAttribute('aria-label', libelle))
+        .on('click', () => courant.current.surClicLieu?.(lieu.id))
+        .on('mouseover', () => courant.current.surSurvolLieu?.(lieu.id))
+        .on('mouseout', () => courant.current.surSurvolLieu?.(null))
+      marqueurs.current.set(lieu.id, { marqueur, lieu, etape })
       if (etape && regrouper) groupeEtapes.current.addLayer(marqueur)
-      else marqueurs.push(marqueur)
+      else aRegrouper.push(marqueur)
     })
-    if (groupe.current.addLayers) groupe.current.addLayers(marqueurs)
-    else marqueurs.forEach((m) => groupe.current.addLayer(m))
-  }, [lieux, idSelectionne, idSurvole, numeroEtape, surClicLieu, surSurvolLieu])
+    if (groupe.current.addLayers) groupe.current.addLayers(aRegrouper)
+    else aRegrouper.forEach((m) => groupe.current.addLayer(m))
+    misEnAvant.current = { selectionne, survole }
+  }, [lieux, numeroEtape, regrouper])
+
+  // Survol et sélection : seuls les marqueurs concernés changent d'icône.
+  // setIcon réutilise l'élément HTML du marqueur : le focus clavier n'est pas perdu.
+  useEffect(() => {
+    const avant = misEnAvant.current
+    new Set([avant.selectionne, avant.survole, idSelectionne, idSurvole]).forEach((id) => {
+      const m = id != null && marqueurs.current.get(id)
+      if (!m) return
+      const survole = id === idSurvole
+      const actif = survole || id === idSelectionne
+      m.marqueur.setIcon(creerIcone(m.lieu, actif, survole, m.etape))
+      m.marqueur.setZIndexOffset(actif ? 1000 : 0)
+    })
+    misEnAvant.current = { selectionne: idSelectionne, survole: idSurvole }
+  }, [idSelectionne, idSurvole])
 
   // Tracé du circuit (coordonnées fournies par l'API)
   useEffect(() => {
     if (!coucheTrace.current) return
     coucheTrace.current.clearLayers()
-    if (trace?.length >= 2) {
-      L.polyline(trace, { className: 'atl-trace', weight: 3, dashArray: '1 8', lineCap: 'round', lineJoin: 'round', interactive: false })
+    // Comme pour les marqueurs, une étape sans position est sautée (pas de trait vers le golfe de Guinée)
+    const points = (trace ?? []).filter(([lat, lon]) => pointValide(lat, lon))
+    if (points.length >= 2) {
+      L.polyline(points, { className: 'atl-trace', weight: 3, dashArray: '1 8', lineCap: 'round', lineJoin: 'round', interactive: false })
         .addTo(coucheTrace.current)
     }
   }, [trace])
 
   // Cadrage sur un ensemble de points (ex. les étapes d'un circuit partagé)
   useEffect(() => {
-    if (!carte.current || !cadrage?.length) return
-    carte.current.fitBounds(L.latLngBounds(cadrage), {
-      paddingTopLeft: [margeGauche + 48, 64],
-      paddingBottomRight: [64, 64],
+    const c = carte.current
+    if (!c || !cadrage?.length) return
+    // Les marges, toutes ensemble, laissent toujours au moins 15 % de la carte visible dans chaque sens :
+    // sinon Leaflet calcule un zoom infini (ou NaN) et cadre le circuit hors de l'écran (téléphone à l'horizontale).
+    const taille = c.getSize()
+    const haut = Math.min(64, taille.y * 0.1)
+    const droite = Math.min(64, taille.x * 0.1)
+    const bas = Math.min(64 + taille.y * partieBasCachee, taille.y * 0.85 - haut)
+    const gauche = Math.min(margeGauche + 48, taille.x * 0.85 - droite)
+    c.fitBounds(L.latLngBounds(cadrage), {
+      paddingTopLeft: [gauche, haut],
+      paddingBottomRight: [droite, bas],
       maxZoom: 17,
     })
-  }, [cadrage, margeGauche])
+  }, [cadrage, margeGauche, partieBasCachee])
 
   const autourDeMoi = () => {
     if (!navigator.geolocation) {

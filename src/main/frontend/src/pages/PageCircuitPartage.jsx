@@ -6,12 +6,15 @@ import Logo from '../components/Logo.jsx'
 import * as CircuitApi from '../services/CircuitApi.js'
 import useCircuit from '../context/CircuitContext.jsx'
 import useNotification from '../context/NotificationContext.jsx'
+import useMobile from '../hooks/useMobile.js'
 import { libelleType } from '../data/referentiels.js'
 import { formatDuree, formatKm } from '../data/format.js'
+import { coordonnees } from '../data/coordonnees.js'
 import '../components/circuit/PanneauCircuit.css' // récapitulatif et numéros d'étape
 import './PageCircuitPartage.css'
 
 const LARGEUR_PANNEAU = 400
+const HAUTEUR_VOLET_MOBILE = 0.6 // le panneau devient un volet en bas, sur 60 % de la hauteur (cf. CSS)
 const FORMAT_CODE = /^[A-Z0-9]{8}$/
 
 const ICONE_CARTE = (
@@ -54,10 +57,12 @@ function CircuitEnLecture({ circuit, statut, code, surReessayer }) {
   const navigate = useNavigate()
   const { remplacerPar } = useCircuit()
   const { notifier } = useNotification()
+  const mobile = useMobile()
 
   const etapes = circuit?.etapes ?? []
   const lieux = useMemo(() => etapes.map((e) => e.lieu), [etapes])
-  const cadrage = useMemo(() => lieux.map((l) => [l.adresse.latitude, l.adresse.longitude]), [lieux])
+  // Une étape sans adresse reste dans la liste, mais n'entre pas dans le cadrage de la carte
+  const cadrage = useMemo(() => lieux.map(coordonnees).filter(Boolean), [lieux])
   const numeroEtape = useMemo(() => {
     const index = new Map(etapes.map((e, i) => [e.lieu.id, i + 1]))
     return (id) => index.get(id) ?? null
@@ -86,7 +91,8 @@ function CircuitEnLecture({ circuit, statut, code, surReessayer }) {
         numeroEtape={numeroEtape}
         trace={circuit?.trace}
         cadrage={cadrage}
-        margeGauche={LARGEUR_PANNEAU + 16}
+        margeGauche={mobile ? 0 : LARGEUR_PANNEAU + 16}
+        partieBasCachee={mobile ? HAUTEUR_VOLET_MOBILE : 0}
         regrouper={false}
         controles="zoom"
       />

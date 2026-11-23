@@ -1,12 +1,16 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as LieuApi from '../services/LieuApi.js'
 import { estValide } from '../data/FiltreRecherche.js'
 import useDepartements from './useDepartements.js'
+import useValeurDifferee from './useValeurDifferee.js'
 
 export const FILTRE_VIDE = { texte: '', types: [], codeDepartement: '', label: '' }
 
 // En dessous de ce zoom, la zone est trop large : on ne charge pas les lieux
 export const ZOOM_MIN = 10
+
+// Pause de frappe avant d'envoyer la recherche texte (sinon une requête par lettre)
+const DELAI_FRAPPE_MS = 300
 
 // Une seule source de vérité : les marqueurs de la carte = la liste de résultats.
 export default function useLieux() {
@@ -20,6 +24,11 @@ export default function useLieux() {
   const [essai, setEssai] = useState(0) // incrémenté par reessayer() pour relancer la requête
   const { departements } = useDepartements()
   const filtreValide = estValide(filtre, departements)
+
+  // Filtre réellement envoyé : le texte attend la fin de la frappe, mais un effacement s'applique tout de suite
+  const texte = useValeurDifferee(filtre.texte.trim(), DELAI_FRAPPE_MS)
+  const { types, codeDepartement, label } = filtre
+  const filtreRequete = useMemo(() => ({ texte, types, codeDepartement, label }), [texte, types, codeDepartement, label])
 
   useEffect(() => {
     if (!bbox) return
@@ -40,11 +49,11 @@ export default function useLieux() {
     const numero = ++derniereRequete.current
     setChargement(true)
     setErreur(null)
-    LieuApi.rechercherDansZone(bbox, filtre)
+    LieuApi.rechercherDansZone(bbox, filtreRequete)
       .then((lieux) => numero === derniereRequete.current && setResultats(lieux))
       .catch((e) => numero === derniereRequete.current && setErreur(e))
       .finally(() => numero === derniereRequete.current && setChargement(false))
-  }, [bbox, tropLarge, filtre, filtreValide, essai])
+  }, [bbox, tropLarge, filtreRequete, filtreValide, essai])
 
   const modifierFiltre = useCallback((champ, valeur) => setFiltre((f) => ({ ...f, [champ]: valeur })), [])
   const reinitialiser = useCallback(() => setFiltre(FILTRE_VIDE), [])

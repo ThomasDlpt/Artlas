@@ -1,41 +1,52 @@
 import { useEffect, useRef, useState } from 'react'
 import Icone from '../Icone.jsx'
+import Logo from '../Logo.jsx'
 import './BarreRecherche.css'
 
 /**
  * Haut gauche : logo + loupe. La barre de recherche est repliée par défaut ;
  * le clic sur la loupe la déplie (focus dans le champ), Échap ou la croix la referment.
+ * Le texte de recherche n'est jamais invisible : refermer la barre l'efface, et elle s'affiche déjà ouverte
+ * si un texte est actif (ex. saisi sur mobile avant de passer en grand écran).
  */
 export default function BarreRecherche({ texte, surChangement }) {
-  const [ouverte, setOuverte] = useState(false)
+  const [ouverte, setOuverte] = useState(() => Boolean(texte))
   const champ = useRef(null)
+  const loupe = useRef(null)
+  const deplacerFocus = useRef(false) // seulement après un geste de la personne, jamais au chargement
 
+  // À l'ouverture, le focus va dans le champ ; à la fermeture, il revient sur la loupe (pas sur le haut de la page)
   useEffect(() => {
+    if (!deplacerFocus.current) return
+    deplacerFocus.current = false
     if (ouverte) champ.current?.focus()
+    else loupe.current?.focus()
   }, [ouverte])
 
-  const fermer = () => setOuverte(false)
+  const ouvrir = () => {
+    deplacerFocus.current = true
+    setOuverte(true)
+  }
+
+  const fermer = () => {
+    if (texte) surChangement('')
+    deplacerFocus.current = true
+    setOuverte(false)
+  }
 
   return (
     <div className="atl-haut-gauche">
-      <a href="/" className="atl-logo-pastille" aria-label="Artlas, accueil">
-        <svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true">
-          <path d="M32 7 58 53H6z" fill="none" stroke="currentColor" strokeWidth="5" strokeLinejoin="round" />
-          <path d="M19 41h26" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
-          <circle cx="32" cy="33" r="6" fill="var(--color-accent)" />
-        </svg>
-        <span className="atl-logo">
-          Art<i>las</i>
-        </span>
-      </a>
+      {/* Lien du routeur : pas de rechargement, le circuit en cours (en mémoire) est conservé */}
+      <Logo />
 
       {!ouverte && (
         <button
+          ref={loupe}
           type="button"
           className="atl-rond atl-rond--48"
           aria-label="Rechercher un lieu ou une commune"
           aria-expanded="false"
-          onClick={() => setOuverte(true)}
+          onClick={ouvrir}
         >
           <Icone nom="search" taille={21} />
         </button>
@@ -52,7 +63,11 @@ export default function BarreRecherche({ texte, surChangement }) {
             ref={champ}
             value={texte}
             onChange={(e) => surChangement(e.target.value)}
-            onKeyDown={(e) => e.key === 'Escape' && fermer()}
+            onKeyDown={(e) => {
+              if (e.key !== 'Escape') return
+              e.stopPropagation() // Échap ferme la recherche seulement, pas la fiche ouverte à droite
+              fermer()
+            }}
             placeholder="Un lieu, une commune…"
           />
           <button type="button" className="atl-recherche__fermer" aria-label="Fermer la recherche" onClick={fermer}>

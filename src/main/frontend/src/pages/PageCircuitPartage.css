@@ -91,6 +91,10 @@
 .page-introuvable__carte form p.page-introuvable__aide--erreur { color: var(--color-error); font-weight: 600; }
 .page-introuvable__carte > .atl-btn { margin-top: 6px; }
 
-@media (max-width: 600px) {
+/* Même seuil que useMobile (LARGEUR_MOBILE) : le cadrage de la carte en dépend */
+@media (max-width: 640px) {
   .atl-partage { top: auto; height: 60%; left: 8px; right: 8px; bottom: 8px; width: auto; }
+  /* Au-dessus du volet, sinon il les recouvre : l'attribution OpenStreetMap (obligatoire), puis les boutons de zoom */
+  .page-partage .leaflet-bottom.leaflet-right { bottom: calc(60% + 8px); }
+  .page-partage .atl-controles { bottom: calc(60% + 40px); right: 12px; }
 }
